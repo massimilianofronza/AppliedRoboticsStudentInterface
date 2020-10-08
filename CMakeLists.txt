@@ -12,6 +12,7 @@ include_directories(
  include 
  ${OpenCV_INCLUDE_DIRS}
  ${project_interface_INCLUDE_DIRS}
+ src	## to include student_functions.hpp
 )
 
 ## Add executables

@@ -1,5 +1,6 @@
 #include "student_image_elab_interface.hpp"
 #include "student_planning_interface.hpp"
+#include "student_functions.hpp"
 
 #include <stdexcept>
 #include <sstream>
