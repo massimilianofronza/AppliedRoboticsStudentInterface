@@ -21,7 +21,7 @@ namespace student {
   void imageUndistort(const cv::Mat& img_in, cv::Mat& img_out, 
           const cv::Mat& cam_matrix, const cv::Mat& dist_coeffs, const std::string& config_folder){
 
-    throw std::logic_error( "STUDENT FUNCTION - IMAGE UNDISTORT - NOT IMPLEMENTED" );  
+  	student_imageUndistort(img_in, img_out, cam_matrix, dist_coeffs, config_folder);
 
   }
 

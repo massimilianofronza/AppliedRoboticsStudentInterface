@@ -23,6 +23,7 @@ add_executable(calibrate
 ## CREATE EXECUTABLE LIBRARY
 add_library(student SHARED
    src/student_interface.cpp
+   src/student_imageUndistort.cpp
 )
 
 target_link_libraries(student
