@@ -24,6 +24,8 @@ add_executable(calibrate
 add_library(student SHARED
    src/student_interface.cpp
    src/student_imageUndistort.cpp
+   src/student_extrinsicCalib.cpp
+   src/student_findPlaneTransform.cpp
 )
 
 target_link_libraries(student

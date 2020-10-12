@@ -15,7 +15,10 @@ namespace student {
   }
 
   bool extrinsicCalib(const cv::Mat& img_in, std::vector<cv::Point3f> object_points, const cv::Mat& camera_matrix, cv::Mat& rvec, cv::Mat& tvec, const std::string& config_folder){
-    throw std::logic_error( "STUDENT FUNCTION - EXTRINSIC CALIB - NOT IMPLEMENTED" );   
+	
+	//std::cout << "Inside extrinsicCalib() in student_interface.cpp" << std::endl;
+	return student_extrinsicCalib(img_in, object_points, camera_matrix, rvec, tvec, config_folder);
+	
   }
 
   void imageUndistort(const cv::Mat& img_in, cv::Mat& img_out, 
@@ -29,7 +32,10 @@ namespace student {
                         const cv::Mat& tvec, const std::vector<cv::Point3f>& object_points_plane, 
                         const std::vector<cv::Point2f>& dest_image_points_plane, 
                         cv::Mat& plane_transf, const std::string& config_folder){
-    throw std::logic_error( "STUDENT FUNCTION - FIND PLANE TRANSFORM - NOT IMPLEMENTED" );  
+    		
+
+	student_findPlaneTransform(cam_matrix, rvec, tvec, object_points_plane, dest_image_points_plane,plane_transf,config_folder );		
+
   }
 
 
