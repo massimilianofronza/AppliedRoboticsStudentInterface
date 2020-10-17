@@ -36,6 +36,6 @@ namespace student {
 			return;
 		}
 
-		std::cout << "FRAME UNDISTORTED.\n" << std::flush;
+		//std::cout << "FRAME UNDISTORTED.\n" << std::flush;
 	}
 }
