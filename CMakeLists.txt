@@ -27,6 +27,7 @@ add_library(student SHARED
    src/student_extrinsicCalib.cpp
    src/student_findPlaneTransform.cpp
    src/student_unwarp.cpp
+   src/student_loadImage.cpp
 )
 
 target_link_libraries(student
