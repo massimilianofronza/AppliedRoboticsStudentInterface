@@ -14,23 +14,33 @@
 namespace student{
 
 	void student_loadImage(cv::Mat& img_out, const std::string& config_folder){
+		
+		// Get a list of all images in config_folder/camera_image
+		static std::vector<cv::String> img_list; 
+		const bool recursive = false;
+    		cv::glob(config_folder + "/camera_image/*.jpg", img_list, recursive);
+		
+		// Current image being processed
+		static size_t i=0;
+  		static cv::Mat current_img;     
 
-		//Load the first image from /tmp/camera_image000, saved there by student_genericImageListener
-		std::stringstream ss;
-        	ss << config_folder << "/camera_image000/000.jpg";
-		std::string img_path = ss.str();
-		
-		std::cout << "Loading image " << img_path << std::endl;
-		
-		img_out = cv::imread(img_path);
-		  
+    		if(img_list.size() > 0){
+			for (i=0; i < img_list.size(); i++){
+				std::cout << "Reading image with index " << i << std::endl;
+	     			current_img = cv::imread(img_list[i]);
+			}
+		} else { 
+			throw std::logic_error( "STUDENT FUNCTION - No images to load" );
+		}			  
+
+		img_out = current_img;		
 
 		if(img_out.empty())
 		{
-			std::cout << "Could not read the image: " << img_path << std::endl;
+			//std::cout << "Could not read the image: " << img_path << std::endl;
 			throw std::logic_error( "STUDENT FUNCTION - No image loaded" );
 		}
-
+		return;
 		
 		  
 	}

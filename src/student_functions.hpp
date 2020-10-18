@@ -6,6 +6,7 @@ namespace student {
 //	FUNCTIONS CALLED BY student_interface.cpp WILL BE DEFINED HERE
 	void student_loadImage(cv::Mat& img_out, const std::string& config_folder);
 	
+	void student_genericImageListener(const cv::Mat& img_in, std::string topic, const std::string& config_folder);
 	
 	void student_imageUndistort(const cv::Mat& img_in, cv::Mat& img_out, 
 				const cv::Mat& cam_matrix, const cv::Mat& dist_coeffs, 
