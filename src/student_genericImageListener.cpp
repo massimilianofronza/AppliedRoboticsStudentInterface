@@ -14,6 +14,7 @@ namespace student {
 		static size_t img_no = 0;
   		static std::string folder_path = config_folder + "/camera_image/";
   		
+		// creates the folder if it doesn't exist yet
 		if (!std::experimental::filesystem::exists(folder_path)){		    
 
  	     		if(!std::experimental::filesystem::create_directories(folder_path)){
@@ -22,6 +23,7 @@ namespace student {
  	     		}	
 		}
   		
+		// show image and wait for "save" request, or "quit"
 	        cv::imshow(topic, img_in);
 	        char c;
 	        c = cv::waitKey(30);
@@ -30,6 +32,7 @@ namespace student {
                 switch (c) {    	
 			case 's':	
 				{	
+				// get the current time, in order to put this information in the image name
 				time_t rawtime;
 	  			struct tm * timeinfo;
 	  			char buffer[80];
@@ -38,7 +41,7 @@ namespace student {
 	  			strftime(buffer, sizeof(buffer),"%d-%m-%Y_%H:%M", timeinfo);
 	  			std::string str(buffer);
 
-	 
+	 			// save image
 				img_file << folder_path << "img_" << str << "_" << std::setfill('0') 
 						<< std::setw(3)  << (img_no++) << ".jpg";
 			 	cv::imwrite( img_file.str(), img_in );

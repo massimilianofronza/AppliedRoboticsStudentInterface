@@ -7,13 +7,15 @@
 namespace student {
 
 	void loadImage(cv::Mat& img_out, const std::string& config_folder){
-		//throw std::logic_error( "STUDENT FUNCTION - LOAD IMAGE - NOT IMPLEMENTED" );
+
 		student_loadImage(img_out, config_folder);
+
 	}
 
 	void genericImageListener(const cv::Mat& img_in, std::string topic, const std::string& config_folder){
-		//throw std::logic_error( "STUDENT FUNCTION - IMAGE LISTENER - NOT CORRECTLY IMPLEMENTED" );
+		
 		student_genericImageListener(img_in, topic, config_folder);
+
 	}
 
 	bool extrinsicCalib(const cv::Mat& img_in, std::vector<cv::Point3f> object_points, const cv::Mat& camera_matrix, cv::Mat& rvec, cv::Mat& tvec, const std::string& config_folder){
@@ -51,7 +53,9 @@ namespace student {
 	}
 
 	bool findRobot(const cv::Mat& img_in, const double scale, Polygon& triangle, double& x, double& y, double& theta, const std::string& config_folder){
-		throw std::logic_error( "STUDENT FUNCTION - FIND ROBOT - NOT IMPLEMENTED" );
+
+		return student_findRobot(img_in, scale, triangle, x, y, theta, config_folder);
+
 	}
 
 	bool planPath(const Polygon& borders, const std::vector<Polygon>& obstacle_list, const std::vector<std::pair<int,Polygon>>& victim_list, const Polygon& gate, const float x, const float y, const float theta, Path& path){

@@ -29,6 +29,7 @@ add_library(student SHARED
    src/student_unwarp.cpp
    src/student_loadImage.cpp
    src/student_genericImageListener.cpp
+   src/student_findRobot.cpp
 )
 
 target_link_libraries(student

@@ -24,4 +24,7 @@ namespace student {
 	void student_unwarp(const cv::Mat& img_in, cv::Mat& img_out, const cv::Mat& transf,
 				const std::string& config_folder);
 
+	bool student_findRobot(const cv::Mat& img_in, const double scale, Polygon& triangle, 
+				double& x, double& y, double& theta, const std::string& config_folder);
+
 }
