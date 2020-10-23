@@ -49,7 +49,9 @@ namespace student {
 	}
 
 	bool processMap(const cv::Mat& img_in, const double scale, std::vector<Polygon>& obstacle_list, std::vector<std::pair<int,Polygon>>& victim_list, Polygon& gate, const std::string& config_folder){
-		throw std::logic_error( "STUDENT FUNCTION - PROCESS MAP - NOT IMPLEMENTED" );
+		
+		return student_processMap(img_in, scale, obstacle_list, victim_list, gate, config_folder);
+		
 	}
 
 	bool findRobot(const cv::Mat& img_in, const double scale, Polygon& triangle, double& x, double& y, double& theta, const std::string& config_folder){

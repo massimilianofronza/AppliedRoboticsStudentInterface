@@ -3,7 +3,8 @@
 
 namespace student {
 
-//	FUNCTIONS CALLED BY student_interface.cpp WILL BE DEFINED HERE
+	//////////////// FUNCTIONS CALLED BY student_interface.cpp WILL BE DEFINED HERE ////////////////
+
 	void student_loadImage(cv::Mat& img_out, const std::string& config_folder);
 	
 	void student_genericImageListener(const cv::Mat& img_in, std::string topic, const std::string& config_folder);
@@ -26,5 +27,9 @@ namespace student {
 
 	bool student_findRobot(const cv::Mat& img_in, const double scale, Polygon& triangle, 
 				double& x, double& y, double& theta, const std::string& config_folder);
+
+	bool student_processMap(const cv::Mat& img_in, const double scale,
+				std::vector<Polygon>& obstacle_list, std::vector<std::pair<int,Polygon>>& victim_list,
+				Polygon& gate, const std::string& config_folder);
 
 }
