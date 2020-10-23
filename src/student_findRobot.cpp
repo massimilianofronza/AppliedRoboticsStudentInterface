@@ -10,17 +10,18 @@ namespace student{
 		Polygon& triangle, double& x, double& y, 
 			double& theta, const std::string& config_folder){
 
-		bool debug = true;
+		bool DEBUG = true;
 
 		// Convert color space from BGR to HSV
 		cv::Mat hsv_img;
 		cv::cvtColor(img_in, hsv_img, cv::COLOR_BGR2HSV);    
 
-		if (debug){
-			/*cv::imshow("Arena", img_in);
-			cv::waitKey(0);
+		if (DEBUG){
+			cv::namedWindow("Arena",10);
+			cv::imshow("Arena", img_in);
+			cv::namedWindow("Arena hsv",10);
 			cv::imshow("Arena hsv", hsv_img);
-			cv::waitKey(0); */
+			cv::waitKey(1500); 
 		}
 
 		// Prepare blue mask, with HSV values that best worked for real images
@@ -34,9 +35,10 @@ namespace student{
 		cv::Mat dil_kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3), cv::Point(-1,-1));
 		cv::dilate(blue_mask, blue_mask, dil_kernel);
 
-		if (debug){/*
-			cv::imshow("BLUE filter cleared", blue_mask);
-			cv::waitKey(0);*/
+		if (DEBUG){
+			cv::namedWindow("Blue filter clean", 10);
+			cv::imshow("BLUE filter clean", blue_mask);
+			cv::waitKey(10);
 		}
 
 		// Process blue mask and find countours
@@ -44,7 +46,7 @@ namespace student{
 		std::vector<cv::Point> approx_curve;
 		cv::findContours(blue_mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);		
 
-		if (debug){ std::cout << "N. contours: " << contours.size() << std::endl; }
+		if (DEBUG){ std::cout << "N. contours: " << contours.size() << std::endl; }
 
 
 		bool found = false;
@@ -59,7 +61,7 @@ namespace student{
 			if (approx_curve.size() != 3) continue;
 
 			double A = cv::contourArea(approx_curve);
-			if (debug){
+			if (DEBUG){
 				// double check area of robot
 				std::cout << "Area of robot: " << A << std::endl;	
 			}	
@@ -94,7 +96,7 @@ namespace student{
 			center_x /= triangle.size();
 			center_y /= triangle.size();
 
-			if (debug) {
+			if (DEBUG) {
 				std::cout << "center_x = " << center_x << std::endl; 
 				std::cout << "center_y = " << center_y << std::endl; 
 				std::cout << "Triangle size: " << triangle.size() << std::endl;
@@ -122,7 +124,7 @@ namespace student{
 			y = center_y;
 			double theta = std::atan2(dy, dx);
 
-			if (debug) { std::cout << "Rotation angle: " << theta << std::endl; }
+			if (DEBUG) { std::cout << "Rotation angle: " << theta << std::endl; }
 
 			
 			}
