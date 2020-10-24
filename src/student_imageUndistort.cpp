@@ -7,11 +7,12 @@ namespace student {
   							    const cv::Mat& cam_matrix, const cv::Mat& dist_coeffs,
   						   		const std::string& config_folder) {
 
+		// Utility/debug variables
 		static bool initialized = false;
     	static cv::Mat output_map1, output_map2;
 
     	if (!initialized) {
-    		std::cout << "FIRST FRAME RECEIVED, INITIALIZING DISTORTION PROCESS...\n" << std::flush;
+    		std::cout << "\tFIRST FRAME RECEIVED... \n" << std::flush;
 
 			cv::Mat R;
 			try {
@@ -23,11 +24,11 @@ namespace student {
 				return;
 			}
 
-			std::cout << "...INITIALIZATION COMPLETED.\n" << std::flush;
+			std::cout << "\tstudent_imageUndistort INITIALIZED.\n" << std::flush;
 			initialized = true;
     	}
 
-		// Initialize output image
+		// Undistort the image
 		try {
 			cv::remap(img_in, img_out, output_map1, output_map2, cv::INTER_LINEAR);
 		}
@@ -35,7 +36,5 @@ namespace student {
 			std::cerr << "ERROR IN METHOD <remap> of student_imageUndistort.cpp: " << e.msg << std::endl;
 			return;
 		}
-
-		//std::cout << "FRAME UNDISTORTED.\n" << std::flush;
 	}
 }

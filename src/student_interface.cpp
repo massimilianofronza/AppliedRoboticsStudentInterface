@@ -4,7 +4,12 @@
 
 #include <stdexcept>
 #include <sstream>
+
 namespace student {
+
+// Debug variables
+const bool DEBUG_Map = false;
+const bool DEBUG_Robot = false;
 
 	void loadImage(cv::Mat& img_out, const std::string& config_folder){
 
@@ -20,7 +25,6 @@ namespace student {
 
 	bool extrinsicCalib(const cv::Mat& img_in, std::vector<cv::Point3f> object_points, const cv::Mat& camera_matrix, cv::Mat& rvec, cv::Mat& tvec, const std::string& config_folder){
 	
-		//std::cout << "Inside extrinsicCalib() in student_interface.cpp" << std::endl;
 		return student_extrinsicCalib(img_in, object_points, camera_matrix, rvec, tvec, config_folder);
 	
 	}
@@ -38,7 +42,7 @@ namespace student {
 						cv::Mat& plane_transf, const std::string& config_folder){
 
 		student_findPlaneTransform(cam_matrix, rvec, tvec, object_points_plane, dest_image_points_plane,plane_transf,config_folder);
-
+		std::cout << "\tstudent_findPlaneTransform COMPLETED.\n" << std::flush;
 	}
 
 
@@ -50,20 +54,19 @@ namespace student {
 
 	bool processMap(const cv::Mat& img_in, const double scale, std::vector<Polygon>& obstacle_list, std::vector<std::pair<int,Polygon>>& victim_list, Polygon& gate, const std::string& config_folder){
 		
-		return student_processMap(img_in, scale, obstacle_list, victim_list, gate, config_folder);
-		
+		return student_processMap(img_in, scale, obstacle_list, victim_list, gate, config_folder, DEBUG_Map);
+
 	}
 
-	bool findRobot(const cv::Mat& img_in, const double scale, Polygon& triangle, double& x, double& y, double& theta, const std::string& config_folder){
+	bool findRobot(const cv::Mat& img_in, const double scale, Polygon& triangle, double& x, double& y, double& theta, const std::string& config_folder) {
 
-		return student_findRobot(img_in, scale, triangle, x, y, theta, config_folder);
+		return student_findRobot(img_in, scale, triangle, x, y, theta, config_folder, DEBUG_Robot);
 
 	}
 
 	bool planPath(const Polygon& borders, const std::vector<Polygon>& obstacle_list, const std::vector<std::pair<int,Polygon>>& victim_list, const Polygon& gate, const float x, const float y, const float theta, Path& path){
 		throw std::logic_error( "STUDENT FUNCTION - PLAN PATH - NOT IMPLEMENTED" );
+		std::cout << "\tstudent_planPath COMPLETED.\n" << std::flush;
 	}
-
-
 }
-
+	

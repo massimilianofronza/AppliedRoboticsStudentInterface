@@ -6,6 +6,9 @@ namespace student {
 	void student_unwarp(const cv::Mat& img_in, cv::Mat& img_out, const cv::Mat& transf, 
             const std::string& config_folder) {
 
+		// Debug variable
+		static bool initialized = false;
+
 		try {
 			cv::warpPerspective(img_in, img_out, transf, img_in.size());
 		}
@@ -13,7 +16,10 @@ namespace student {
 			std::cerr << "ERROR IN METHOD <warpPerspective> of student_unwarp.cpp: " << e.msg << std::endl;
 			return;
 		}
-		
-		//std::cout << "UNWARPED.\n" << std::flush;
+
+		if (!initialized) {
+			std::cout << "\tstudent_unwarp EXECUTED.\n" << std::flush;
+			initialized = true;
+		}
 	}
 }

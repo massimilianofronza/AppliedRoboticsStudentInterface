@@ -29,7 +29,7 @@ namespace student {
 	        c = cv::waitKey(30);
 	    
 	        std::stringstream img_file;
-                switch (c) {    	
+            switch (c) {    	
 			case 's':	
 				{	
 				// get the current time, in order to put this information in the image name

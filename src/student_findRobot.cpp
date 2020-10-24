@@ -7,25 +7,27 @@
 namespace student{
 
 	bool student_findRobot(const cv::Mat& img_in, const double scale, 
-		Polygon& triangle, double& x, double& y, 
-			double& theta, const std::string& config_folder){
-
-		bool DEBUG = true;
+			Polygon& triangle, double& x, double& y, 
+			double& theta, const std::string& config_folder, const bool DEBUG) {
 
 		// Convert color space from BGR to HSV
 		cv::Mat hsv_img;
 		cv::cvtColor(img_in, hsv_img, cv::COLOR_BGR2HSV);    
 
-		if (DEBUG){
-			cv::namedWindow("Arena",10);
-			cv::imshow("Arena", img_in);
-			cv::namedWindow("Arena hsv",10);
-			cv::imshow("Arena hsv", hsv_img);
+		if (DEBUG) {
+			char debug_1[] = "Arena";
+			char debug_2[] = "Arena hsv";
+			cv::namedWindow(debug_1, 10);
+			cv::imshow(debug_1, img_in);
+			cv::namedWindow(debug_2 ,10);
+			cv::imshow(debug_2, hsv_img);
 			cv::waitKey(1500); 
+			//cv::destroyWindow(debug_1);
+			//cv::destroyWindow(debug_2);
 		}
 
 		// Prepare blue mask, with HSV values that best worked for real images
-		cv::Mat blue_mask;    
+		cv::Mat blue_mask;
 		cv::inRange(hsv_img, cv::Scalar(90, 70, 35), cv::Scalar(140, 255, 255), blue_mask);	
 
 		// Erosion and delatation to get rid of noise and to make robot more clear
@@ -35,10 +37,12 @@ namespace student{
 		cv::Mat dil_kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3), cv::Point(-1,-1));
 		cv::dilate(blue_mask, blue_mask, dil_kernel);
 
-		if (DEBUG){
-			cv::namedWindow("Blue filter clean", 10);
-			cv::imshow("BLUE filter clean", blue_mask);
+		if (DEBUG) {
+			char debug_3[] = "Blue filter clean";
+			cv::namedWindow(debug_3, 10);
+			cv::imshow(debug_3, blue_mask);
 			cv::waitKey(10);
+			//cv::destroyWindow(debug_3);
 		}
 
 		// Process blue mask and find countours
@@ -61,12 +65,14 @@ namespace student{
 			if (approx_curve.size() != 3) continue;
 
 			double A = cv::contourArea(approx_curve);
+			
 			if (DEBUG){
 				// double check area of robot
 				std::cout << "Area of robot: " << A << std::endl;	
 			}	
-		      	// If it is an area too small or too big, continue searching
-		     	if (A < 300 || A > 3000) continue;
+		    
+		    // If it is an area too small or too big, continue searching
+		    if (A < 300 || A > 3000) continue;
 
 			// There should be only 1 blue object, the robot
 			found = true;	
@@ -126,12 +132,8 @@ namespace student{
 
 			if (DEBUG) { std::cout << "Rotation angle: " << theta << std::endl; }
 
-			
-			}
-
-		return found;
-
 		}
 
-
+		return found;
 	}
+}

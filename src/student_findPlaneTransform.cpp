@@ -11,9 +11,9 @@ namespace student  {
 	
 		cv::Mat image_points;
 
-    		// project points
-   		cv::projectPoints(object_points_plane, rvec, tvec, cam_matrix, cv::Mat(), image_points);
+ 		// project points
+ 		cv::projectPoints(object_points_plane, rvec, tvec, cam_matrix, cv::Mat(), image_points);
 
-    		plane_transf = cv::getPerspectiveTransform(image_points, dest_image_points_plane);
-	}
+    plane_transf = cv::getPerspectiveTransform(image_points, dest_image_points_plane);
+  }
 }

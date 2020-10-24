@@ -14,7 +14,7 @@ namespace student {
 	
 	// For victim processing
 	int findTemplateId(cv::Mat& processROI, std::vector<cv::Mat>& templates, bool DEBUG);
-	cv::Mat rotate(cv::Mat src, double angle);
+			cv::Mat rotate(cv::Mat src, double angle);
 
 
 
@@ -22,15 +22,14 @@ namespace student {
 
 	bool student_processMap(const cv::Mat& img_in, const double scale,
 			std::vector<Polygon>& obstacle_list, std::vector<std::pair<int,Polygon>>& victim_list,
-			Polygon& gate, const std::string& config_folder) {
+			Polygon& gate, const std::string& config_folder, const bool DEBUG) {
 	
+// Debug:
 //cv::Mat img_in = imread("/tmp/square_arena_real1.jpg", cv::IMREAD_COLOR);
 //cv::Mat img_in = imread("/tmp/numbers/ideal_unwarped.jpg", cv::IMREAD_COLOR);	 //for victims
 
 		//////// VARIABLES ////////
 
-		// Debug variable to execute more code:
-		bool DEBUG = true;
   		// HSV matrix:
 		cv::Mat img_hsv;
 		// Green mask for double usage:
@@ -45,20 +44,32 @@ namespace student {
 	    if (!found_obst) {
 			std::cerr << "ERROR IN METHOD <processObstacles> of student_processMap.cpp.\n" << std::flush;
 	    }
+	    else {
+	    	std::cout << "\tOBSTACLES IDENTIFIED\n" << std::flush;
+	    }
 	    const bool proc_green = processGreen(img_hsv, green_mask, DEBUG);
 	    if (!proc_green) {
 	    	std::cerr << "ERROR IN METHOD <processGreen> of student_processMap.cpp.\n" << std::flush;
 	    }
+		else {
+			std::cout << "\tGREEN MASK PROCESSED\n" << std::flush;
+		}
 		const bool found_gate = processGate(img_hsv, green_mask, scale, gate, DEBUG);
 	    if (!found_gate) {
 	    	std::cerr << "ERROR IN METHOD <processGate> of student_processMap.cpp.\n" << std::flush;
 	    }
+		else {
+			std::cout << "\tGATE IDENTIFIED\n" << std::flush;
+		}
 	    const bool proc_vict = processVictims(img_in, img_hsv, green_mask, scale, victim_list, DEBUG);
 	    if (!proc_vict) {
 	    	std::cerr << "ERROR IN METHOD <processVictims> of student_processMap.cpp.\n" << std::flush;
 	    }
+		else {
+			std::cout << "\tVICTIMS IDENTIFIED\n" << std::flush;
+		}
 
-	    return found_obst && proc_green && found_gate && proc_vict;
+		return found_obst && proc_green && found_gate && proc_vict;
 	}
 
 
@@ -68,7 +79,6 @@ namespace student {
 
   		// Color masks:
 		cv::Mat red_mask_low, red_mask_high, red_mask, black_mask;
-// Fossero stati solo cerchi avrei usato ELLIPSE, ma essendoci anche il gate da identificare ho preferito così
 		
 		// Red kernel:
 		cv::Mat kernel_red = cv::getStructuringElement(cv::MORPH_RECT, cv::Size((1*2) + 1, (1*2) + 1));
@@ -93,18 +103,18 @@ namespace student {
 		cv::inRange(img_hsv, cv::Scalar(0, 0, 0), cv::Scalar(255, 255, 40), black_mask);
 
 		// Combination of the 2 red masks:
-// Four different ways to combine together the two binary masks:
 		cv::addWeighted(red_mask_low, 1.0, red_mask_high, 1.0, 0.0, red_mask);
-//red_mask = red_mask_low | red_mask_high;
-//red_mask = red_mask_low + red_mask_high;
-//cv::bitwise_or(red_mask_low, red_mask_high, red_mask);
 
 		if (DEBUG) {
-			cv::namedWindow("Red raw", 10);
-	  		cv::imshow("Red raw", red_mask);
-			cv::namedWindow("Black raw", 10);
-	  		cv::imshow("Black raw", black_mask);
-	  		cv::waitKey(0);
+			char debug_1[] = "Red raw";
+			char debug_2[] = "Black raw";
+			cv::namedWindow(debug_1, 10);
+	  		cv::imshow(debug_1, red_mask);
+			cv::namedWindow(debug_2, 10);
+	  		cv::imshow(debug_2, black_mask);
+	  		cv::waitKey(30000);
+	  		cv::destroyWindow(debug_1);
+	  		cv::destroyWindow(debug_2);
 	  	}
 
 		//////// MASKS FILTERING ////////
@@ -118,24 +128,26 @@ namespace student {
 		cv::dilate(black_mask, black_mask, kernel_black_2);
 
 		if (DEBUG) {
-			cv::namedWindow("Red filtered", 10);
-  			cv::imshow("Red filtered", red_mask);
-			cv::namedWindow("Black filtered", 10);
-  			cv::imshow("Black filtered", black_mask);
-  			cv::waitKey(0);
-  		}
+			char debug_3[] = "Red filtered";
+			char debug_4[] = "Black filtered";
+			cv::namedWindow(debug_3, 10);
+  			cv::imshow(debug_3, red_mask);
+			cv::namedWindow(debug_4, 10);
+  			cv::imshow(debug_4, black_mask);
+  			cv::waitKey(30000);
+			cv::destroyWindow(debug_3);
+	  		cv::destroyWindow(debug_4);
+		}
 
-  		//////// CONTOURS IDENTIFICATION ////////
+  		//////// CONTOURS PROCESSING - RED MASK ////////
 	
-contours_red = img_hsv.clone();
+		// Debug:
+		contours_red = img_hsv.clone();
+
 		cv::findContours(red_mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-cv::drawContours(contours_red, contours, -1, cv::Scalar(40,190,40), 1, cv::LINE_AA);
-//std::cout << "N. contours: " << contours.size() << std::endl;
 		for (int i = 0; i < contours.size(); i++) {
-//std::cout << (i+1) << ") Contour size: " << contours[i].size() << std::endl;
+
 			cv::approxPolyDP(contours[i], approx_curve, 8, true);
-contours_approx = {approx_curve};
-cv::drawContours(contours_red, contours_approx, -1, cv::Scalar(0,170,220), 3, cv::LINE_AA);
 
 			Polygon scaled_contour_red;
 			for (const auto& pt: approx_curve) {
@@ -143,21 +155,32 @@ cv::drawContours(contours_red, contours_approx, -1, cv::Scalar(0,170,220), 3, cv
 			}
 			obstacle_list.push_back(scaled_contour_red);
 
-//std::cout << "   Approximated contour size: " << approx_curve.size() << std::endl;
+			if (DEBUG) {
+				std::cout << (i+1) << ") Contour size: " << contours[i].size() << std::endl;
+				contours_approx = {approx_curve};
+				cv::drawContours(contours_red, contours_approx, -1, cv::Scalar(0,170,220), 3, cv::LINE_AA);
+
+				// Executed only once:
+				if (i == contours.size() - 1) {
+					std::cout << "   Approximated contour size: " << approx_curve.size() << std::endl;
+					char debug_5[] = "Original + red";
+					cv::namedWindow(debug_5, 10);
+					cv::imshow(debug_5, contours_red);
+					cv::waitKey(30000);
+					cv::destroyWindow(debug_5);
+				}
+			}
 		}
 
-cv::imshow("Original", contours_red);
-cv::waitKey(0);
+		//////// CONTOURS PROCESSING - BLACK MASK ////////
 
-contours_black = img_hsv.clone();
+		// Debug:
+		contours_black = img_hsv.clone();
+		
 		cv::findContours(black_mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-cv::drawContours(contours_black, contours, -1, cv::Scalar(40,190,40), 1, cv::LINE_AA);
-//std::cout << "N. contours: " << contours.size() << std::endl;
 		for (int i = 0; i < contours.size(); i++) {
-//std::cout << (i+1) << ") Contour size: " << contours[i].size() << std::endl;
+
 			cv::approxPolyDP(contours[i], approx_curve, 8, true);
-contours_approx = {approx_curve};
-cv::drawContours(contours_black, contours_approx, -1, cv::Scalar(0,170,220), 3, cv::LINE_AA);
 
 			Polygon scaled_contour_black;
 			for (const auto& pt: approx_curve) {
@@ -165,11 +188,22 @@ cv::drawContours(contours_black, contours_approx, -1, cv::Scalar(0,170,220), 3, 
 			}
 			obstacle_list.push_back(scaled_contour_black);
 
-//std::cout << "   Approximated contour size: " << approx_curve.size() << std::endl;
-		}
+			if (DEBUG) {
+				std::cout << (i+1) << ") Contour size: " << contours[i].size() << std::endl;
+				contours_approx = {approx_curve};
+				cv::drawContours(contours_black, contours_approx, -1, cv::Scalar(0,170,220), 3, cv::LINE_AA);
 
-cv::imshow("Original", contours_black);
-cv::waitKey(0);
+				// Executed only once:
+				if (i == contours.size() - 1) {
+					std::cout << "   Approximated contour size: " << approx_curve.size() << std::endl;
+					char debug_6[] = "Original + black";
+					cv::namedWindow(debug_6, 10);
+					cv::imshow(debug_6, contours_black);
+					cv::waitKey(30000);
+					cv::destroyWindow(debug_6);
+				}
+			}
+		}
 
 		return true;
 	}
@@ -187,9 +221,11 @@ cv::waitKey(0);
 		cv::inRange(img_hsv, cv::Scalar(40, 25, 25), cv::Scalar(80, 255, 255), green_mask);
 
 		if (DEBUG) {
-			cv::namedWindow("Green raw", 10);
-	  		cv::imshow("Green raw", green_mask);
-	  		cv::waitKey(0);
+			char debug_7[] = "Green raw";
+			cv::namedWindow(debug_7, 10);
+	  		cv::imshow(debug_7, green_mask);
+	  		cv::waitKey(30000);
+	  		//cv::destroyWindow(debug_7);
 	  	}
 
 		//////// MASK FILTERING ////////
@@ -198,9 +234,12 @@ cv::waitKey(0);
 		cv::dilate(green_mask, green_mask, kernel_green);
 
 		if (DEBUG) {
-			cv::namedWindow("Green filtered", 10);
-  			cv::imshow("Green filtered", green_mask);
-			cv::waitKey(0);
+			char debug_8[] = "Green filtered";
+			cv::namedWindow(debug_8, 10);
+  			cv::imshow(debug_8, green_mask);
+			cv::waitKey(30000);
+			//cv::destroyWindow(debug_8);
+			cv::destroyAllWindows();
   		}
 
 		return true;
@@ -214,9 +253,9 @@ cv::waitKey(0);
 		std::vector<std::vector<cv::Point>> contours;
 		std::vector<cv::Point> approx_curve;
 		
-// Debug variables
-std::vector<std::vector<cv::Point>> contours_approx;
-cv::Mat contours_green;
+		// Debug variables
+		std::vector<std::vector<cv::Point>> contours_approx;
+		cv::Mat contours_green;
 
   		//////// CONTOURS IDENTIFICATION ////////
 
@@ -224,35 +263,44 @@ cv::Mat contours_green;
 
 		//////// GATE IDENTIFICATION ////////
 
-contours_green = img_hsv.clone();
-cv::drawContours(contours_green, contours, -1, cv::Scalar(40,190,40), 1, cv::LINE_AA);
-std::cout << "N. contours: " << contours.size() << std::endl;
-		
+		// Debug:
+		contours_green = img_hsv.clone();
+
 		bool gate_found = false;
-std::cout << "N. contours: " << contours.size() << std::endl;
 		for( auto& contour : contours) {
 			const double area = cv::contourArea(contour);
-std::cout << "AREA " << area << std::endl;
-std::cout << "SIZE: " << contours.size() << std::endl;
+
 			if (area > 500) {
 				cv::approxPolyDP(contour, approx_curve, 8, true);
 
-				if(approx_curve.size() != 4) continue;	// prima era !=4, così se per sfiga il gate dovesse essere un po' diverso, non avremmo problemi
+				if(approx_curve.size() != 4) continue;
 
-contours_approx = {approx_curve};
-cv::drawContours(contours_green, contours_approx, -1, cv::Scalar(0,170,220), 4, cv::LINE_AA);
+				if (DEBUG) {
+					std::cout << "AREA " << area << std::endl;
+					std::cout << "SIZE: " << contours.size() << std::endl;
+				}
 
 				for (const auto& pt: approx_curve) {
 					gate.emplace_back(pt.x/scale, pt.y/scale);
 				}
 				gate_found = true;
+
+				if (DEBUG) {
+					std::cout << "N. contours: " << contours.size() << std::endl;
+					contours_approx = {approx_curve};
+					cv::drawContours(contours_green, contours_approx, -1, cv::Scalar(0,170,220), 4, cv::LINE_AA);
+
+					std::cout << "   Approximated contour size: " << approx_curve.size() << std::endl;
+					char debug_9[] = "Original + gate";
+					cv::namedWindow(debug_9, 10);
+					cv::imshow(debug_9, contours_green);
+					cv::waitKey(30000);
+					cv::destroyWindow(debug_9);
+				}
+
 				break;
 			}
-std::cout << "   Approximated contour size: " << approx_curve.size() << std::endl;
 	    }
-
-cv::imshow("Original", contours_green);
-cv::waitKey(0);
 
     	return gate_found;
 	}
@@ -296,15 +344,17 @@ cv::waitKey(0);
 		cv::Mat green_mask_inv, filtered(img_in.rows, img_in.cols, CV_8UC3, cv::Scalar(255,255,255));
 		cv::bitwise_not(green_mask, green_mask_inv); 
 		img_in.copyTo(filtered, green_mask_inv);
+		
 		if (DEBUG) {
-			cv::namedWindow("Inverted",10);
-			cv::imshow("Inverted", filtered);
-
-			/*cv::namedWindow("Numbers", 10);
-			cv::imshow("Numbers", green_mask_inv);
-			*/
-			cv::waitKey(100);
-
+			char debug_10[] = "Inverted";
+			char debug_11[] = "Numbers";
+			cv::namedWindow(debug_10, 10);
+			cv::imshow(debug_10, filtered);
+			cv::namedWindow(debug_11, 10);
+			cv::imshow(debug_11, green_mask_inv);
+			cv::waitKey(30000);
+			cv::destroyWindow(debug_10);
+			cv::destroyWindow(debug_11);
 		}
 		
 		// Find and process bounding rectangles of victims
@@ -352,7 +402,7 @@ cv::waitKey(0);
 			std::cout << "N. victims: " << victim_list.size() << std::endl;
 		}
 
-		//cv::destroyAllWindows();
+		cv::destroyAllWindows();
 		return true;
 	}
 
@@ -363,22 +413,24 @@ cv::waitKey(0);
 		cv::threshold(ROI_rect, ROI_rect, 100, 255, 0);		
    		cv::GaussianBlur(ROI_rect, ROI_rect, cv::Size(5, 5), 2, 2);
 
-		if (DEBUG){		
-			/*	
-			cv::namedWindow("ROI", 10);
-			cv::imshow("ROI", ROI_rect);
-			cv::waitKey(10);
-			*/
+		if (DEBUG) {/*
+			char debug_12[] = "ROI";
+			cv::namedWindow(debug_12, 10);
+			cv::imshow(debug_12, ROI_rect);
+			cv::waitKey(30000);
+			cv::destroyWindow(debug_12);*/
 		}	
 
 		// Image from simulator is unwarped, so flip the rectangle with number along y axis 
 		cv::Mat flippedROI;
 		cv::flip(ROI_rect, flippedROI, 1);
 
-		if (DEBUG){
-			cv::namedWindow("Flipped", 10);
-			cv::imshow("Flipped", flippedROI);
+		if (DEBUG) {
+			char debug_13[] = "Flipped";
+			cv::namedWindow(debug_13, 10);
+			cv::imshow(debug_13, flippedROI);
 			cv::waitKey(1500);
+			//cv::destroyWindow(debug_13);
  		}
 
 		// Variables for template matching
@@ -396,8 +448,9 @@ cv::waitKey(0);
 			rotated = rotate(flippedROI, angles[i]);
 
 			if (DEBUG){
-				cv::namedWindow("ROI rotated", 10);
-				cv::imshow("ROI rotated", rotated);
+				char debug_14[] = "ROI rotated";
+				cv::namedWindow(debug_14, 10);
+				cv::imshow(debug_14, rotated);
 				cv::waitKey(1500);
 			}
 			
@@ -417,12 +470,11 @@ cv::waitKey(0);
 				}
 			}
 
-			if(DEBUG){
+			if (DEBUG) {
 				std::cout << "Max score, id for rotated image: " << max_score << "," << max_id + 1 << std::endl;
+				cv::destroyAllWindows();
 			}
-	
 		}
-		
 		
 		// templates are from 1 to 5, not 0 - 4
 		return max_id + 1;
