@@ -21,6 +21,9 @@ bool dubins_LSR(double sc_th0, double sc_thf, int sc_Kmax,
 
 double scaleFromStandard(double lambda, double& sc_s1, double& sc_s2, double& sc_s3);
 
+std::pair<int, bool/*dubinscurve*/> dubins_shortest_path(double x0, double y0, double th0, 
+                            double xf, double yf, double thf, int Kmax);
+
 
 // -------------------------------------------
 // DATATYPES
@@ -28,6 +31,8 @@ double scaleFromStandard(double lambda, double& sc_s1, double& sc_s2, double& sc
 
 // New datatype to store the 6 dubins primitives in an array and 
 // lately iterate over them
+// TODO: when the final project is ready, keep in mind that you can use a 
+// switch instead of this to choose function relative to the enum type
 typedef bool (*DubinsFunctionPointer) (
     double sc_th0, double sc_thf, int sc_Kmax,
     double& sc_s1, double& sc_s2, double& sc_s3
@@ -44,7 +49,7 @@ enum dubins_primitives {
 
 // TODO: uncomment the last 3
 // Array of pointers to iterate over dubins primitives functions
-DubinsFunctionPointer primitives[] = {
+DubinsFunctionPointer primitives[6] = {
     dubins_LSL,
     dubins_RSR,
     dubins_LSR
@@ -165,10 +170,11 @@ int main() {}
 // TODO: fix the return value when called
 // Solve the Dubins problem for the given input parameters.
 // Return the type and the parameters of the optimal curve
-/*std::pair<int, dubinscurve>*/void dubins_shortest_path(double x0, double y0, double th0, 
+std::pair<int, bool/*dubinscurve*/> dubins_shortest_path(double x0, double y0, double th0, 
                             double xf, double yf, double thf, int Kmax ) {
     // Return values:
     int pidx = 0;
+    bool curve;
     //dubinscurve curve;
 
     // Variables for scaleToStandard:
@@ -232,4 +238,7 @@ int main() {}
     else {
         // TODO lancia qualche eccezione per la curva ottimale non trovata
     }
+
+    // TODO check syntax
+    return std::pair<int, bool>(pidx, curve);
 }
