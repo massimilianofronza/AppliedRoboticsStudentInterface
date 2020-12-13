@@ -9,10 +9,9 @@ find_package(project_interface REQUIRED )
 
 ## Specify additional locations of header files
 include_directories(
- include 
  ${OpenCV_INCLUDE_DIRS}
  ${project_interface_INCLUDE_DIRS}
- src	## to include student_functions.hpp
+ src/include	## custom headers folder
 )
 
 ## Add executables
@@ -22,15 +21,17 @@ add_executable(calibrate
 
 ## CREATE EXECUTABLE LIBRARY
 add_library(student SHARED
-   src/student_interface.cpp
-   src/student_imageUndistort.cpp
-   src/student_extrinsicCalib.cpp
-   src/student_findPlaneTransform.cpp
-   src/student_unwarp.cpp
-   src/student_loadImage.cpp
-   src/student_genericImageListener.cpp
-   src/student_findRobot.cpp
-   src/student_processMap.cpp
+   src/student_interface.cpp	## main file
+   src/visual			## visual functions
+   src/visual/student_extrinsicCalib.cpp
+   src/visual/student_findPlaneTransform.cpp
+   src/visual/student_findRobot.cpp
+   src/visual/student_genericImageListener.cpp
+   src/visual/student_imageUndistort.cpp
+   src/visual/student_loadImage.cpp
+   src/visual/student_processMap.cpp
+   src/visual/student_unwarp.cpp
+   src/path			## path functions
 )
 
 target_link_libraries(student

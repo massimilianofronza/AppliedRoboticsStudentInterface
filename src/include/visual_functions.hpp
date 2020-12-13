@@ -3,7 +3,7 @@
 
 namespace student {
 
-	//////////////// FUNCTIONS CALLED BY student_interface.cpp WILL BE DEFINED HERE ////////////////
+	////////// VISUAL FUNCTIONS CALLED BY student_interface.cpp //////////
 
 	void student_loadImage(cv::Mat& img_out, const std::string& config_folder);
 	

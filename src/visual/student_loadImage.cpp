@@ -1,6 +1,6 @@
 #include "student_image_elab_interface.hpp"
 #include "student_planning_interface.hpp"
-#include "student_functions.hpp" 
+#include "visual_functions.hpp" 
 
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgcodecs.hpp>
