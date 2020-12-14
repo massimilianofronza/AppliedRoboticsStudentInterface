@@ -1,6 +1,6 @@
+#include <iostream>
 #include <cmath>
 #include <string>
-#include <vector>
 #include <limits>
 
 #define PI 3.14159265
@@ -173,7 +173,7 @@ int main() {}
 std::pair<int, bool/*dubinscurve*/> dubins_shortest_path(double x0, double y0, double th0, 
                             double xf, double yf, double thf, int Kmax ) {
     // Return values:
-    int pidx = 0;
+    int pidx;
     bool curve;
     //dubinscurve curve;
 
@@ -215,7 +215,8 @@ std::pair<int, bool/*dubinscurve*/> dubins_shortest_path(double x0, double y0, d
         }
     }
 
-    if (pidx > 0) {
+    // TODO i changed to >= from > for matlab conversion
+    if (pidx >= 0) {
 
         // Variables for scaleFromStandard:
         double s1 = 0;
@@ -232,13 +233,21 @@ std::pair<int, bool/*dubinscurve*/> dubins_shortest_path(double x0, double y0, d
                             dubins_primitives_ksigns(pidx, 1) * Kmax, 
                             dubins_primitives_ksigns(pidx, 2) * Kmax);
         */
-        // Check the correctness of the algorithm
-        //assert(check(sc_s1, ksigns(pidx,1)*sc_Kmax, sc_s2, ksigns(pidx,2)*sc_Kmax, sc_s3, ksigns(pidx,3)*sc_Kmax, sc_th0, sc_thf));
+        // Check the correctness of the algorithm - TODO i changed indexes for matlab conversion
+        bool check_alg = check(sc_s1, dubins_primitives_ksigns[pidx-1][0]*sc_Kmax, 
+                               sc_s2, dubins_primitives_ksigns[pidx-1][1]*sc_Kmax, 
+                               sc_s3, dubins_primitives_ksigns[pidx-1][2]*sc_Kmax, 
+                               sc_th0, sc_thf);
+        if (check_alg != true) {
+            std::cerr << "ERROR IN METHOD <dubins_shortest_path> of TODO.cpp: algorithm check returned false." << std::endl;
+        }
     }
     else {
-        // TODO lancia qualche eccezione per la curva ottimale non trovata
+        std::cerr << "ERROR IN METHOD <dubins_shortest_path> of TODO.cpp: optimal curve not found." << std::endl;
     }
 
     // TODO check syntax
     return std::pair<int, bool>(pidx, curve);
 }
+
+
