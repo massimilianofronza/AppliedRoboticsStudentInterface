@@ -1,3 +1,4 @@
+#include <opencv2/core/core.hpp>
 #include <iostream>
 #include <cmath>
 #include <string>
@@ -21,8 +22,9 @@ bool dubins_LSR(double sc_th0, double sc_thf, int sc_Kmax,
 
 double scaleFromStandard(double lambda, double& sc_s1, double& sc_s2, double& sc_s3);
 
-std::pair<int, bool/*dubinscurve*/> dubins_shortest_path(double x0, double y0, double th0, 
-                            double xf, double yf, double thf, int Kmax);
+std::pair<int, dubinsCurve> dubins_shortest_path(configuration initial,
+                                                 configuration final, 
+                                                 int Kmax);
 
 
 // -------------------------------------------
@@ -166,16 +168,13 @@ bool dubins_LSR(double sc_th0, double sc_thf, int sc_Kmax,
 int main() {}
 
 
-// TODO: fit the dubinscurve structure
-// TODO: fix the return value when called
 // Solve the Dubins problem for the given input parameters.
 // Return the type and the parameters of the optimal curve
-std::pair<int, bool/*dubinscurve*/> dubins_shortest_path(double x0, double y0, double th0, 
-                            double xf, double yf, double thf, int Kmax ) {
+std::pair<int, dubinsCurve> dubins_shortest_path(configuration initial, 
+                                                 configuration final, int Kmax ) {
     // Return values:
     int pidx;
-    bool curve;
-    //dubinscurve curve;
+    dubinsCurve curve;
 
     // Variables for scaleToStandard:
     double sc_th0 = 0;
@@ -184,7 +183,7 @@ std::pair<int, bool/*dubinscurve*/> dubins_shortest_path(double x0, double y0, d
     double lambda = 0;
 
     // Scale down your curve in the normalized range, so from -1,0 up to 1,0
-    //scaleToStandard(x0, y0, th0, xf, yf, thf, Kmax, sc_th0, sc_thf, sc_Kmax, lambda);
+    scaleToStandard(initial, final, Kmax, sc_th0, sc_thf, sc_Kmax, lambda);
 
     // Variables to solve the sys of equations for all of the dubins_primitives
     // to find the optimal solution:
@@ -228,16 +227,17 @@ std::pair<int, bool/*dubinscurve*/> dubins_shortest_path(double x0, double y0, d
         scaleFromStandard(lambda, sc_s1, sc_s2, sc_s3, s1, s2, s3);
     
         // Construct the Dubins curve object with the computed optimal parameters
-        /*curve = dubinscurve(x0, y0, th0, s1, s2, s3, 
+        curve = constructDubinsCurve(initial, s1, s2, s3, 
                             dubins_primitives_ksigns(pidx, 0) * Kmax, 
                             dubins_primitives_ksigns(pidx, 1) * Kmax, 
                             dubins_primitives_ksigns(pidx, 2) * Kmax);
-        */
+        
         // Check the correctness of the algorithm - TODO i changed indexes for matlab conversion
-        bool check_alg = check(sc_s1, dubins_primitives_ksigns[pidx-1][0]*sc_Kmax, 
-                               sc_s2, dubins_primitives_ksigns[pidx-1][1]*sc_Kmax, 
-                               sc_s3, dubins_primitives_ksigns[pidx-1][2]*sc_Kmax, 
+        bool check_alg = check(sc_s1, dubins_primitives_ksigns[pidx][0]*sc_Kmax, 
+                               sc_s2, dubins_primitives_ksigns[pidx][1]*sc_Kmax, 
+                               sc_s3, dubins_primitives_ksigns[pidx][2]*sc_Kmax, 
                                sc_th0, sc_thf);
+
         if (check_alg != true) {
             std::cerr << "ERROR IN METHOD <dubins_shortest_path> of TODO.cpp: algorithm check returned false." << std::endl;
         }
@@ -247,7 +247,7 @@ std::pair<int, bool/*dubinscurve*/> dubins_shortest_path(double x0, double y0, d
     }
 
     // TODO check syntax
-    return std::pair<int, bool>(pidx, curve);
+    return std::pair<int, dubinsCurve>(pidx, curve);
 }
 
 
