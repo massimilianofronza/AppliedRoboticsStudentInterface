@@ -22,7 +22,6 @@ add_executable(calibrate
 ## CREATE EXECUTABLE LIBRARY
 add_library(student SHARED
    src/student_interface.cpp	## main file
-   src/visual			## visual functions
    src/visual/student_extrinsicCalib.cpp
    src/visual/student_findPlaneTransform.cpp
    src/visual/student_findRobot.cpp
@@ -31,7 +30,9 @@ add_library(student SHARED
    src/visual/student_loadImage.cpp
    src/visual/student_processMap.cpp
    src/visual/student_unwarp.cpp
-   src/path			## path functions
+   src/path/dubins_core.cpp
+   src/path/dubins_utility.cpp
+   src/path/dubins_plot.cpp
 )
 
 target_link_libraries(student
