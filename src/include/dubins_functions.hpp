@@ -21,15 +21,6 @@ namespace student {
 	    LSL, RSR, LSR, RSL, RLR, LRL, MAXIMUM_NUMBER_OF_CURVES
 	};
 
-	// New datatype to store the 6 dubins primitives in an array and 
-	// lately iterate over them
-	// TODO: when the final project is ready, keep in mind that you can use a 
-	// switch instead of this to choose function relative to the enum type
-	typedef bool (*DubinsFunctionPointer) (
-	    double sc_th0, double sc_thf, int sc_Kmax,
-	    double& sc_s1, double& sc_s2, double& sc_s3
-	);
-
 
 
 	// -------------------------------------------
@@ -61,27 +52,6 @@ namespace student {
 	    dubinsArc a2;
 	    dubinsArc a3;
 	    double L;
-	};
-
-	// Array of pointers to iterate over dubins primitives functions
-	DubinsFunctionPointer primitives[6] = {
-	    dubins_LSL,
-	    dubins_RSR,
-	    dubins_LSR,
-	    dubins_RSL,
-	    dubins_RLR,
-	    dubins_LRL
-	};
-
-	// Definition of the curvatue signs corresponding to the different
-	// dubins primitives functions
-	int dubins_primitives_ksigns[6][3] = {
-	    {  1,  0,  1 },     // LSL
-	    { -1,  0, -1 },     // RSR
-	    {  1,  0, -1 },     // LSR
-	    { -1,  0,  1 },     // RSL
-	    { -1,  1, -1 },     // RLR
-	    {  1, -1,  1 }      // LRL
 	};
 
 

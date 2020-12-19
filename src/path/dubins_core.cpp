@@ -4,6 +4,18 @@
 
 namespace student {
 
+	// Definition of the curvatue signs corresponding to the different
+	// dubins primitives functions
+	int dubins_primitives_ksigns[6][3] = {
+	    {  1,  0,  1 },     // LSL
+	    { -1,  0, -1 },     // RSR
+	    {  1,  0, -1 },     // LSR
+	    { -1,  0,  1 },     // RSL
+	    { -1,  1, -1 },     // RLR
+	    {  1, -1,  1 }      // LRL
+	};
+
+
 	// -------------------------------------------
 	// METHODS TO SCALE AND SOLVE DUBINS PROBLEMS
 	// -------------------------------------------
@@ -35,7 +47,7 @@ namespace student {
 
 
 	bool dubins_LSL(double sc_th0, double sc_thf, int sc_Kmax, 
-                double& sc_s1, double& sc_s2, double& sc_s3) {
+                	double& sc_s1, double& sc_s2, double& sc_s3) {
 	    double invK = 1 / sc_Kmax;
 	    double C = cos(sc_thf) - cos(sc_th0);
 	    double S = 2 * sc_Kmax + sin(sc_th0) - sin(sc_thf);
@@ -184,7 +196,7 @@ namespace student {
 	// Return the type and the parameters of the optimal curve
 	std::pair<int, dubinsCurve> dubins_shortest_path(configuration initial, 
 	                                                 configuration final, 
-	                                                 int Kmax ) {
+	                                                 int Kmax) {
 	    // Return values:
 	    int pidx;
 	    dubinsCurve curve;
@@ -210,15 +222,37 @@ namespace student {
 	    for (int i = LSL; i != MAXIMUM_NUMBER_OF_CURVES; i++) {
 
 	        // Return values of the primitives:
-	        bool ok = false;
+	        bool found = false;
 	        double sc_s1_c = 0;
 	        double sc_s2_c = 0;
 	        double sc_s3_c = 0;
 
-	        ok = primitives[i](sc_th0, sc_thf, sc_Kmax, sc_s1_c, sc_s2_c, sc_s3_c);
+	        switch (i) {
+			    case LSL:
+					found = dubins_LSL(sc_th0, sc_thf, sc_Kmax, sc_s1_c, sc_s2_c, sc_s3_c);
+			        break;
+			    case RSR:
+					found = dubins_RSR(sc_th0, sc_thf, sc_Kmax, sc_s1_c, sc_s2_c, sc_s3_c);
+			    	break;
+			    case LSR:
+			        found = dubins_LSR(sc_th0, sc_thf, sc_Kmax, sc_s1_c, sc_s2_c, sc_s3_c);
+			        break;
+			    case RSL:
+			        found = dubins_RSL(sc_th0, sc_thf, sc_Kmax, sc_s1_c, sc_s2_c, sc_s3_c);
+			        break;
+			    case RLR:
+			        found = dubins_RLR(sc_th0, sc_thf, sc_Kmax, sc_s1_c, sc_s2_c, sc_s3_c);
+			        break;
+			    case LRL:
+			        found = dubins_LRL(sc_th0, sc_thf, sc_Kmax, sc_s1_c, sc_s2_c, sc_s3_c);
+			        break;
+			    default:
+			        assert( ! "Invalid Foo enum value" );	
+			        break;
+			}
 	        double Lcur = sc_s1_c + sc_s2_c + sc_s3_c;
 	        
-	        if (ok && (Lcur < L)) {
+	        if (found && (Lcur < L)) {
 	            L = Lcur;
 	            sc_s1 = sc_s1_c;
 	            sc_s2 = sc_s2_c;
@@ -239,19 +273,21 @@ namespace student {
 	    
 	        // Construct the Dubins curve object with the computed optimal parameters
 	        curve = constructDubinsCurve(initial, s1, s2, s3, 
-	                            dubins_primitives_ksigns(pidx, 0) * Kmax, 
-	                            dubins_primitives_ksigns(pidx, 1) * Kmax, 
-	                            dubins_primitives_ksigns(pidx, 2) * Kmax);
+	                            dubins_primitives_ksigns[pidx][0] * Kmax, 
+	                            dubins_primitives_ksigns[pidx][1] * Kmax, 
+	                            dubins_primitives_ksigns[pidx][2] * Kmax);
 	        
 	        // Check the correctness of the algorithm
-	        bool check_alg = check(sc_s1, dubins_primitives_ksigns[pidx][0]*sc_Kmax, 
-	                               sc_s2, dubins_primitives_ksigns[pidx][1]*sc_Kmax, 
-	                               sc_s3, dubins_primitives_ksigns[pidx][2]*sc_Kmax, 
-	                               sc_th0, sc_thf);
-
-	        if (check_alg != true) {
+	        assert (
+	        	check (sc_s1, dubins_primitives_ksigns[pidx][0]*sc_Kmax, 
+	                   sc_s2, dubins_primitives_ksigns[pidx][1]*sc_Kmax, 
+	                   sc_s3, dubins_primitives_ksigns[pidx][2]*sc_Kmax, 
+	                   sc_th0, sc_thf
+	            )
+	        );
+	        /*if (check_alg != true) {
 	            std::cerr << "ERROR IN METHOD <dubins_shortest_path> of dubins_core.cpp: algorithm check returned false." << std::endl;
-	        }
+	        }*/
 	    }
 	    else {
 	        std::cerr << "ERROR IN METHOD <dubins_shortest_path> of dubins_core.cpp: optimal curve not found." << std::endl;
