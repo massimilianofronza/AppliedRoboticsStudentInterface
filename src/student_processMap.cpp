@@ -1,6 +1,7 @@
 #include "student_image_elab_interface.hpp"
 #include "student_planning_interface.hpp"
 #include "student_functions.hpp"
+#include "clipper.hpp"
 
 namespace student {
 
@@ -13,6 +14,10 @@ namespace student {
 	bool processVictims(const cv::Mat& img_in, const cv::Mat& img_hsv, cv::Mat& green_mask, const double scale, 
 			std::vector<std::pair<int,Polygon>>& victim_list, bool DEBUG);
 	
+
+	bool offsetObstacles(const cv::Mat& img_in, const cv::Mat& img_hsv, double scale,std::vector<Polygon>& obstacle_list,
+				 std::vector<std::vector<cv::Point>>& processed_obstacles, bool DEBUG);
+
 	// For victim processing
 	int findTemplateId(cv::Mat& processROI, std::vector<cv::Mat>& templates, bool DEBUG);
 			cv::Mat rotate(cv::Mat src, double angle);
@@ -56,7 +61,10 @@ namespace student {
 	    	std::cout << "\tARENA BORDERS IDENTIFIED\n" << std::flush;
 	    }
 	    
-	    const bool proc_green = processGreen(img_hsv, green_mask, DEBUG);
+	    std::vector<std::vector<cv::Point>> processed_obstacles;
+	    const bool offset_obstacles = offsetObstacles(img_in, img_hsv, scale, obstacle_list, processed_obstacles, DEBUG);
+
+/*      const bool proc_green = processGreen(img_hsv, green_mask, DEBUG);
 	    if (!proc_green) {
 	    	std::cerr << "ERROR IN METHOD <processGreen> of student_processMap.cpp.\n" << std::flush;
 	    }
@@ -81,8 +89,8 @@ namespace student {
 		}
 
 		return found_obst && found_borders && proc_green && found_gate && proc_vict;
-
-		//return found_borders;
+*/
+		return found_borders;
 	}
 
 
@@ -357,6 +365,122 @@ namespace student {
 			}
 		}
 		return true;
+	}
+
+
+	bool offsetObstacles(const cv::Mat& img_in, const cv::Mat& img_hsv, double scale, std::vector<Polygon>& obstacle_list,
+				 std::vector<std::vector<cv::Point>>& processed_obstacles, bool DEBUG){
+
+
+		// Find the size of the robot from the blue mask
+		cv::Mat blue_mask;
+		cv::inRange(img_hsv, cv::Scalar(90, 70, 35), cv::Scalar(140, 255, 255), blue_mask);	
+
+		// Erosion and delatation to get rid of noise and to make robot more clear
+		cv::Mat er_kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3), cv::Point(-1,-1));
+		cv::erode(blue_mask, blue_mask, er_kernel);
+
+		cv::Mat dil_kernel = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3,3), cv::Point(-1,-1));
+		cv::dilate(blue_mask, blue_mask, dil_kernel);
+
+
+		// Process blue mask and find countours
+		std::vector<std::vector<cv::Point>> contours, approximated;
+		std::vector<cv::Point> approx_curve;
+		cv::findContours(blue_mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);		
+
+		if (DEBUG){ std::cout << "N. contours: " << contours.size() << std::endl; }
+
+		cv::Mat contours_img = img_in.clone();
+		bool found = false;
+		for (int i = 0; i<contours.size(); i++){
+
+			// Approximates the found shapes to closed shapes with less vertices
+			cv::approxPolyDP(contours[i], approx_curve, 7, true);
+			approximated = {approx_curve};
+	
+			double A = cv::contourArea(approx_curve);
+
+			if (approx_curve.size() == 3 && A > 300 && A < 3000 ){
+				// double check area of robot
+				std::cout << "Area of robot: " << A << std::endl;		
+				// There should be only 1 blue object, the robot
+				found = true;
+
+				cv::drawContours(contours_img, approximated, -1, cv::Scalar(0,170,220), 3, cv::LINE_AA);
+
+				if (DEBUG) {
+					char debug_1[] = "Robot";
+					cv::namedWindow(debug_1, 10);
+					cv::imshow(debug_1, contours_img);
+					cv::waitKey(30000); 
+					cv::destroyWindow(debug_1);
+				}
+				break;
+			}
+		}
+		//FIND BOUNDING CIRCLE OF THE ROBOT
+		cv::Point2f center;
+		float radius;
+		cv::minEnclosingCircle(approx_curve, center, radius);
+		std::cout << "CIRCLE: center: " << center << " radius: " << radius << std::endl; 
+
+		cv::Scalar colorCircle(0,0,255);
+	   	int thicknessCircle = 2;
+		cv::circle(contours_img, center, radius, colorCircle, thicknessCircle);
+		char debug_2[] = "Robot circle";
+		cv::namedWindow(debug_2, 10);
+		cv::imshow(debug_2, contours_img);
+		cv::waitKey(30000); 
+		cv::destroyWindow(debug_2);		
+
+		float OFFSET = radius;
+
+	    ClipperLib::Paths offsettedPolygons;
+	    ClipperLib::ClipperOffset co;
+
+	    //const double INT_ROUND = 1000.;
+	    std::cout << "Tot obstacles to process: " << obstacle_list.size() << std::endl;
+	    for (const auto& object: obstacle_list) {
+	          
+	        ClipperLib::Path srcObstacle;
+	        for (const auto& p: object) {
+	            srcObstacle << ClipperLib::IntPoint(p.x*scale, p.y*scale);
+	        }
+	        if (object.size() == 3){
+	            co.AddPath(srcObstacle, ClipperLib::jtSquare, ClipperLib::etClosedLine); // convex hull
+	        } else {            
+	            co.AddPath(srcObstacle, ClipperLib::jtSquare, ClipperLib::etClosedPolygon);
+	        }
+	    }
+	    co.Execute(offsettedPolygons, OFFSET);
+
+	   for (const ClipperLib::Path &processed : offsettedPolygons) {
+	        std::vector<cv::Point> obstacle;
+	        std::cout << "Processing new obstacle. Size: " << processed.size() << std::endl;
+
+	        for (const ClipperLib::IntPoint &pt: processed){
+	            cv::Point curr(pt.X, pt.Y);
+	            std::cout << "Current processed point:" << pt.X << " " << pt.Y << std::endl;
+	            obstacle.emplace_back(curr);
+	        }
+
+	        processed_obstacles.emplace_back(obstacle);
+	    }
+
+
+        std::cout << "Processed obstacles: " << processed_obstacles.size() << std::endl; 
+	    contours_img = img_in.clone();
+	    drawContours(contours_img, processed_obstacles, -1, cv::Scalar(0,170,220), 3, cv::LINE_AA);
+
+        char debug_3[] = "Offsetting";
+		cv::namedWindow(debug_3, 10);
+		cv::imshow(debug_3, contours_img);
+		cv::waitKey(30000); 
+		cv::destroyWindow(debug_3);		  
+
+		return true;
+
 	}
 
 

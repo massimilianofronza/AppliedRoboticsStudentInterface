@@ -12,12 +12,17 @@ include_directories(
  include 
  ${OpenCV_INCLUDE_DIRS}
  ${project_interface_INCLUDE_DIRS}
- src	## to include student_functions.hpp
+ src	## to include student_functions.hpp and clipper.hpp
 )
 
 ## Add executables
 add_executable(calibrate
    src/camera_calibration.cpp
+)
+
+
+add_library(ClipperLib SHARED
+   src/clipper.cpp
 )
 
 ## CREATE EXECUTABLE LIBRARY
@@ -35,6 +40,7 @@ add_library(student SHARED
 
 target_link_libraries(student
   ${OpenCV_LIBRARIES}
+  ClipperLib
 )
 
 target_link_libraries(calibrate
