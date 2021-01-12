@@ -1,3 +1,7 @@
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc.hpp>
 #include <opencv2/opencv.hpp>
 #include <cmath>
 #include <string>
@@ -12,6 +16,7 @@ namespace student {
 	////////// DUBINS FUNCTIONS //////////
 
 	#define PI 3.14159265
+	#define DUBINS_UTILITY_DEBUG false
 
 	// -------------------------------------------
 	// DATATYPES
@@ -93,27 +98,27 @@ namespace student {
 	void scaleFromStandard(double lambda, double sc_s1, double sc_s2, 
 					double sc_s3, double& s1, double& s2, double& s3);
 
-	bool dubins_LSL(double sc_th0, double sc_thf, int sc_Kmax, 
+	bool dubins_LSL(double sc_th0, double sc_thf, double sc_Kmax, 
     	            double& sc_s1, double& sc_s2, double& sc_s3);
 
-	bool dubins_RSR(double sc_th0, double sc_thf, int sc_Kmax, 
+	bool dubins_RSR(double sc_th0, double sc_thf, double sc_Kmax, 
     	            double& sc_s1, double& sc_s2, double& sc_s3);
 
-	bool dubins_LSR(double sc_th0, double sc_thf, int sc_Kmax, 
+	bool dubins_LSR(double sc_th0, double sc_thf, double sc_Kmax, 
     	            double& sc_s1, double& sc_s2, double& sc_s3);
 
-	bool dubins_RSL(double sc_th0, double sc_thf, int sc_Kmax, 
+	bool dubins_RSL(double sc_th0, double sc_thf, double sc_Kmax, 
 	                double& sc_s1, double& sc_s2, double& sc_s3);
 
-	bool dubins_RLR(double sc_th0, double sc_thf, int sc_Kmax, 
+	bool dubins_RLR(double sc_th0, double sc_thf, double sc_Kmax, 
 	                double& sc_s1, double& sc_s2, double& sc_s3);
 
-	bool dubins_LRL(double sc_th0, double sc_thf, int sc_Kmax, 
+	bool dubins_LRL(double sc_th0, double sc_thf, double sc_Kmax, 
 	                double& sc_s1, double& sc_s2, double& sc_s3);
 
 	std::pair<int, dubinsCurve> dubins_shortest_path(configuration initial,
                                                 	 configuration final, 
-                                                	 int Kmax);
+                                                	 double Kmax);
 
 
 	// -------------------------------------------

@@ -1,5 +1,3 @@
-#include "student_image_elab_interface.hpp"
-#include "student_planning_interface.hpp"
 #include "dubins_functions.hpp"
 
 namespace student {
@@ -13,7 +11,7 @@ namespace student {
         double y;
         if (abs(x) < 0.002) {
             //For small values of t use Taylor series approximation
-            y = 1 - pow(x,2)/6 * (1 - pow(x,2)/20);
+            y = 1.0 - pow(x,2) / 6.0 * (1.0 - pow(x,2) / 20.0);
         } else {
             y = sin(x)/x;
         }
@@ -24,10 +22,10 @@ namespace student {
 	double mod2pi(double angle) {
 	    double normalized = angle;
 	    while (normalized < 0){
-	        normalized = normalized + 2 * PI;
+	        normalized = normalized + 2.0 * PI;
 	    }
 	    while (normalized >= 2 * PI){
-	     normalized = normalized - 2 * PI;
+	     normalized = normalized - 2.0 * PI;
 	    }
 	    return normalized;
 	}
@@ -36,10 +34,10 @@ namespace student {
 	double rangeSymm(double angle) {
 	    double inRange = angle;
 	    while (inRange <= -PI){
-	        inRange = inRange + 2 * PI;
+	        inRange = inRange + 2.0 * PI;
 	    }
 	    while ( inRange > PI) {
-	        inRange = inRange - 2 * PI;
+	        inRange = inRange - 2.0 * PI;
 	    }
 	    return inRange;
 	}
@@ -53,26 +51,34 @@ namespace student {
 	        std::cout << "Length of found curve is negative. Exiting." << std::endl;
 	        return false;
 	    }
-	    
-	    int x0 = -1;
-	    int y0 = 0;
-	    int xf = 1;
-	    int yf = 0;
 
-	    // Three equations must be satisfied 
-	    // double or int?  x0 - xf = 2
-	    double eq1 = x0 - s1 * sinc((1/2) * k0 * s1) * cos(th0 + (1/2) * k0 * s1) 
-	           + s2 * sinc((1/2) * k1 * s2) * cos(th0 + k0 * s1 + (1/2) * k1 * s2)
-	           + s3 * sinc((1/2) * k2 * s3) * cos(th0 + k0 * s1 + k1 * s2 + (1/2) * k2 * s3) - xf;
+	    double x0 = -1;
+	    double y0 = 0;
+	    double xf = 1;
+	    double yf = 0;
 
-	    // double or int? y0 - yf = 0
-	    double eq2 = y0 + s1 * sinc((1/2) * k0 * s1) * sin(th0 + (1/2) * k0 * s1) 
-	           + s2 * sinc((1/2) * k1 * s2) * sin(th0 + k0 * s1 + (1/2) * k1 * s2) 
-	           + s3 * sinc((1/2) * k2 * s3) * sin(th0 + k0 * s1 + k1 * s2 + (1/2) * k2 * s3) - yf;
+	    // Three equations must be satisfied
+	    double eq1 = x0 + s1 * sinc((1.0/2.0) * k0 * s1) * cos(th0 + (1.0/2.0) * k0 * s1) 
+	    				+ s2 * sinc((1.0/2.0) * k1 * s2) * cos(th0 + k0 * s1 + (1.0/2.0) * k1 * s2)
+						+ s3 * sinc((1.0/2.0) * k2 * s3) * cos(th0 + k0 * s1 + k1 * s2 + (1.0/2.0) * k2 * s3) - xf;
+
+	    double eq2 = y0 + s1 * sinc((1.0/2.0) * k0 * s1) * sin(th0 + (1.0/2.0) * k0 * s1) 
+	           			+ s2 * sinc((1.0/2.0) * k1 * s2) * sin(th0 + k0 * s1 + (1.0/2.0) * k1 * s2) 
+	           			+ s3 * sinc((1.0/2.0) * k2 * s3) * sin(th0 + k0 * s1 + k1 * s2 + (1.0/2.0) * k2 * s3) - yf;
 
 	    double eq3 = rangeSymm(k0 * s1 + k1 * s2 + k2 * s3 + th0 - thf);
-
-	    return (sqrt(eq1 * eq1 + eq2 * eq2 + eq3 * eq3) < 1.0e-10);
+		
+	    double sq = sqrt(eq1 * eq1 + eq2 * eq2 + eq3 * eq3);
+	    
+	    if (DUBINS_UTILITY_DEBUG) {
+			std::cout << "Check():" << std::endl;
+			std::cout << "\t eq1: " << eq1 << std::endl;
+			std::cout << "\t eq2: " << eq2 << std::endl;
+			std::cout << "\t eq3: " << eq3 << std::endl;
+			std::cout << "\t sq: " << sq << std::endl;
+		}
+		
+		return (sq < 1.0e-5);
 	}
 
 	/** 
@@ -81,8 +87,8 @@ namespace student {
 	 * */
 	configuration getNextConfig(configuration curr, double k, double s) {
 	    configuration next; 
-	    next.x = curr.x + s * sinc(k * s / 2) * cos(curr.th + k * s / 2);
-	    next.y = curr.y + s * sinc(k * s / 2) * sin(curr.th + k * s / 2);
+	    next.x = curr.x + s * sinc(k * s / 2.0) * cos(curr.th + k * s / 2.0);
+	    next.y = curr.y + s * sinc(k * s / 2.0) * sin(curr.th + k * s / 2.0);
 	    next.th = mod2pi(curr.th + k * s); 
 	    return next;
 	}
