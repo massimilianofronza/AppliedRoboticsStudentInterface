@@ -12,7 +12,7 @@ namespace student {
                 double **pts_3, cv::Scalar c3) {
 
         // The resulting image
-        cv::Mat image = cv::Mat::zeros(600, 1000, CV_8UC3);
+        cv::Mat image = cv::Mat::zeros(PLOT_Y_SIZE, PLOT_X_SIZE, CV_8UC3);
         
         // Setting up a white background
         image.setTo(cv::Scalar(255, 255, 255));
@@ -56,8 +56,8 @@ namespace student {
         for (int j=0; j<npts; j++) {
             double s = arc.len / npts * j;
             temp = getNextConfig(arc.currentConf, arc.k, s);
-            pts[j][0] = temp.x;
-            pts[j][1] = temp.y;
+            pts[j][0] = (temp.x + 3) * 100.0;
+            pts[j][1] = PLOT_Y_SIZE - ((temp.y + 3) * 100.0);
         }
         
         return pts;

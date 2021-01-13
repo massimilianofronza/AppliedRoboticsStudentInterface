@@ -102,7 +102,7 @@ namespace student {
 	    arc.currentConf = currConf;
 	    arc.k = k;
 	    arc.len = L;
-	    arc.nextConf = getNextConfig(currConf, L, k);
+	    arc.nextConf = getNextConfig(currConf, k, L);
 	    return arc;
 	}
 
@@ -118,6 +118,13 @@ namespace student {
 	    curve.a1 = constructArc(initialConf, k0, s1);
 	    curve.a2 = constructArc(curve.a1.nextConf, k1, s2);
 	    curve.a3 = constructArc(curve.a2.nextConf, k2, s3);
+
+	    if (DUBINS_UTILITY_DEBUG) {
+	    	printArc(curve.a1);
+	    	printArc(curve.a2);
+	    	printArc(curve.a3);
+	    }
+
 	    curve.L = s1 + s2 + s3;
 	    return curve;
 	}

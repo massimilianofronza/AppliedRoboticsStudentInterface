@@ -17,6 +17,9 @@ namespace student {
 
 	#define PI 3.14159265
 	#define DUBINS_UTILITY_DEBUG false
+	#define PLOT_X_SIZE 1000
+	#define PLOT_Y_SIZE 600
+
 
 	// -------------------------------------------
 	// DATATYPES
