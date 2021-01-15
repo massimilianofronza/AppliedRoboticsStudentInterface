@@ -9,6 +9,7 @@
 #include <sstream>
 #include <iostream>
 #include <limits>
+#include <chrono>	// for performance testing
 //#include "utils.hpp"
 
 namespace student {
@@ -18,7 +19,8 @@ namespace student {
 	#define PI 3.14159265
 	#define DUBINS_UTILITY_DEBUG false
 	#define PLOT_X_SIZE 1000
-	#define PLOT_Y_SIZE 600
+	#define PLOT_Y_SIZE 800
+
 
 
 	// -------------------------------------------
@@ -88,6 +90,10 @@ namespace student {
 
 	void printArc(dubinsArc arc);
 
+	std::chrono::high_resolution_clock::time_point startTime();
+
+	void stopTime(std::chrono::high_resolution_clock::time_point start, bool unit);
+
 	
 
 	// -------------------------------------------
@@ -122,6 +128,8 @@ namespace student {
 	std::pair<int, dubinsCurve> dubins_shortest_path(configuration initial,
                                                 	 configuration final, 
                                                 	 double Kmax);
+
+	void multipoint();
 
 
 	// -------------------------------------------

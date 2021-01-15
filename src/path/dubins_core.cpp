@@ -292,14 +292,68 @@ namespace student {
 	    	}
 	    	else {
 	        	std::cerr << "ERROR IN METHOD <dubins_shortest_path> of dubins_core.cpp: algorithm check returned false." << std::endl;
+	        	exit(-1);
 	        }
 	    }
 	    else {
 	        std::cerr << "ERROR IN METHOD <dubins_shortest_path> of dubins_core.cpp: optimal curve not found." << std::endl;
+	        exit(-1);
 	    }
 	    
 	    std::cout << "Best curve: " << pidx << std::endl;
 	    return std::pair<int, dubinsCurve>(pidx, curve);
+	}
+
+	// Executes for now simple multipoint computations
+	void multipoint() {
+
+		double arena_limit[2] = {1.56, 1.06};
+		double Kmax = 10;
+		int N_POINTS = 3;
+
+		configuration *points;//[N_POINTS];
+		points = new (std::nothrow) configuration [N_POINTS];
+		if (points == nullptr) {
+			std::cerr << "ERROR IN METHOD <boh> of boh.cpp: cannot allocate multi-points.\n";
+			exit(-1);
+		}
+
+// can do a loop wherever I will need this
+		points[0].x = 0.2;
+		points[0].y = 0.2;
+		points[0].th = 0;
+	
+		points[1].x = 0.9;
+		points[1].y = 0.8;
+		points[1].th = 0;
+
+		points[2].x = 1.4;
+		points[2].y = 0.2;
+		points[2].th = 0;
+
+		dubinsCurve *curves;
+		curves = new dubinsCurve [N_POINTS-1];	// 3 dots == 2 curves
+		if (curves == nullptr) {
+			std::cerr << "ERROR IN METHOD <boh> of boh.cpp: cannot allocate multi-curves.\n";
+			exit(-1);
+		}
+/////////////////////////////////
+		auto start = startTime();
+		
+		//for (int i = 1; i < N_POINTS; i++) { // brute force
+		for (int i = N_POINTS-1; i > 0; i--) {
+			
+			std::pair<int, dubinsCurve> tmp;
+			tmp = dubins_shortest_path(points[i-1], points[i], Kmax);
+
+			curves[i-1] = tmp.second;
+			//plot_dubins(curves[i-1]);
+		}
+
+		delete[] points;
+		//delete[] curves;
+		stopTime(start, false);
+/////////////////////////////////
 	}
 	
 }

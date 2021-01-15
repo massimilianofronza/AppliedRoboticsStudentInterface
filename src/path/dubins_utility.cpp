@@ -78,7 +78,7 @@ namespace student {
 			std::cout << "\t sq: " << sq << std::endl;
 		}
 		
-		return (sq < 1.0e-5);
+		return (sq < 1.0e-3);
 	}
 
 	/** 
@@ -144,6 +144,25 @@ namespace student {
 	    std::cout << "Final configuration: " << std::endl;
 	    printConfiguration(arc.nextConf);
 	    std::cout << std::endl;
+	}
+
+	// Returns this moment in time
+	std::chrono::high_resolution_clock::time_point startTime() {
+		return std::chrono::high_resolution_clock::now();
+	}
+
+	// Gets the start moment and tells how much time passed between that and now
+	void stopTime(std::chrono::high_resolution_clock::time_point start, bool unit) {
+		auto stop = std::chrono::high_resolution_clock::now();
+
+		if (unit) {
+			auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+			std::cout << "PERFORMANCE:\n\t" << duration.count() << " milliseconds.\n";
+		}
+		else {
+			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+			std::cout << "PERFORMANCE:\n\t" << duration.count() << " microseconds.\n";
+		}
 	}
 
 }
