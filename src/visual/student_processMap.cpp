@@ -5,6 +5,9 @@
 
 namespace student {
 
+	// GLOBAL VARIABLE
+	std::vector<Polygon> offsetted_obstacles;
+
 	//////// AUXILIARY FUNCTIONS ////////
 
 	bool processGreen(const cv::Mat& img_hsv, cv::Mat& green_mask, bool DEBUG);
@@ -17,9 +20,11 @@ namespace student {
 
 	float findRobotRadius(const cv::Mat& img_in, const cv::Mat& img_hsv, const double scale, bool DEBUG);
 
-	bool offsetObstacles(const cv::Mat& img_in, const cv::Mat& img_hsv, const double scale, const std::vector<Polygon>& found_obstacles,
+	bool offsetObstacles(const float OFFSET, const cv::Mat& img_in, const double scale, const std::vector<Polygon>& found_obstacles,
 				 std::vector<Polygon>& processed_obstacles, const bool DEBUG);
 
+	bool offsetEachObstacle(const float OFFSET, const cv::Mat& img_in, const double scale,
+				 std::vector<Polygon>& found_obstacles, std::vector<Polygon>& all_output, const bool DEBUG);
 
 	// For victim processing
 	int findTemplateId(cv::Mat& processROI, std::vector<cv::Mat>& templates, bool DEBUG);
@@ -64,8 +69,10 @@ namespace student {
 	    	std::cout << "\tARENA BORDERS IDENTIFIED\n" << std::flush;
 	    }
 	    
-	    //std::vector<Polygon> processed_obstacles;
-	    //const bool offset_obstacles = offsetObstacles(img_in, img_hsv, scale, obstacle_list, processed_obstacles, DEBUG);
+	    // To process all the obstacles together: (either do this or the offsetting inside the processObstacles) 
+		float OFFSET = findRobotRadius(img_in, img_hsv, scale, DEBUG);
+	    const bool offset_obstacles = offsetObstacles(OFFSET, img_in, scale, obstacle_list, offsetted_obstacles, DEBUG);
+
 
 /*      const bool proc_green = processGreen(img_hsv, green_mask, DEBUG);
 	    if (!proc_green) {
@@ -93,7 +100,7 @@ namespace student {
 
 		return found_obst && found_borders && proc_green && found_gate && proc_vict;
 */
-		return found_borders;
+		return found_obst;
 	}
 
 
@@ -163,7 +170,7 @@ namespace student {
 			for (const auto& pt: approx_curve) {
 				scaled_contour_red.emplace_back(pt.x/scale, pt.y/scale);
 			}
-			//obstacle_list.push_back(scaled_contour_red);
+			obstacle_list.push_back(scaled_contour_red);
 			found_obstacles.push_back(scaled_contour_red);
 
 			if (DEBUG) {
@@ -182,14 +189,14 @@ namespace student {
 				}
 			}
 		}
-		// Offset the found obstacles and add them to the obstacle_list
-		std::vector<Polygon> processed_obstacles;
-		offsetObstacles(img_in, img_hsv, scale, found_obstacles, processed_obstacles, DEBUG);
-		std::cout << "No. obstacles to send to Rviz:" << processed_obstacles.size() << std::endl;
-		for (const auto& obstacle : processed_obstacles) {
-			obstacle_list.push_back(obstacle);
-		}
 
+
+		// OFFSET OBSTACLES TO GET NEW POLIGONS
+	//	float OFFSET = findRobotRadius(img_in, img_hsv, scale, DEBUG);
+
+	//	offsetEachObstacle(OFFSET, img_in, scale, found_obstacles, offsetted_obstacles, DEBUG);
+	//	std::cout << "Size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl;
+		
 		return true;
 	}
 
@@ -242,12 +249,13 @@ namespace student {
 
 	    //////// PROCESSING ////////
 		cv::findContours(black_mask, contours, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE);
-
+		bool foundArena = false;
 		for (int i = 0; i < contours.size(); i++) { // here there should be only one contour, the whole arena 
 
 			const double area = cv::contourArea(contours[i]);
-			if (area > 20000) { // the whole arena
-
+			std::cout << "Area of " << i << "th identified contour: " << area << std::endl;
+			if (area > 12000) { // the whole arena
+				foundArena = true;
 				cv::approxPolyDP(contours[i], approx_curve, 7, true);
 				std::cout << i << "th black contour area: " << area << std::endl;
 				std::cout << i << "th black approx_curve size: " << approx_curve.size() << std::endl;
@@ -341,11 +349,9 @@ namespace student {
 					for (const auto& p: bounds) {
 						obstacle.emplace_back(p.x/scale, p.y/scale);
 					}
-					//obstacle_list.push_back(obstacle);
+					obstacle_list.push_back(obstacle);
 					found_borders.push_back(obstacle);
 				}
-
-				// Process the 
 
 				if (DEBUG) {
 					std::cout << (i+1) << ") Black Contour size: " << contours[i].size() << std::endl;
@@ -378,26 +384,11 @@ namespace student {
 			}
 		}
 
-		// Offset the found obstacles and add them to the obstacle_list
-		std::vector<Polygon> processed_borders;
-		offsetObstacles(img_in, img_hsv, scale, found_borders, processed_borders, DEBUG);
-		std::cout << "No. obstacles to send to Rviz:" << processed_borders.size() << std::endl;
-
-		for (const auto& obstacle : processed_borders) {
-//			obstacle_list.push_back(obstacle);
-		}
-
-
-		return true;
+		return foundArena;
 	}
 
-
-	bool offsetObstacles(const cv::Mat& img_in, const cv::Mat& img_hsv, const double scale, const std::vector<Polygon>& found_obstacles,
+	bool offsetObstacles(const float OFFSET, const cv::Mat& img_in, const double scale, const std::vector<Polygon>& found_obstacles,
 				 std::vector<Polygon>& processed_obstacles, const bool DEBUG){
-
-
-		// OFFSET OBSTACLES TO GET NEW POLIGONS
-		float OFFSET = findRobotRadius(img_in, img_hsv, scale, DEBUG);
 
 	    ClipperLib::Paths offsettedPolygons;
 	    ClipperLib::ClipperOffset co;
@@ -455,17 +446,52 @@ namespace student {
 
 
         std::cout << "Processed obstacles: " << processed_obstacles.size() << std::endl;
-        std::cout << "Processed visual obstacles: " << visualObstacles.size() << std::endl; 
-	    cv::Mat contours_img = img_in.clone();
-	    drawContours(contours_img, visualObstacles, -1, cv::Scalar(0,170,220), 3, cv::LINE_AA);
+        std::cout << "Processed visual obstacles: " << visualObstacles.size() << std::endl;
 
-        char debug_3[] = "Offsetting";
-		cv::namedWindow(debug_3, 10);
-		cv::imshow(debug_3, contours_img);
-		cv::waitKey(30000); 
-		cv::destroyWindow(debug_3);		  
+        if (DEBUG) { 
+		    cv::Mat contours_img = img_in.clone();
+		    drawContours(contours_img, visualObstacles, -1, cv::Scalar(0,170,220), 3, cv::LINE_AA);
 
+	        char debug_3[] = "Offsetting";
+			cv::namedWindow(debug_3, 10);
+			cv::imshow(debug_3, contours_img);
+			cv::waitKey(30000); 
+			cv::destroyWindow(debug_3);		  
+		}
 		return true;
+
+	}
+
+
+	bool offsetEachObstacle(const float OFFSET, const cv::Mat& img_in, const double scale, std::vector<Polygon>& found_obstacles, std::vector<Polygon>& all_output, const bool DEBUG){
+		// Process each obstacle at a time (maybe it changes the way of representing them)
+		for (const Polygon& in: found_obstacles) {
+			std::vector<Polygon> input, output;
+			input.push_back(in);
+			offsetObstacles(OFFSET, img_in, scale, input, output, DEBUG);
+			all_output.push_back(output.front());
+		}	 
+		std::cout << "No. output obstacles: " << all_output.size() << std::endl;
+
+		// Transform in vector of points to visualize them
+		
+		if (DEBUG) {
+			cv::Mat contours_img = img_in.clone();
+			std::vector<std::vector<cv::Point>> list;
+			for (const Polygon& out: all_output){
+				std::vector<cv::Point> obstacle;
+				for (const auto& pt : out){
+					obstacle.emplace_back(pt.x, pt.y);
+				}
+				list.emplace_back(obstacle);
+			}
+			cv::drawContours(contours_img, list, -1, cv::Scalar(0,170,220), 3, cv::LINE_AA);
+			char debug_4[] = "Offset";
+			cv::namedWindow(debug_4, 10);
+			cv::imshow(debug_4, contours_img);
+			cv::waitKey(30000);
+			cv::destroyWindow(debug_4);
+		}
 
 	}
 

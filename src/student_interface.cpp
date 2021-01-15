@@ -7,7 +7,7 @@
 namespace student {
 
 // Debug variables
-const bool DEBUG_Map = false;
+const bool DEBUG_Map = true;
 const bool DEBUG_Robot = false;
 
 	void loadImage(cv::Mat& img_out, const std::string& config_folder){
@@ -53,8 +53,10 @@ const bool DEBUG_Robot = false;
 
 	bool processMap(const cv::Mat& img_in, const double scale, std::vector<Polygon>& obstacle_list, std::vector<std::pair<int,Polygon>>& victim_list, Polygon& gate, const std::string& config_folder){
 		
-		return student_processMap(img_in, scale, obstacle_list, victim_list, gate, config_folder, DEBUG_Map);
+		bool res = student_processMap(img_in, scale, obstacle_list, victim_list, gate, config_folder, DEBUG_Map);
+		std::cout << "Inside processMap, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl; // here, should be != 0
 
+		return res;
 	}
 
 	bool findRobot(const cv::Mat& img_in, const double scale, Polygon& triangle, double& x, double& y, double& theta, const std::string& config_folder) {
@@ -64,7 +66,9 @@ const bool DEBUG_Robot = false;
 	}
 
 	bool planPath(const Polygon& borders, const std::vector<Polygon>& obstacle_list, const std::vector<std::pair<int,Polygon>>& victim_list, const Polygon& gate, const float x, const float y, const float theta, Path& path){
-		throw std::logic_error( "STUDENT FUNCTION - PLAN PATH - NOT IMPLEMENTED" );
+		//throw std::logic_error( "STUDENT FUNCTION - PLAN PATH - NOT IMPLEMENTED" );
+		
+		std::cout << "Inside planPath, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl;
 		std::cout << "\tstudent_planPath COMPLETED.\n" << std::flush;
 	}
 }
