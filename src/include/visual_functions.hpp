@@ -1,7 +1,10 @@
 #include <opencv2/opencv.hpp>
-//#include "utils.hpp"
+#include "utils.hpp"
 
 namespace student {
+
+	// GLOBAL VARIABLES	
+	extern std::vector<Polygon> offsetted_obstacles;
 
 	////////// VISUAL FUNCTIONS CALLED BY student_interface.cpp //////////
 
