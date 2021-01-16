@@ -48,7 +48,7 @@ namespace student {
 
 	    // Negative length 
 	    if ((s1 < 0 ) && (s2 < 0) && (s3 < 0)){
-	        std::cout << "Length of found curve is negative. Exiting." << std::endl;
+	        std::cout << "________ERROR IN METHOD <check> of dubins_utility.cpp: length of found curve is negative.________\n";
 	        return false;
 	    }
 

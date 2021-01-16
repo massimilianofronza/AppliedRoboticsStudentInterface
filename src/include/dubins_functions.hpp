@@ -18,8 +18,8 @@ namespace student {
 
 	#define PI 3.14159265
 	#define DUBINS_UTILITY_DEBUG false
-	#define PLOT_X_SIZE 1000
-	#define PLOT_Y_SIZE 800
+	#define PLOT_X_SIZE 700
+	#define PLOT_Y_SIZE 500
 
 
 
@@ -136,12 +136,12 @@ namespace student {
 	// DUBINS_PLOT
 	// -------------------------------------------
 
-	void plot(double **pts_1, cv::Scalar c1, double **pts_2, cv::Scalar c2, 
-			  double **pts_3, cv::Scalar c3);
+	void plot(cv::Mat image, double **pts_1, cv::Scalar c1, 
+							 double **pts_2, cv::Scalar c2, 
+			  				 double **pts_3, cv::Scalar c3);
 
-	double** get_arc_points(dubinsArc arc);
+	double** get_arc_points(dubinsArc arc, int npts);
 
-	void plot_dubins(dubinsCurve curve, cv::Scalar c1, cv::Scalar c2, 
-										cv::Scalar c3);
+	void plot_dubins(dubinsCurve *curve, int size);
 
 }

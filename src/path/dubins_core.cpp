@@ -288,15 +288,15 @@ namespace student {
 	                   sc_th0, sc_thf
 	            )
 	        ) {
-	        	std::cout << "CHECK IN <dubins_shortest_path> of dubins_core.cpp returned TRUE" << std::endl;
+	        	std::cout << "CHECK IN <dubins_shortest_path> of dubins_core.cpp returned TRUE\n";
 	    	}
 	    	else {
-	        	std::cerr << "ERROR IN METHOD <dubins_shortest_path> of dubins_core.cpp: algorithm check returned false." << std::endl;
+	        	std::cerr << "________ERROR IN METHOD <dubins_shortest_path> of dubins_core.cpp: algorithm check returned false.________\n";
 	        	exit(-1);
 	        }
 	    }
 	    else {
-	        std::cerr << "ERROR IN METHOD <dubins_shortest_path> of dubins_core.cpp: optimal curve not found." << std::endl;
+	        std::cerr << "________ERROR IN METHOD <dubins_shortest_path> of dubins_core.cpp: optimal curve not found.________\n";
 	        exit(-1);
 	    }
 	    
@@ -314,7 +314,7 @@ namespace student {
 		configuration *points;//[N_POINTS];
 		points = new (std::nothrow) configuration [N_POINTS];
 		if (points == nullptr) {
-			std::cerr << "ERROR IN METHOD <boh> of boh.cpp: cannot allocate multi-points.\n";
+			std::cerr << "________ERROR IN METHOD <multipoint> of dubins_core.cpp: cannot allocate multi-points.________\n";
 			exit(-1);
 		}
 
@@ -334,7 +334,7 @@ namespace student {
 		dubinsCurve *curves;
 		curves = new dubinsCurve [N_POINTS-1];	// 3 dots == 2 curves
 		if (curves == nullptr) {
-			std::cerr << "ERROR IN METHOD <boh> of boh.cpp: cannot allocate multi-curves.\n";
+			std::cerr << "________ERROR IN METHOD <multipoint> of dubins_core.cpp: cannot allocate multi-curves.________\n";
 			exit(-1);
 		}
 /////////////////////////////////
@@ -351,7 +351,7 @@ namespace student {
 		}
 
 		delete[] points;
-		//delete[] curves;
+		//delete[] curves;	// TODO remember to do this somewhere.
 		stopTime(start, false);
 /////////////////////////////////
 	}

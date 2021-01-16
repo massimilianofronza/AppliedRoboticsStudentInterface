@@ -2,20 +2,15 @@
 
 namespace student {
 
+
     // -------------------------------------------
     // PLOT FUNCTIONS
     // -------------------------------------------
 
     // Plot of the arc's points on an empty image
-    void plot(double **pts_1, cv::Scalar c1, 
-                double **pts_2, cv::Scalar c2, 
-                double **pts_3, cv::Scalar c3) {
-
-        // The resulting image
-        cv::Mat image = cv::Mat::zeros(PLOT_Y_SIZE, PLOT_X_SIZE, CV_8UC3);
-        
-        // Setting up a white background
-        image.setTo(cv::Scalar(255, 255, 255));
+    void plot(cv::Mat image, double **pts_1, cv::Scalar c1, 
+                             double **pts_2, cv::Scalar c2, 
+                             double **pts_3, cv::Scalar c3) {
         
         // Linking all consecutive points with a line
         for (int r=0; r<99; r++) {
@@ -29,53 +24,82 @@ namespace student {
                             cv::Point(pts_3[r+1][0], pts_3[r+1][1]), c3, 4, cv::LINE_8);
         }
 
-        // Free the memory
-        delete(pts_1);
-        delete(pts_2);
-        delete(pts_3);
-        
-        // Plot the final image
-        cv::namedWindow("Dubins curve", cv::WINDOW_AUTOSIZE);
-        cv::imshow("Dubins curve", image);
-        cv::waitKey(0);
     }
 
     // Plot an arc (circular or straight)
-    double** get_arc_points(dubinsArc arc) {
-        int npts = 100;
+    void get_arc_points(double **pts, dubinsArc arc, int npts) {
         configuration temp;
         
-        // Creating the points matrix, with 2 standing for x and y coordinates
-        double **pts;
-        pts = new double *[npts];
-        for(int i=0; i<npts; i++) {
-            pts[i] = new double[2];
-        }
-
         // Obtaining points
         for (int j=0; j<npts; j++) {
+
             double s = arc.len / npts * j;
             temp = getNextConfig(arc.currentConf, arc.k, s);
-            pts[j][0] = (temp.x + 3) * 100.0;
-            pts[j][1] = PLOT_Y_SIZE - ((temp.y + 3) * 100.0);
+            pts[j][0] = (temp.x + 2.0) * 100.0;     // TODO these offset may be removed
+            pts[j][1] = PLOT_Y_SIZE - ((temp.y + 3.0) * 100.0);
+
+            // Correctness check
+            if ((pts[j][0] < 0) or (pts[j][1]) < 0) {
+                std::cerr << "________ERROR IN METHOD <get_arc_points> of dubins_plot.cpp: negative point(s).________\n";
+                exit(-1);
+            }
         }
-        
-        return pts;
+
     }
 
     // Plot a Dubins curve
-    void plot_dubins(dubinsCurve curve, cv::Scalar c1, cv::Scalar c2, cv::Scalar c3) {
+    void plot_dubins(dubinsCurve *curve, int size) {
+        // The resulting image
+        cv::Mat image = cv::Mat::zeros(PLOT_Y_SIZE, PLOT_X_SIZE, CV_8UC3);
+
+        // Setting up a white background
+        image.setTo(cv::Scalar(255, 255, 255));
+
+        // Color of the arcs
+        cv::Scalar c1 = cv::Scalar(255, 0, 0);
+        cv::Scalar c2 = cv::Scalar(0, 255, 0);
+        cv::Scalar c3 = cv::Scalar(0, 0, 255);
+
         // Three set of points, one for each arc
         double **pts_1;
         double **pts_2;
         double **pts_3;
 
-        // Get points the three arcs
-        pts_1 = get_arc_points(curve.a1);
-        pts_2 = get_arc_points(curve.a2);
-        pts_3 = get_arc_points(curve.a3);
+        int npts = 100;
 
-        plot(pts_1, c1, pts_2, c2, pts_3, c3);
+        // Allocating the points matrix, with 2 standing for x and y coordinates
+        pts_1 = new double *[npts];
+        pts_2 = new double *[npts];
+        pts_3 = new double *[npts];
+
+        for(int i=0; i<npts; i++) {
+            pts_1[i] = new double[2];
+            pts_2[i] = new double[2];
+            pts_3[i] = new double[2];
+        }
+
+        // Plot each curve on the same image
+        for (int i=0; i<size; i++) {
+        
+            // Get points of the three arcs
+            get_arc_points(pts_1, curve[i].a1, npts);
+            get_arc_points(pts_2, curve[i].a2, npts);
+            get_arc_points(pts_3, curve[i].a3, npts);
+        
+            plot(image, pts_1, c1, pts_2, c2, pts_3, c3);
+        }
+
+        // Free the memory
+        for (int i=0; i<npts; i++) {
+            delete[] pts_1[i];
+            delete[] pts_2[i];
+            delete[] pts_3[i];
+        }
+
+        // Show the final image
+        cv::namedWindow("Dubins curve", cv::WINDOW_AUTOSIZE);
+        cv::imshow("Dubins curve", image);
+        cv::waitKey(0);
     }
 
 }
