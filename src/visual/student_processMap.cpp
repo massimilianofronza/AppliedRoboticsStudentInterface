@@ -70,11 +70,11 @@ namespace student {
 	    }
 	    
 	    // To process all the obstacles together: (either do this or the offsetting inside the processObstacles) 
-		float OFFSET = findRobotRadius(img_in, img_hsv, scale, DEBUG);
-	    const bool offset_obstacles = offsetObstacles(OFFSET, img_in, scale, obstacle_list, offsetted_obstacles, DEBUG);
+	//	float OFFSET = findRobotRadius(img_in, img_hsv, scale, DEBUG);
+	 //   const bool offset_obstacles = offsetObstacles(OFFSET, img_in, scale, obstacle_list, offsetted_obstacles, DEBUG);
 
 
-/*      const bool proc_green = processGreen(img_hsv, green_mask, DEBUG);
+        const bool proc_green = processGreen(img_hsv, green_mask, DEBUG);
 	    if (!proc_green) {
 	    	std::cerr << "ERROR IN METHOD <processGreen> of student_processMap.cpp.\n" << std::flush;
 	    }
@@ -99,8 +99,6 @@ namespace student {
 		}
 
 		return found_obst && found_borders && proc_green && found_gate && proc_vict;
-*/
-		return found_obst;
 	}
 
 
@@ -192,10 +190,10 @@ namespace student {
 
 
 		// OFFSET OBSTACLES TO GET NEW POLIGONS
-	//	float OFFSET = findRobotRadius(img_in, img_hsv, scale, DEBUG);
+		float OFFSET = findRobotRadius(img_in, img_hsv, scale, DEBUG);
 
-	//	offsetEachObstacle(OFFSET, img_in, scale, found_obstacles, offsetted_obstacles, DEBUG);
-	//	std::cout << "Size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl;
+		offsetEachObstacle(OFFSET, img_in, scale, found_obstacles, offsetted_obstacles, DEBUG);
+		std::cout << "Size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl;
 		
 		return true;
 	}
@@ -424,7 +422,7 @@ namespace student {
 	            if (pt.X < 0 && pt.Y < 0 ) {
 	            	obstacle.emplace_back(0,0);
 	            	visualObstacle.emplace_back(0,0);
-	            } 
+	            }
 	            else if (pt.X < 0) {
 	            	obstacle.emplace_back(0, pt.Y);
 	            	visualObstacle.emplace_back(0, pt.Y);
