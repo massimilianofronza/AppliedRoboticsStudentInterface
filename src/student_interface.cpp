@@ -1,13 +1,13 @@
 #include "student_image_elab_interface.hpp"
 #include "student_planning_interface.hpp"
 #include "visual_functions.hpp"
-//#include "path_functions.hpp"
+#include "path_functions.hpp"
 #include "dubins_functions.hpp"
 
 namespace student {
 
 // Debug variables
-const bool DEBUG_Map = true;
+const bool DEBUG_Map = false;
 const bool DEBUG_Robot = false;
 
 	void loadImage(cv::Mat& img_out, const std::string& config_folder){
@@ -65,11 +65,14 @@ const bool DEBUG_Robot = false;
 
 	}
 
-	bool planPath(const Polygon& borders, const std::vector<Polygon>& obstacle_list, const std::vector<std::pair<int,Polygon>>& victim_list, const Polygon& gate, const float x, const float y, const float theta, Path& path){
+	bool planPath(const Polygon& borders, const std::vector<Polygon>& obstacle_list,
+	 const std::vector<std::pair<int,Polygon>>& victim_list, const Polygon& gate, const float x, 
+	 const float y, const float theta, Path& path, const std::string& config_folder){
 		//throw std::logic_error( "STUDENT FUNCTION - PLAN PATH - NOT IMPLEMENTED" );
 		
 		std::cout << "Inside planPath, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl;
 		std::cout << "\tstudent_planPath COMPLETED.\n" << std::flush;
+		return student_planPath(borders, obstacle_list, victim_list, gate, x, y, theta, path, config_folder);
 	}
 }
 	
