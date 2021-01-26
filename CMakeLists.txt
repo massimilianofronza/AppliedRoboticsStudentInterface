@@ -37,6 +37,9 @@ add_library(student SHARED
    src/path/dubins_core.cpp
    src/path/dubins_utility.cpp
    src/path/dubins_plot.cpp
+   src/path/collision_core.cpp
+   src/path/collision_utility.cpp
+   src/path/collision_plot.cpp
 )
 
 target_link_libraries(student
