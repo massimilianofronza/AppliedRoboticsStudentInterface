@@ -5,8 +5,9 @@
 
 namespace student {
 
-	// GLOBAL VARIABLE
+	// GLOBAL VARIABLES
 	std::vector<Polygon> offsetted_obstacles;
+	double SCALE;
 
 	//////// AUXILIARY FUNCTIONS ////////
 
@@ -44,6 +45,7 @@ namespace student {
 
 		//////// VARIABLES ////////
 
+		SCALE = scale;
   		// HSV matrix:
 		cv::Mat img_hsv;
 		// Green mask for double usage:

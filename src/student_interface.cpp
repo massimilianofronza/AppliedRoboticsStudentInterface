@@ -3,6 +3,7 @@
 #include "visual_functions.hpp"
 #include "path_functions.hpp"
 #include "dubins_functions.hpp"
+#include <algorithm>
 
 namespace student {
 
@@ -52,10 +53,10 @@ const bool DEBUG_Robot = false;
 	}
 
 	bool processMap(const cv::Mat& img_in, const double scale, std::vector<Polygon>& obstacle_list, std::vector<std::pair<int,Polygon>>& victim_list, Polygon& gate, const std::string& config_folder){
-		
+	
 		bool res = student_processMap(img_in, scale, obstacle_list, victim_list, gate, config_folder, DEBUG_Map);
 		std::cout << "Inside processMap, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl; // here, should be != 0
-
+		std::cout << "Map SCALE " << SCALE << std::endl;
 		return res;
 	}
 
@@ -70,9 +71,12 @@ const bool DEBUG_Robot = false;
 	 const float y, const float theta, Path& path, const std::string& config_folder){
 		//throw std::logic_error( "STUDENT FUNCTION - PLAN PATH - NOT IMPLEMENTED" );
 		
-		std::cout << "Inside planPath, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl;
+		std::cout << "Inside planPath, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl; // should be != 0
+		std::cout << "OUT SCALE " << SCALE << std::endl;
+		bool res = student_planPath(borders, obstacle_list, victim_list, gate, x, y, theta, path, config_folder);
+
 		std::cout << "\tstudent_planPath COMPLETED.\n" << std::flush;
-		return student_planPath(borders, obstacle_list, victim_list, gate, x, y, theta, path, config_folder);
+		return res;
 	}
 }
 	
