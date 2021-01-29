@@ -3,6 +3,12 @@
 #include "visual_functions.hpp"
 
 namespace student {
+
+	/**
+	* Implementation of the imageUndistort() function of student_interface. It takes the 
+	* img_in and performs the undistortion based on the camera parameters.
+	*
+	*/
 	void student_imageUndistort(const cv::Mat& img_in, cv::Mat& img_out, 
   							    const cv::Mat& cam_matrix, const cv::Mat& dist_coeffs,
   						   		const std::string& config_folder) {

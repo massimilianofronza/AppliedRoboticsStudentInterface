@@ -8,7 +8,11 @@
 
 namespace student {
 
-	
+	/**
+	* Implementation of the genericImageListener function from the student_interface. 
+	* It saves the img_in into the config_folder/camera_image directory, upon request of the user. 
+	* Press 's' when the image is shown in order to save it.
+	*/
 	void student_genericImageListener(const cv::Mat& img_in, std::string topic, const std::string& config_folder){ 
 
 		static size_t img_no = 0;

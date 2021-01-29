@@ -11,30 +11,47 @@ namespace student {
 
 	//////// AUXILIARY FUNCTIONS ////////
 
+
+	/// Function to process the green color of the image that comes from the simulator.
 	bool processGreen(const cv::Mat& img_hsv, cv::Mat& green_mask, bool DEBUG);
+	
+	/// Finds the red obstacles and saves them in the obstacle_list.
 	bool processObstacles(const cv::Mat& img_in, const cv::Mat& img_hsv, const double scale, std::vector<Polygon>& obstacle_list, bool DEBUG);	
+
+	/// Finds the black borders of the arena and treats them as trapezoidal obstacles.
 	bool processBorders(const cv::Mat& img_in, const cv::Mat& img_hsv, const double scale, std::vector<Polygon>& obstacle_list, bool DEBUG);	
+	
+	/// Finds the green gate.
 	bool processGate(const cv::Mat& img_hsv, cv::Mat& green_mask, const double scale, Polygon& gate, bool DEBUG);
+	
+	/// Processes the green circles that correspond to the victims, to collect their position and their id.
 	bool processVictims(const cv::Mat& img_in, const cv::Mat& img_hsv, cv::Mat& green_mask, const double scale, 
 			std::vector<std::pair<int,Polygon>>& victim_list, bool DEBUG);
 	
-
+	/// Processes the blue triangle of the robot to find the radius of the circle, in order to perform the offset.
 	float findRobotRadius(const cv::Mat& img_in, const cv::Mat& img_hsv, const double scale, bool DEBUG);
 
+	/// Uses Clipper to offset the found_obstacles all together, returing a list of processed_obstacles where they are merged.
 	bool offsetObstacles(const float OFFSET, const cv::Mat& img_in, const double scale, const std::vector<Polygon>& found_obstacles,
 				 std::vector<Polygon>& processed_obstacles, const bool DEBUG);
 
+	/// Offsets each obstacle in found_obstacles at a time by using the Clipper library.
 	bool offsetEachObstacle(const float OFFSET, const cv::Mat& img_in, const double scale,
 				 std::vector<Polygon>& found_obstacles, std::vector<Polygon>& all_output, const bool DEBUG);
 
-	// For victim processing
+	/// Processes a region of an image against the number templates, and returns the id of the best match
 	int findTemplateId(cv::Mat& processROI, std::vector<cv::Mat>& templates, bool DEBUG);
 			cv::Mat rotate(cv::Mat src, double angle);
 
 
 
 	//////////////// MAIN FUNCTION ////////////////
-
+	/**
+	* Implementation of the processMap() function of the student_interface. 
+	* It takes the img_in coming from the simulator or the camera, processes it to find
+	* the obstacles that the robot has to avoid and the victims that it needs to save. 
+	* It uses some helper functions that divide the processing in a more structured way.
+	*/
 	bool student_processMap(const cv::Mat& img_in, const double scale,
 			std::vector<Polygon>& obstacle_list, std::vector<std::pair<int,Polygon>>& victim_list,
 			Polygon& gate, const std::string& config_folder, const bool DEBUG) {
@@ -763,7 +780,7 @@ namespace student {
 		return true;
 	}
 
-	// Processes an image against the number templates, and returns the id of the best match
+	
 	int findTemplateId(cv::Mat& ROI_rect, std::vector<cv::Mat>& templates, bool DEBUG){
 
 		cv::resize(ROI_rect, ROI_rect, cv::Size(200,200));

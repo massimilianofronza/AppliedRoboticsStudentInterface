@@ -5,11 +5,18 @@
 #include "dubins_functions.hpp"
 #include <algorithm>
 
+/**
+* Main file with the functions required by the simulator.
+* The actual functions called are organized in different files for a cleaner code.
+*
+*/
 namespace student {
 
-// Debug variables
-const bool DEBUG_Map = false;
-const bool DEBUG_Robot = false;
+	/// Debug variable for map processing
+	const bool DEBUG_Map = false;
+
+	/// Debug variable for robot location
+	const bool DEBUG_Robot = false;
 
 	void loadImage(cv::Mat& img_out, const std::string& config_folder){
 
