@@ -1,5 +1,6 @@
 #include "dubins_functions.hpp"
 
+
 namespace student {
 
 	// Definition of the curvatue signs corresponding to the different
@@ -18,7 +19,7 @@ namespace student {
 	// METHODS TO SCALE AND SOLVE DUBINS PROBLEMS
 	// -------------------------------------------
 
-	// Scale path finding problem into (-1,0) - (1,0) range 
+	/// Scale path finding problem into (-1,0) - (1,0) range 
 	void scaleToStandard(configuration initial, configuration final, 
 					double kmax, double &scTh0, double &scThf, 
 					double &scKmax, double &lambda) {
@@ -35,7 +36,7 @@ namespace student {
         scKmax = kmax * lambda;
 	}
 
-	// Scale the solution to the standard problem back to the original problem
+	/// Scale the solution to the standard problem back to the original problem
 	void scaleFromStandard(double lambda, double sc_s1, double sc_s2, 
 					double sc_s3, double& s1, double& s2, double& s3) {
 	    s1 = sc_s1 * lambda;
@@ -194,8 +195,10 @@ namespace student {
 	    return true;
 	}
 
-	// Solve the Dubins problem for the given input parameters.
-	// Return the type and the parameters of the optimal curve
+	/** 
+	* Solve the Dubins problem for the given input parameters.
+	* Return the type and the parameters of the optimal curve.
+	*/
 	std::pair<int, dubinsCurve> dubins_shortest_path(configuration initial, 
 	                                                 configuration final, 
 	                                                 double Kmax) {
@@ -288,7 +291,7 @@ namespace student {
 	                   sc_th0, sc_thf
 	            )
 	        ) {
-	        	std::cout << "CHECK IN <dubins_shortest_path> of dubins_core.cpp returned TRUE\n";
+	        	//std::cout << "CHECK IN <dubins_shortest_path> of dubins_core.cpp returned TRUE\n";
 	    	}
 	    	else {
 	        	std::cerr << "________ERROR IN METHOD <dubins_shortest_path> of dubins_core.cpp: algorithm check returned false.________\n";
@@ -300,25 +303,25 @@ namespace student {
 	        exit(-1);
 	    }
 	    
-	    std::cout << "Best curve: " << pidx << std::endl;
+	   // std::cout << "Best curve: " << pidx << std::endl;
 	    return std::pair<int, dubinsCurve>(pidx, curve);
 	}
 
 	// Executes for now simple multipoint computations
-	void multipoint() {
+	std::vector<dubinsCurve> multipoint(configuration& robot, std::vector<Point>& points) {
 
-		double arena_limit[2] = {1.56, 1.06};
+		//double arena_limit[2] = {1.56, 1.06};
 		double Kmax = 10;
-		int N_POINTS = 3;
+		int N_POINTS = points.size();
 
-		configuration *points;//[N_POINTS];
-		points = new (std::nothrow) configuration [N_POINTS];
-		if (points == nullptr) {
+		configuration *configs;//[N_POINTS];
+		configs = new (std::nothrow) configuration [N_POINTS];
+		if (configs == nullptr) {
 			std::cerr << "________ERROR IN METHOD <multipoint> of dubins_core.cpp: cannot allocate multi-points.________\n";
 			exit(-1);
 		}
 
-// can do a loop wherever I will need this
+/*// can do a loop wherever I will need this
 		points[0].x = 0.2;
 		points[0].y = 0.2;
 		points[0].th = 0;
@@ -330,30 +333,75 @@ namespace student {
 		points[2].x = 1.4;
 		points[2].y = 0.2;
 		points[2].th = 0;
+*/
 
-		dubinsCurve *curves;
-		curves = new dubinsCurve [N_POINTS-1];	// 3 dots == 2 curves
-		if (curves == nullptr) {
-			std::cerr << "________ERROR IN METHOD <multipoint> of dubins_core.cpp: cannot allocate multi-curves.________\n";
-			exit(-1);
-		}
+		std::vector<dubinsCurve> curves;
+		//curves = new dubinsCurve [N_POINTS-1];	// 3 dots == 2 curves
+		//if (curves == nullptr) {
+		//	std::cerr << "________ERROR IN METHOD <multipoint> of dubins_core.cpp: cannot allocate multi-curves.________\n";
+		//	exit(-1);
+		//}
+
 /////////////////////////////////
 		auto start = startTime();
 		
-		//for (int i = 1; i < N_POINTS; i++) { // brute force
-		for (int i = N_POINTS-1; i > 0; i--) {
-			
-			std::pair<int, dubinsCurve> tmp;
-			tmp = dubins_shortest_path(points[i-1], points[i], Kmax);
+		dubinsCurve best;
+		double bestLength = 999999;
+		//int angles [] = {0, 45, 90, 135, 180, 225, 270, 315}; // 8 angles
+		double angles [] = {0, PI/6.0, PI/3.0, PI/2.0, 2.0*PI/3.0, 5.0*PI/6.0, PI, 7.0*PI/6.0, 4.0*PI/3.0, 3.0*PI/2.0, 5.0*PI/3.0, 11.0*PI/6.0}; // 12 angles
 
-			curves[i-1] = tmp.second;
-			//plot_dubins(curves[i-1]);
+		for (int i = 1; i < N_POINTS; i++) { // brute force
+		//for (int i = N_POINTS-1; i > 0; i--) {
+
+			int no_angles = sizeof(angles)/sizeof(angles[0]);
+
+			// Create different configurations based on the angles and try to see which is best (BRUTE FORCE)
+			for (int j = 0; j < no_angles; j++){
+				configuration current; 
+				//if (i == 1) { // computing the first curve, from robot to first victim
+				//	current = robot; // i-1
+				//	std::cout << "Robot pose: " << current.x << ", " << current.y << std::endl;
+
+				//} else {
+					current.x = points[i-1].x;
+					current.y = points[i-1].y;
+					current.th = angles[j];
+				//}
+
+				// Create different next configurations based on the given angles and check best
+				for (int k = 0; k < no_angles; k++) {
+					configuration next;
+					next.x = points[i].x;
+					next.y = points[i].y;
+					next.th = angles[k];
+					std::pair<int, dubinsCurve> tmp;
+					std::cout << "Current processed configurations: (" << current.x << "," << current.y <<
+						 "," << current.th << ") , next: (" << next.x << "," << next.y << "," << next.th << std::endl;
+
+					tmp = dubins_shortest_path(current, next, Kmax);
+					if (tmp.second.L < bestLength){
+						std::cout << i-1 << "th step: found a better Dubins path of length: " << tmp.second.L << std::endl;
+						bestLength = tmp.second.L;
+						best = tmp.second;
+					}
+				}
+			}
+
+			// At the end, best will contain the best dubins curve
+			curves.emplace_back(best);
+			bestLength = 999999;
+			std::cout << "Found curves: " << sizeof(curves)/sizeof(curves[0]);
+		//	std::pair<int, dubinsCurve> tmp;
+		//	tmp = dubins_shortest_path(points[i-1], points[i], Kmax);
+
+		//	curves[i-1] = tmp.second;
+			
 		}
 
-		delete[] points;
-		//delete[] curves;	// TODO remember to do this somewhere.
 		stopTime(start, false);
 /////////////////////////////////
+		plot_dubins(curves);
+		return curves;
 	}
 	
 }
