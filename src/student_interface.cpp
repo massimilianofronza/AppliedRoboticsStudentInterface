@@ -18,6 +18,9 @@ namespace student {
 	/// Debug variable for robot location
 	const bool DEBUG_Robot = false;
 
+	std::vector<Polygon> offsetted_obstacles_co;
+	double SCALE_co;
+
 	void loadImage(cv::Mat& img_out, const std::string& config_folder){
 
 		student_loadImage(img_out, config_folder);
@@ -64,6 +67,8 @@ namespace student {
 		bool res = student_processMap(img_in, scale, obstacle_list, victim_list, gate, config_folder, DEBUG_Map);
 		std::cout << "Inside processMap, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl; // here, should be != 0
 		std::cout << "Map SCALE " << SCALE << std::endl;
+		offsetted_obstacles_co = offsetted_obstacles;
+		SCALE_co = SCALE;
 		return res;
 	}
 
@@ -78,8 +83,8 @@ namespace student {
 	 const float y, const float theta, Path& path, const std::string& config_folder){
 		//throw std::logic_error( "STUDENT FUNCTION - PLAN PATH - NOT IMPLEMENTED" );
 		
-		std::cout << "Inside planPath, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl; // should be != 0
-		std::cout << "OUT SCALE " << SCALE << std::endl;
+		std::cout << "Inside planPath, size of offsetted_obstacles: " << offsetted_obstacles_co.size() << std::endl; // should be != 0
+		std::cout << "OUT SCALE " << SCALE_co << std::endl;
 		bool res = student_planPath(borders, obstacle_list, victim_list, gate, x, y, theta, path, config_folder);
 
 		std::cout << "\tstudent_planPath COMPLETED.\n" << std::flush;

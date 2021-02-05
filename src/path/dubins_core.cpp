@@ -307,100 +307,152 @@ namespace student {
 	    return std::pair<int, dubinsCurve>(pidx, curve);
 	}
 
-	// Executes for now simple multipoint computations
-	std::vector<dubinsCurve> multipoint(configuration& robot, std::vector<Point>& points) {
+	/** 
+	* Computes the Dubin's shortest path between a list of points, the first of which
+	* if the robot and the last of which is the gate. 
+	* Both brute-approach and the optimized, iterative one are presented.
+	*/
+	std::vector<dubinsCurve> multipoint(const configuration& robot, std::vector<Point>& points) {
 
 		//double arena_limit[2] = {1.56, 1.06};
 		double Kmax = 10;
 		int N_POINTS = points.size();
 
-		configuration *configs;//[N_POINTS];
-		configs = new (std::nothrow) configuration [N_POINTS];
-		if (configs == nullptr) {
-			std::cerr << "________ERROR IN METHOD <multipoint> of dubins_core.cpp: cannot allocate multi-points.________\n";
-			exit(-1);
-		}
 
-/*// can do a loop wherever I will need this
-		points[0].x = 0.2;
-		points[0].y = 0.2;
-		points[0].th = 0;
-	
-		points[1].x = 0.9;
-		points[1].y = 0.8;
-		points[1].th = 0;
-
-		points[2].x = 1.4;
-		points[2].y = 0.2;
-		points[2].th = 0;
-*/
-
+		//std::vector<configuration> configs;
 		std::vector<dubinsCurve> curves;
-		//curves = new dubinsCurve [N_POINTS-1];	// 3 dots == 2 curves
-		//if (curves == nullptr) {
-		//	std::cerr << "________ERROR IN METHOD <multipoint> of dubins_core.cpp: cannot allocate multi-curves.________\n";
-		//	exit(-1);
-		//}
 
 /////////////////////////////////
 		auto start = startTime();
 		
-		dubinsCurve best;
+		dubinsCurve bestCurve;
 		double bestLength = 999999;
 		//int angles [] = {0, 45, 90, 135, 180, 225, 270, 315}; // 8 angles
-		double angles [] = {0, PI/6.0, PI/3.0, PI/2.0, 2.0*PI/3.0, 5.0*PI/6.0, PI, 7.0*PI/6.0, 4.0*PI/3.0, 3.0*PI/2.0, 5.0*PI/3.0, 11.0*PI/6.0}; // 12 angles
+		double angles [] = {PI/6.0, PI/3.0, PI/2.0, 2.0*PI/3.0, 5.0*PI/6.0, PI, 7.0*PI/6.0, 4.0*PI/3.0, 3.0*PI/2.0, 5.0*PI/3.0, 11.0*PI/6.0}; // 12 angles
+		int no_angles = sizeof(angles)/sizeof(angles[0]);
+		std::vector<dubinsCurve> reverse; // for optimized path
 
-		for (int i = 1; i < N_POINTS; i++) { // brute force
-		//for (int i = N_POINTS-1; i > 0; i--) {
+		bool optimized = true;
+		if (!optimized) {
 
-			int no_angles = sizeof(angles)/sizeof(angles[0]);
 
-			// Create different configurations based on the angles and try to see which is best (BRUTE FORCE)
-			for (int j = 0; j < no_angles; j++){
-				configuration current; 
-				//if (i == 1) { // computing the first curve, from robot to first victim
-				//	current = robot; // i-1
-				//	std::cout << "Robot pose: " << current.x << ", " << current.y << std::endl;
+			for (int i = 1; i < N_POINTS; i++) { // brute force
 
-				//} else {
-					current.x = points[i-1].x;
-					current.y = points[i-1].y;
-					current.th = angles[j];
-				//}
+				// Create different configurations based on the angles and try to see which is best (BRUTE FORCE)
+				for (int j = 0; j < no_angles; j++){
+					configuration current; 
+					if (i == 1) { 
+						// computing the first curve, from robot to first victim
+						current = robot; // i-1
+						//std::cout << "Robot pose: " << current.x << ", " << current.y << ", th:" << current.th << std::endl;
 
-				// Create different next configurations based on the given angles and check best
-				for (int k = 0; k < no_angles; k++) {
+					} else {
+						current.x = points[i-1].x;
+						current.y = points[i-1].y;
+						current.th = angles[j];
+					}
+
+					// Create different next configurations based on the given angles and check best
+					for (int k = 0; k < no_angles; k++) {
+						configuration next;
+						next.x = points[i].x;
+						next.y = points[i].y;
+						next.th = angles[k];
+						std::pair<int, dubinsCurve> tmp;
+						//std::cout << "Current processed configurations: (" << current.x << "," << current.y <<
+						//	 "," << current.th << ") , next: (" << next.x << "," << next.y << "," << next.th << std::endl;
+
+						tmp = dubins_shortest_path(current, next, Kmax);
+						if (tmp.second.L < bestLength){
+							std::cout << i-1 << "th step: found a better Dubins path of length: " << tmp.second.L << std::endl;
+							bestLength = tmp.second.L;
+							bestCurve = tmp.second;
+						}
+					}
+				}
+
+				// At the end, best will contain the best dubins curve
+				curves.emplace_back(bestCurve);
+				bestLength = 999999;
+				std::cout << "Found curves: " << curves.size() << std::endl;
+			}
+		} else { // recursive
+			for (int i = N_POINTS-1; i > 0; i--) { 
+				// base case
+		
+				double bestAngle;
+				double bestLength = 999999;
+				dubinsCurve bestCurve;
+				std::pair<int, dubinsCurve> tmp;
+				// try all possible anglse between the last two configurations
+				if (i == N_POINTS-1) { 
+					// BASE CASE
+					configuration final;
+					configuration previous;
+					for (int j = 0; j < no_angles ; j++){
+						previous.x = points[i-1].x;
+						previous.y = points[i-1].y;
+						if (i == 1) {
+							previous.th = robot.th;
+						} else {
+							previous.th = angles[j];
+						}
+						for (int k = 0; k < no_angles; k++){
+							final.x = points[i].x;
+							final.y = points[i].y;
+							final.th = angles[k];
+
+							tmp = dubins_shortest_path(previous, final, Kmax);
+							if (tmp.second.L < bestLength){
+									std::cout << i-1 << "th step: found a better Dubins path of length: " << tmp.second.L << std::endl;
+									bestLength = tmp.second.L;
+									bestCurve = tmp.second;
+									bestAngle = angles[j];
+							}
+						}
+					}
+
+				} else { 
+					// INDUCTIVE STEP
 					configuration next;
 					next.x = points[i].x;
 					next.y = points[i].y;
-					next.th = angles[k];
-					std::pair<int, dubinsCurve> tmp;
-					std::cout << "Current processed configurations: (" << current.x << "," << current.y <<
-						 "," << current.th << ") , next: (" << next.x << "," << next.y << "," << next.th << std::endl;
+					next.th = bestAngle;
 
-					tmp = dubins_shortest_path(current, next, Kmax);
-					if (tmp.second.L < bestLength){
-						std::cout << i-1 << "th step: found a better Dubins path of length: " << tmp.second.L << std::endl;
-						bestLength = tmp.second.L;
-						best = tmp.second;
+					for (int j = 0; j < no_angles; j++){
+						configuration current;
+						current.x = points[i-1].x;
+						current.y = points[i-1].y;
+						if (i == 1 ){
+							current.th = robot.th;
+						} else {
+							current.th = angles[j];	
+						}
+						tmp = dubins_shortest_path(current, next, Kmax);
+						if (tmp.second.L < bestLength){
+								std::cout << i-1 << "th step: found a better Dubins path of length: " << tmp.second.L << std::endl;
+								bestLength = tmp.second.L;
+								bestCurve = tmp.second;
+								bestAngle = angles[j];
+						}
+
 					}
 				}
+
+				reverse.emplace_back(bestCurve);
+				bestLength = 999999;
 			}
 
-			// At the end, best will contain the best dubins curve
-			curves.emplace_back(best);
-			bestLength = 999999;
-			std::cout << "Found curves: " << sizeof(curves)/sizeof(curves[0]);
-		//	std::pair<int, dubinsCurve> tmp;
-		//	tmp = dubins_shortest_path(points[i-1], points[i], Kmax);
-
-		//	curves[i-1] = tmp.second;
-			
-		}
+		} 
 
 		stopTime(start, false);
+
+		for (int i = reverse.size()-1; i >= 0; i--){
+			curves.emplace_back(reverse[i]);
+		}
 /////////////////////////////////
 		plot_dubins(curves);
+
 		return curves;
 	}
 	

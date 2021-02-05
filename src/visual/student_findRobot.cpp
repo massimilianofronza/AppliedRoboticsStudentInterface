@@ -139,7 +139,7 @@ namespace student{
 			if (DEBUG) { std::cout << "Rotation angle: " << theta << std::endl; }
 
 		}
-
+		//std::cout << "\t\tROBOT FOUND" << std::endl; 
 		return found;
 	}
 }

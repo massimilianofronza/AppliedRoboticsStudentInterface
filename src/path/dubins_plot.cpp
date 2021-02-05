@@ -35,14 +35,14 @@ namespace student {
 
             double s = arc.len / npts * j;
             temp = getNextConfig(arc.currentConf, arc.k, s);
-            pts[j][0] = (temp.x + 2.0) * 130.0;     // TODO these offset may be removed
-            pts[j][1] = PLOT_Y_SIZE - ((temp.y + 3.0) * 130.0);
+            pts[j][0] = (temp.x + 2.0) * 100.0;     // TODO these offset may be removed
+            pts[j][1] = PLOT_Y_SIZE - ((temp.y + 3.0) * 100.0);
 
             // Correctness check
-          //  if ((pts[j][0] < 0) or (pts[j][1]) < 0) {
-           //     std::cerr << "________ERROR IN METHOD <get_arc_points> of dubins_plot.cpp: negative point(s).________\n";
-            //    exit(-1);
-            //}
+            if ((pts[j][0] < 0) or (pts[j][1]) < 0) {
+          	    std::cerr << "________ERROR IN METHOD <get_arc_points> of dubins_plot.cpp: negative point(s).________\n";
+                exit(-1);
+            }
         }
 
     }
@@ -100,6 +100,8 @@ namespace student {
         cv::namedWindow("Dubins curve", cv::WINDOW_AUTOSIZE);
         cv::imshow("Dubins curve", image);
         cv::waitKey(0);
+        cv::destroyWindow("Dubins curve");
+
     }
 
 }

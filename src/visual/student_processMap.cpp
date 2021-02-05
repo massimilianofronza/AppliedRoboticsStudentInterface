@@ -274,8 +274,8 @@ namespace student {
 			if (area > 12000) { // the whole arena
 				foundArena = true;
 				cv::approxPolyDP(contours[i], approx_curve, 7, true);
-				std::cout << i << "th black contour area: " << area << std::endl;
-				std::cout << i << "th black approx_curve size: " << approx_curve.size() << std::endl;
+				//std::cout << i << "th black contour area: " << area << std::endl;
+				//std::cout << i << "th black approx_curve size: " << approx_curve.size() << std::endl;
 				
 				// from the approximated curve, only take the extreme points
 
@@ -300,7 +300,7 @@ namespace student {
 				// Take outer vertices and compute inner ones
 				for (int j = 0; j < wholeArena.size(); j++){
 					cv::Point p = wholeArena[j];
-					std::cout << "Contour point: " << p << std::endl;
+					//std::cout << "Contour point: " << p << std::endl;
 				
 			   		// NOTE: Beware the order in which the points are added 
 
@@ -432,11 +432,11 @@ namespace student {
 	   for (const ClipperLib::Path &processed : offsettedPolygons) {
 	        Polygon obstacle;
 	        std::vector<cv::Point> visualObstacle;
-	        std::cout << "New processed obstacle. Size: " << processed.size() << std::endl;
+	       // std::cout << "New processed obstacle. Size: " << processed.size() << std::endl;
 
 	        for (const ClipperLib::IntPoint &pt: processed){
 	      
-	            std::cout << "Current processed point:" << pt.X << " " << pt.Y << std::endl;
+	           // std::cout << "Current processed point:" << pt.X << " " << pt.Y << std::endl;
 	            
 	            if (pt.X < 0 && pt.Y < 0 ) {
 	            	obstacle.emplace_back(0,0);
@@ -547,7 +547,7 @@ namespace student {
 
 			if (approx_curve.size() == 3 && A > 300 && A < 3000 ){
 				// double check area of robot
-				std::cout << "Area of robot: " << A << std::endl;		
+				//std::cout << "Area of robot: " << A << std::endl;		
 				// There should be only 1 blue object, the robot
 				found = true;
 
@@ -567,7 +567,7 @@ namespace student {
 		cv::Point2f center;
 		float radius;
 		cv::minEnclosingCircle(approx_curve, center, radius);
-		std::cout << "CIRCLE: center: " << center << " radius: " << radius << std::endl; 
+		std::cout << "Enclosing robot CIRCLE: center: " << center << " radius: " << radius << std::endl; 
 		if (DEBUG) {
 			cv::Scalar colorCircle(0,0,255);
 		   	int thicknessCircle = 2;
