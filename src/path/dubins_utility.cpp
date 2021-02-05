@@ -70,7 +70,7 @@ namespace student {
 		
 	    double sq = sqrt(eq1 * eq1 + eq2 * eq2 + eq3 * eq3);
 	    
-	    if (DUBINS_UTILITY_DEBUG) {
+	    if (DUB_UTILITY_DEBUG) {
 			std::cout << "Check():" << std::endl;
 			std::cout << "\t eq1: " << eq1 << std::endl;
 			std::cout << "\t eq2: " << eq2 << std::endl;
@@ -119,7 +119,7 @@ namespace student {
 	    curve.a2 = constructArc(curve.a1.nextConf, k1, s2);
 	    curve.a3 = constructArc(curve.a2.nextConf, k2, s3);
 
-	    if (DUBINS_UTILITY_DEBUG) {
+	    if (DUB_UTILITY_DEBUG) {
 	    	printArc(curve.a1);
 	    	printArc(curve.a2);
 	    	printArc(curve.a3);

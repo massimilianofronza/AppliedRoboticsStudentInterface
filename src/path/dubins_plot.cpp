@@ -36,7 +36,7 @@ namespace student {
             double s = arc.len / npts * j;
             temp = getNextConfig(arc.currentConf, arc.k, s);
             pts[j][0] = (temp.x + 2.0) * 100.0;     // TODO these offset may be removed
-            pts[j][1] = PLOT_Y_SIZE - ((temp.y + 3.0) * 100.0);
+            pts[j][1] = DUB_PLOT_Y_SIZE - ((temp.y + 3.0) * 100.0);
 
             // Correctness check
             if ((pts[j][0] < 0) or (pts[j][1]) < 0) {
@@ -50,7 +50,7 @@ namespace student {
     // Plot a Dubins curve
     void plot_dubins(dubinsCurve *curve, int size) {
         // The resulting image
-        cv::Mat image = cv::Mat::zeros(PLOT_Y_SIZE, PLOT_X_SIZE, CV_8UC3);
+        cv::Mat image = cv::Mat::zeros(DUB_PLOT_Y_SIZE, DUB_PLOT_X_SIZE, CV_8UC3);
 
         // Setting up a white background
         image.setTo(cv::Scalar(255, 255, 255));

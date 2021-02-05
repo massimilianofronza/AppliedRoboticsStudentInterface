@@ -16,11 +16,10 @@ namespace student {
 
 	////////// DUBINS FUNCTIONS //////////
 
-	#define PI 3.14159265
-	#define DUBINS_UTILITY_DEBUG false
-	#define PLOT_X_SIZE 700
-	#define PLOT_Y_SIZE 500
-
+	#define PI 3.14159265358979323846
+	#define DUB_UTILITY_DEBUG false
+	#define DUB_PLOT_X_SIZE 700
+	#define DUB_PLOT_Y_SIZE 500
 
 
 	// -------------------------------------------
@@ -30,7 +29,6 @@ namespace student {
 	enum dubins_primitives {
 	    LSL, RSR, LSR, RSL, RLR, LRL, MAXIMUM_NUMBER_OF_CURVES
 	};
-
 
 
 	// -------------------------------------------
@@ -65,7 +63,6 @@ namespace student {
 	};
 
 
-
 	// -------------------------------------------
 	// DUBINS_UTILITY
 	// -------------------------------------------
@@ -93,7 +90,6 @@ namespace student {
 	std::chrono::high_resolution_clock::time_point startTime();
 
 	void stopTime(std::chrono::high_resolution_clock::time_point start, bool unit);
-
 	
 
 	// -------------------------------------------

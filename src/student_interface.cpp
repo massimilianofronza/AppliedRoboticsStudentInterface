@@ -3,6 +3,7 @@
 #include "visual_functions.hpp"
 #include "path_functions.hpp"
 #include "dubins_functions.hpp"
+#include "collision_functions.hpp"
 
 namespace student {
 
