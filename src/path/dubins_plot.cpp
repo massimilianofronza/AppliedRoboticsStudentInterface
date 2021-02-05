@@ -40,7 +40,7 @@ namespace student {
 
             // Correctness check
             if ((pts[j][0] < 0) or (pts[j][1]) < 0) {
-                std::cerr << "________ERROR IN METHOD <get_arc_points> of dubins_plot.cpp: negative point(s).________\n";
+          	    std::cerr << "________ERROR IN METHOD <get_arc_points> of dubins_plot.cpp: negative point(s).________\n";
                 exit(-1);
             }
         }
@@ -48,7 +48,7 @@ namespace student {
     }
 
     // Plot a Dubins curve
-    void plot_dubins(dubinsCurve *curve, int size) {
+    void plot_dubins(std::vector<dubinsCurve> curves) {
         // The resulting image
         cv::Mat image = cv::Mat::zeros(DUB_PLOT_Y_SIZE, DUB_PLOT_X_SIZE, CV_8UC3);
 
@@ -79,12 +79,12 @@ namespace student {
         }
 
         // Plot each curve on the same image
-        for (int i=0; i<size; i++) {
+        for (int i=0; i<curves.size(); i++) {
         
             // Get points of the three arcs
-            get_arc_points(pts_1, curve[i].a1, npts);
-            get_arc_points(pts_2, curve[i].a2, npts);
-            get_arc_points(pts_3, curve[i].a3, npts);
+            get_arc_points(pts_1, curves[i].a1, npts);
+            get_arc_points(pts_2, curves[i].a2, npts);
+            get_arc_points(pts_3, curves[i].a3, npts);
         
             plot(image, pts_1, c1, pts_2, c2, pts_3, c3);
         }
@@ -100,6 +100,8 @@ namespace student {
         cv::namedWindow("Dubins curve", cv::WINDOW_AUTOSIZE);
         cv::imshow("Dubins curve", image);
         cv::waitKey(0);
+        cv::destroyWindow("Dubins curve");
+
     }
 
 }

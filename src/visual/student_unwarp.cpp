@@ -3,6 +3,12 @@
 #include "visual_functions.hpp"
 
 namespace student {
+
+	/**
+	* Implementation of the unwarp() function of the student_interface. 
+	* It performs the last step in image processing which unwarps the image according to the
+	* transformation matrix previously computed.
+	*/
 	void student_unwarp(const cv::Mat& img_in, cv::Mat& img_out, const cv::Mat& transf, 
             const std::string& config_folder) {
 

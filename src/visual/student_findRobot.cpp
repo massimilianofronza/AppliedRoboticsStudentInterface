@@ -6,6 +6,12 @@
 
 namespace student{
 
+	/**
+	* Student implementation of the findRobot() function. 
+	* It processes the blue area of the arena, identifies the triangle which represents 
+	* the robot, processes it to find its center (x,y) and orientation (theta). 
+	* If DEBUG is true, more information about the process is printed and images are shown. 
+	*/
 	bool student_findRobot(const cv::Mat& img_in, const double scale, 
 			Polygon& triangle, double& x, double& y, 
 			double& theta, const std::string& config_folder, const bool DEBUG) {
@@ -133,7 +139,7 @@ namespace student{
 			if (DEBUG) { std::cout << "Rotation angle: " << theta << std::endl; }
 
 		}
-
+		//std::cout << "\t\tROBOT FOUND" << std::endl; 
 		return found;
 	}
 }

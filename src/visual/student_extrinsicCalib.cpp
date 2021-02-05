@@ -24,6 +24,11 @@ namespace student {
   static int n;
   static double show_scale = 1.0;
 
+  /**
+  * Saves the selected points into the result variable, for usage
+  * by the calibration function. 
+  * (taken from professor_interface.cpp)
+  */
  	void mouseCallback(int event, int x, int y, int, void* p) {
 
    	if (event != cv::EVENT_LBUTTONDOWN || done.load()) return;
@@ -38,6 +43,11 @@ namespace student {
   	}
   }
 
+  /**
+  * Function which asks the user to select the 4 points to be used 
+  * for the calibration of the camera (the arena corners).
+  * (taken from professor_interface.cpp)
+  */
   std::vector<cv::Point2f> pickNPoints(int n0, const cv::Mat& img) {
   	result.clear();
   	cv::Size small_size(img.cols/show_scale, img.rows/show_scale);
@@ -60,12 +70,14 @@ namespace student {
  	 	return result;
  	}
 
-  // Calls the above function to get an estimate of the arena corners in 3D
-  // and from there to compute rotation and translation vectors (2D).
-  // These will be used to unwarp the image later, transforming it 
-  // from 3D to 2D in a correct way.
-  // (Finds arena pose from 3D(object_points)-2D(image_in) point correspondences.)
-
+  /**
+  * Implementation of extrinsicCalib() functions.
+  * From 4 user-inserted points, it gets an estimate of the arena corners
+  * in 3D and computes the rotation and translation vectors to map them into 2D. 
+  * These will be used to unwarm the image, transforming i t from 3d to 2d in a correct way.
+  * (Finds arena pose from 3D(object_points)-2D(image_in) point correspondences.)
+  * Returns true if the operation was successful.
+  */
   bool student_extrinsicCalib(const cv::Mat& img_in, std::vector<cv::Point3f> object_points, 
                       const cv::Mat& camera_matrix, cv::Mat& rvec, 
                       cv::Mat& tvec, const std::string& config_folder){

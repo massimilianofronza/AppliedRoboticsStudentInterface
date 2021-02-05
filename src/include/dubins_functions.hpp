@@ -10,7 +10,7 @@
 #include <iostream>
 #include <limits>
 #include <chrono>	// for performance testing
-//#include "utils.hpp"
+#include "utils.hpp"
 
 namespace student {
 
@@ -125,7 +125,7 @@ namespace student {
                                                 	 configuration final, 
                                                 	 double Kmax);
 
-	void multipoint();
+	std::vector<dubinsCurve> multipoint(const configuration& robot, std::vector<Point>& points);
 
 
 	// -------------------------------------------
@@ -138,6 +138,6 @@ namespace student {
 
 	double** get_arc_points(dubinsArc arc, int npts);
 
-	void plot_dubins(dubinsCurve *curve, int size);
-
+	
+    void plot_dubins(std::vector<dubinsCurve> curves);
 }

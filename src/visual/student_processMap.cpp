@@ -5,35 +5,53 @@
 
 namespace student {
 
-	// GLOBAL VARIABLE
+	// GLOBAL VARIABLES
 	std::vector<Polygon> offsetted_obstacles;
+	double SCALE;
 
 	//////// AUXILIARY FUNCTIONS ////////
 
+
+	/// Function to process the green color of the image that comes from the simulator.
 	bool processGreen(const cv::Mat& img_hsv, cv::Mat& green_mask, bool DEBUG);
+	
+	/// Finds the red obstacles and saves them in the obstacle_list.
 	bool processObstacles(const cv::Mat& img_in, const cv::Mat& img_hsv, const double scale, std::vector<Polygon>& obstacle_list, bool DEBUG);	
+
+	/// Finds the black borders of the arena and treats them as trapezoidal obstacles.
 	bool processBorders(const cv::Mat& img_in, const cv::Mat& img_hsv, const double scale, std::vector<Polygon>& obstacle_list, bool DEBUG);	
+	
+	/// Finds the green gate.
 	bool processGate(const cv::Mat& img_hsv, cv::Mat& green_mask, const double scale, Polygon& gate, bool DEBUG);
+	
+	/// Processes the green circles that correspond to the victims, to collect their position and their id.
 	bool processVictims(const cv::Mat& img_in, const cv::Mat& img_hsv, cv::Mat& green_mask, const double scale, 
 			std::vector<std::pair<int,Polygon>>& victim_list, bool DEBUG);
 	
-
+	/// Processes the blue triangle of the robot to find the radius of the circle, in order to perform the offset.
 	float findRobotRadius(const cv::Mat& img_in, const cv::Mat& img_hsv, const double scale, bool DEBUG);
 
+	/// Uses Clipper to offset the found_obstacles all together, returing a list of processed_obstacles where they are merged.
 	bool offsetObstacles(const float OFFSET, const cv::Mat& img_in, const double scale, const std::vector<Polygon>& found_obstacles,
 				 std::vector<Polygon>& processed_obstacles, const bool DEBUG);
 
+	/// Offsets each obstacle in found_obstacles at a time by using the Clipper library.
 	bool offsetEachObstacle(const float OFFSET, const cv::Mat& img_in, const double scale,
 				 std::vector<Polygon>& found_obstacles, std::vector<Polygon>& all_output, const bool DEBUG);
 
-	// For victim processing
+	/// Processes a region of an image against the number templates, and returns the id of the best match
 	int findTemplateId(cv::Mat& processROI, std::vector<cv::Mat>& templates, bool DEBUG);
 			cv::Mat rotate(cv::Mat src, double angle);
 
 
 
 	//////////////// MAIN FUNCTION ////////////////
-
+	/**
+	* Implementation of the processMap() function of the student_interface. 
+	* It takes the img_in coming from the simulator or the camera, processes it to find
+	* the obstacles that the robot has to avoid and the victims that it needs to save. 
+	* It uses some helper functions that divide the processing in a more structured way.
+	*/
 	bool student_processMap(const cv::Mat& img_in, const double scale,
 			std::vector<Polygon>& obstacle_list, std::vector<std::pair<int,Polygon>>& victim_list,
 			Polygon& gate, const std::string& config_folder, const bool DEBUG) {
@@ -44,6 +62,7 @@ namespace student {
 
 		//////// VARIABLES ////////
 
+		SCALE = scale;
   		// HSV matrix:
 		cv::Mat img_hsv;
 		// Green mask for double usage:
@@ -255,8 +274,8 @@ namespace student {
 			if (area > 12000) { // the whole arena
 				foundArena = true;
 				cv::approxPolyDP(contours[i], approx_curve, 7, true);
-				std::cout << i << "th black contour area: " << area << std::endl;
-				std::cout << i << "th black approx_curve size: " << approx_curve.size() << std::endl;
+				//std::cout << i << "th black contour area: " << area << std::endl;
+				//std::cout << i << "th black approx_curve size: " << approx_curve.size() << std::endl;
 				
 				// from the approximated curve, only take the extreme points
 
@@ -281,7 +300,7 @@ namespace student {
 				// Take outer vertices and compute inner ones
 				for (int j = 0; j < wholeArena.size(); j++){
 					cv::Point p = wholeArena[j];
-					std::cout << "Contour point: " << p << std::endl;
+					//std::cout << "Contour point: " << p << std::endl;
 				
 			   		// NOTE: Beware the order in which the points are added 
 
@@ -413,11 +432,11 @@ namespace student {
 	   for (const ClipperLib::Path &processed : offsettedPolygons) {
 	        Polygon obstacle;
 	        std::vector<cv::Point> visualObstacle;
-	        std::cout << "New processed obstacle. Size: " << processed.size() << std::endl;
+	       // std::cout << "New processed obstacle. Size: " << processed.size() << std::endl;
 
 	        for (const ClipperLib::IntPoint &pt: processed){
 	      
-	            std::cout << "Current processed point:" << pt.X << " " << pt.Y << std::endl;
+	           // std::cout << "Current processed point:" << pt.X << " " << pt.Y << std::endl;
 	            
 	            if (pt.X < 0 && pt.Y < 0 ) {
 	            	obstacle.emplace_back(0,0);
@@ -528,7 +547,7 @@ namespace student {
 
 			if (approx_curve.size() == 3 && A > 300 && A < 3000 ){
 				// double check area of robot
-				std::cout << "Area of robot: " << A << std::endl;		
+				//std::cout << "Area of robot: " << A << std::endl;		
 				// There should be only 1 blue object, the robot
 				found = true;
 
@@ -548,7 +567,7 @@ namespace student {
 		cv::Point2f center;
 		float radius;
 		cv::minEnclosingCircle(approx_curve, center, radius);
-		std::cout << "CIRCLE: center: " << center << " radius: " << radius << std::endl; 
+		std::cout << "Enclosing robot CIRCLE: center: " << center << " radius: " << radius << std::endl; 
 		if (DEBUG) {
 			cv::Scalar colorCircle(0,0,255);
 		   	int thicknessCircle = 2;
@@ -761,7 +780,7 @@ namespace student {
 		return true;
 	}
 
-	// Processes an image against the number templates, and returns the id of the best match
+	
 	int findTemplateId(cv::Mat& ROI_rect, std::vector<cv::Mat>& templates, bool DEBUG){
 
 		cv::resize(ROI_rect, ROI_rect, cv::Size(200,200));

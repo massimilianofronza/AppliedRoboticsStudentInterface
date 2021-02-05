@@ -13,6 +13,11 @@
 
 namespace student{
 
+	/**
+	* Implementation of the loadImage() function of the student_interface. It 
+	* takes the imges from the config_folder/camera_image folder and loads them into
+	* the simulator.
+	*/
 	void student_loadImage(cv::Mat& img_out, const std::string& config_folder){
 		
 		// Get a list of all images in config_folder/camera_image/

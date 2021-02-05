@@ -4,12 +4,23 @@
 #include "path_functions.hpp"
 #include "dubins_functions.hpp"
 #include "collision_functions.hpp"
+#include <algorithm>
 
+/**
+* Main file with the functions required by the simulator.
+* The actual functions called are organized in different files for a cleaner code.
+*
+*/
 namespace student {
 
-// Debug variables
-const bool DEBUG_Map = false;
-const bool DEBUG_Robot = false;
+	/// Debug variable for map processing
+	const bool DEBUG_Map = false;
+
+	/// Debug variable for robot location
+	const bool DEBUG_Robot = false;
+
+	std::vector<Polygon> offsetted_obstacles_co;
+	double SCALE_co;
 
 	void loadImage(cv::Mat& img_out, const std::string& config_folder){
 
@@ -53,10 +64,12 @@ const bool DEBUG_Robot = false;
 	}
 
 	bool processMap(const cv::Mat& img_in, const double scale, std::vector<Polygon>& obstacle_list, std::vector<std::pair<int,Polygon>>& victim_list, Polygon& gate, const std::string& config_folder){
-		
+	
 		bool res = student_processMap(img_in, scale, obstacle_list, victim_list, gate, config_folder, DEBUG_Map);
 		std::cout << "Inside processMap, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl; // here, should be != 0
-
+		std::cout << "Map SCALE " << SCALE << std::endl;
+		offsetted_obstacles_co = offsetted_obstacles;
+		SCALE_co = SCALE;
 		return res;
 	}
 
@@ -71,9 +84,12 @@ const bool DEBUG_Robot = false;
 	 const float y, const float theta, Path& path, const std::string& config_folder){
 		//throw std::logic_error( "STUDENT FUNCTION - PLAN PATH - NOT IMPLEMENTED" );
 		
-		std::cout << "Inside planPath, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl;
+		std::cout << "Inside planPath, size of offsetted_obstacles: " << offsetted_obstacles_co.size() << std::endl; // should be != 0
+		std::cout << "OUT SCALE " << SCALE_co << std::endl;
+		bool res = student_planPath(borders, obstacle_list, victim_list, gate, x, y, theta, path, config_folder);
+
 		std::cout << "\tstudent_planPath COMPLETED.\n" << std::flush;
-		return student_planPath(borders, obstacle_list, victim_list, gate, x, y, theta, path, config_folder);
+		return res;
 	}
 }
 	
