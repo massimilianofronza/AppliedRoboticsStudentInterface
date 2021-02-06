@@ -20,8 +20,8 @@ namespace student{
 
 
 		// TODO these two global variables don't work
-		std::cout << "Inside student_planPath, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl; // here, should be != 0
-		std::cout << "SCALE " << SCALE << std::endl;
+		//std::cout << "Inside student_planPath, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl; // here, should be != 0
+		//std::cout << "SCALE " << SCALE << std::endl;
 		// debug image
 		cv::Mat image = cv::Mat::zeros(300,300, CV_8UC3);
 
@@ -130,7 +130,7 @@ namespace student{
 
 		std::vector<dubinsCurve> curves = multipoint(robot, point_list);
 
-		float ds = 0.05;
+		float ds = 0.02;
 
 		for (const auto& curve: curves){
 

@@ -4,7 +4,6 @@
 namespace student {
 
 	// GLOBAL VARIABLES	
-	extern std::vector<Polygon> offsetted_obstacles;
 	extern double SCALE;
 	
 	////////// VISUAL FUNCTIONS CALLED BY student_interface.cpp //////////
