@@ -134,19 +134,19 @@ namespace student{
 
 		for (const auto& curve: curves){
 
-			for (float s = ds; s < curve.a1.len; s+=ds) {
+			for (float s = 0; s <= curve.a1.len; s+=ds) {
 				configuration intermediate = getNextConfig(curve.a1.currentConf, curve.a1.k, s);
-				path.points.emplace_back(ds, intermediate.x, intermediate.y, intermediate.th, curve.a1.k);
+				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a1.k);
 			}
 
-			for (float s = ds; s < curve.a2.len; s+=ds) {
+			for (float s = 0; s <= curve.a2.len; s+=ds) {
 				configuration intermediate = getNextConfig(curve.a2.currentConf, curve.a2.k, s);
-				path.points.emplace_back(ds, intermediate.x, intermediate.y, intermediate.th, curve.a2.k);
+				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a2.k);
 			}
 
-			for (float s = ds; s < curve.a3.len; s+=ds) {
+			for (float s = 0; s <= curve.a3.len; s+=ds) {
 				configuration intermediate = getNextConfig(curve.a3.currentConf, curve.a3.k, s);
-				path.points.emplace_back(ds, intermediate.x, intermediate.y, intermediate.th, curve.a3.k);
+				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a3.k);
 			}
 			//path.points.emplace_back(curve.a1.len, curve.a1.currentConf.x, curve.a1.currentConf.y,curve.a1.currentConf.th, curve.a1.k);
 		
