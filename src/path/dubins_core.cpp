@@ -328,7 +328,7 @@ namespace student {
 		dubinsCurve bestCurve;
 		double bestLength = 999999;
 		//int angles [] = {0, 45, 90, 135, 180, 225, 270, 315}; // 8 angles
-		double angles [] = {PI/6.0, PI/3.0, PI/2.0, 2.0*PI/3.0, 5.0*PI/6.0, PI, 7.0*PI/6.0, 4.0*PI/3.0, 3.0*PI/2.0, 5.0*PI/3.0, 11.0*PI/6.0}; // 12 angles
+		double angles [] = {0, PI/6.0, PI/3.0, PI/2.0, 2.0*PI/3.0, 5.0*PI/6.0, PI, 7.0*PI/6.0, 4.0*PI/3.0, 3.0*PI/2.0, 5.0*PI/3.0, 11.0*PI/6.0}; // 12 angles
 		int no_angles = sizeof(angles)/sizeof(angles[0]);
 		std::vector<dubinsCurve> reverse; // for optimized path
 

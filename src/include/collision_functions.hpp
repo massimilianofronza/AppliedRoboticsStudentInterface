@@ -2,6 +2,7 @@
 //#include <iostream>	already in dubins_functions TODO leva tutto
 //#include <cmath>
 
+#include "dubins_functions.hpp"
 
 namespace student {
 
