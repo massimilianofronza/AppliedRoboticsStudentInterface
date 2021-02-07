@@ -9,13 +9,21 @@
 #include <ompl/base/spaces/SE2StateSpace.h>
 #include <ompl/base/StateValidityChecker.h>
 #include <ompl/base/MotionValidator.h>
+#include <ompl/base/samplers/ObstacleBasedValidStateSampler.h>
 
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
+#include <ompl/geometric/planners/rrt/RRTstar.h>
+
 #include <ompl/geometric/PathGeometric.h>
   
 #include <ompl/config.h>
 #include <iostream>
-  
+
+#include <boost/geometry/algorithms/within.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
+#include <boost/geometry/geometries/polygon.hpp>
+
+
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 /// End of planning imports
@@ -25,7 +33,17 @@ namespace student{
 	const bool DEBUG = true;
 
 	bool myStateValidityCheckerFunction(const ob::State *state);
+	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation*si);
 
+
+	Polygon this_borders;
+	std::vector<Polygon> this_obstacle_list;
+	typedef boost::geometry::model::d2::point_xy<double> point_type;
+	typedef boost::geometry::model::polygon<point_type> polygon_type;
+	// TODO represent arena and obstacles with the boost geometry types to check
+	// if the points are inside the polygons (for state validity)
+	// check: boost.org/doc/libs/1_62_0/libs/geometry/doc/html/geometry/reference/algorithms/within/within_2.html
+	
 	/**
 	* Performs the computation of a collision free path, that goes through all the victims's centers 
 	* in order (mission 1) by using Dubin's manoeuvres.
@@ -36,12 +54,19 @@ namespace student{
                  const float x, const float y, const float theta, Path& path,
                  const std::string& config_folder){
 
+		this_borders = borders;
+		for (const auto& vertex : borders){
+			std::cout << "Arena corner: " << vertex.x << "," << vertex.y << std::endl;
+		} 
 
+		this_obstacle_list = obstacle_list;
 		// TODO these two global variables don't work
 		//std::cout << "Inside student_planPath, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl; // here, should be != 0
 		//std::cout << "SCALE " << SCALE << std::endl;
 		// debug image
 		cv::Mat image = cv::Mat::zeros(300,300, CV_8UC3);
+
+
 
 		// Variables to keep victims and their centroid sorted 
 		std::vector<std::pair<int, int>> sorted_index;
@@ -178,6 +203,8 @@ namespace student{
 		// Set the object used to check which states in the space are valid
 		si->setStateValidityChecker(myStateValidityCheckerFunction);
 		si->setStateValidityCheckingResolution(0.03);
+		si->setValidStateSamplerAllocator(allocOBValidStateSampler);
+
 		si->setup();
 		
 		// Set our robot's starting state to be the bottom-left corner of
@@ -199,7 +226,7 @@ namespace student{
 		pdef->setStartAndGoalStates(start, goal);
 
 		// Create an instance of a planner
-    	auto planner(std::make_shared<og::RRTConnect>(si));
+    	auto planner(std::make_shared<og::RRTstar>(si));
 
 		// Tell the planner which problem we are interested in solving
     	planner->setProblemDefinition(pdef);
@@ -217,8 +244,8 @@ namespace student{
     	if (solved) {
 	        // get the goal representation from the problem definition (not the same as the goal state)
 	        // and inquire about the found path
-	    	og::PathGeometric path( dynamic_cast<const og::PathGeometric&>( *pdef->getSolutionPath()));
-			const std::vector< ob::State* > &states = path.getStates();
+	    	og::PathGeometric path(dynamic_cast<const og::PathGeometric&>(*pdef->getSolutionPath()));
+			const std::vector<ob::State*> &states = path.getStates();
 			ob::SE2StateSpace::StateType *state;
 
 			for(size_t i=0; i < states.size() ; ++i) {
@@ -267,7 +294,16 @@ namespace student{
 	    return true;
   	}
 
+  	// 
   	bool myStateValidityCheckerFunction(const ob::State *state) {
+  		//ob::SE2StateSpace::StateType *D2state = state->as<ob::SE2StateSpace::StateType>();
+  		double x = state->as<ob::SE2StateSpace::StateType>()->getX(); 
+  		double y = state->as<ob::SE2StateSpace::StateType>()->getY();
+  		std::cout << "Checking validity of point " << x << "," << y << std::endl;
 		return true;
+	}
+
+	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation*si){
+		return std::make_shared<ob::ObstacleBasedValidStateSampler>(si);
 	}
 }
