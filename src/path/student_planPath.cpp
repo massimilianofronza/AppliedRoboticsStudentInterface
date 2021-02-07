@@ -4,9 +4,27 @@
 #include "path_functions.hpp"
 #include "dubins_functions.hpp"
 
+/// Path planning specific imports
+#include <ompl/base/SpaceInformation.h>
+#include <ompl/base/spaces/SE2StateSpace.h>
+#include <ompl/base/StateValidityChecker.h>
+#include <ompl/base/MotionValidator.h>
+
+#include <ompl/geometric/planners/rrt/RRTConnect.h>
+#include <ompl/geometric/PathGeometric.h>
+  
+#include <ompl/config.h>
+#include <iostream>
+  
+namespace ob = ompl::base;
+namespace og = ompl::geometric;
+/// End of planning imports
+
 namespace student{
 
 	const bool DEBUG = true;
+
+	bool myStateValidityCheckerFunction(const ob::State *state);
 
 	/**
 	* Performs the computation of a collision free path, that goes through all the victims's centers 
@@ -128,7 +146,97 @@ namespace student{
 		robot.y = y;
 		robot.th = theta;
 
-		std::vector<dubinsCurve> curves = multipoint(robot, point_list);
+		
+
+	/*	//CODE from the professor interface
+	    float xc = 0, yc = 1.5, r = 1.4;
+	    float ds = 0.05;
+	    std::cout << "M_PI =" << M_PI << std::endl;
+	    for (float theta = -M_PI/2, s = 0; theta<(-M_PI/2 + 1.2); theta+=ds/r, s+=ds) {
+	    	
+	      path.points.emplace_back(s, xc+r*std::cos(theta), yc+r*std::sin(theta), theta+M_PI/2, 1./r);    
+	    }
+*/
+
+		auto space(std::make_shared<ob::SE2StateSpace>());
+		//ob::StateSpacePtr space(new ob::RealVectorStateSpace(2));
+    	
+		// set the bounds for the R^2 part of SE(2)
+	    ob::RealVectorBounds bounds(2);
+	    bounds.setLow(0);
+	    bounds.setHigh(2);
+	  
+	  	space->setBounds(bounds);
+
+
+    	// Set the bounds of space to be in [0,1].
+		//space->as<ob::RealVectorStateSpace>()->setBounds(0.0, 2.0);		
+
+		// Construct a space information instance for this state space
+		auto si(std::make_shared<ob::SpaceInformation>(space));
+
+		// Set the object used to check which states in the space are valid
+		si->setStateValidityChecker(myStateValidityCheckerFunction);
+		si->setStateValidityCheckingResolution(0.03);
+		si->setup();
+		
+		// Set our robot's starting state to be the bottom-left corner of
+		// the environment, or (0,0).
+		ob::ScopedState<> start(space);
+		start->as<ob::SE2StateSpace::StateType>()->setX(robot.x); //values[0] = robot.x;
+		start->as<ob::SE2StateSpace::StateType>()->setY(robot.y);
+		start->as<ob::SE2StateSpace::StateType>()->setYaw(robot.th);
+		 
+		// Set our robot's goal state to be the top-right corner of the
+		// environment, or (1,1).
+		ob::ScopedState<> goal(space);
+		goal->as<ob::SE2StateSpace::StateType>()->setX(gate_center.x);
+		goal->as<ob::SE2StateSpace::StateType>()->setY(gate_center.y);
+		
+		auto pdef(std::make_shared<ob::ProblemDefinition>(si));
+		
+		// Set the start and goal states
+		pdef->setStartAndGoalStates(start, goal);
+
+		// Create an instance of a planner
+    	auto planner(std::make_shared<og::RRTConnect>(si));
+
+		// Tell the planner which problem we are interested in solving
+    	planner->setProblemDefinition(pdef);
+
+		planner->setup();
+
+		// Returns a value from ompl::base::PlannerStatus which describes whether a solution has been found within the specified 
+		// amount of time (in seconds). If this value can be cast to true, a solution was found.
+    	ob::PlannerStatus solved = planner->ob::Planner::solve(1.0);
+
+    	std::vector<Point> RRT_list;
+
+		// If a solution has been found, display it. Simplification could be done, but we would need to create an instance 
+		// of ompl::geometric::PathSimplifier.
+    	if (solved) {
+	        // get the goal representation from the problem definition (not the same as the goal state)
+	        // and inquire about the found path
+	    	og::PathGeometric path( dynamic_cast<const og::PathGeometric&>( *pdef->getSolutionPath()));
+			const std::vector< ob::State* > &states = path.getStates();
+			ob::SE2StateSpace::StateType *state;
+
+			for(size_t i=0; i < states.size() ; ++i) {
+				state = states[i]->as<ob::SE2StateSpace::StateType>();
+				RRT_list.emplace_back(state->getX(), state->getY());
+				std::cout << "State " << i << ": " << state->getX() << ", " << state->getY() << "\n";
+			}
+	        //og::PathGeometric path = pdef->as<og::PathGeometric>getSolutionPath();
+	        std::cout << "Found solution:" << std::endl;
+	 
+	        // print the path to screen
+	        path.print(std::cout);
+    	}
+		std::cout << "Start " << start << std::endl;
+		std::cout << "Goal " << goal << std::endl;   	
+
+
+		std::vector<dubinsCurve> curves = multipoint(robot, RRT_list);
 
 		float ds = 0.02;
 
@@ -155,15 +263,11 @@ namespace student{
 			//path.points.emplace_back(curve.a3.len, curve.a3.currentConf.x, curve.a3.currentConf.y,curve.a3.currentConf.th, curve.a3.k);
 		}
 
-	/*	//CODE from the professor interface
-	    float xc = 0, yc = 1.5, r = 1.4;
-	    float ds = 0.05;
-	    std::cout << "M_PI =" << M_PI << std::endl;
-	    for (float theta = -M_PI/2, s = 0; theta<(-M_PI/2 + 1.2); theta+=ds/r, s+=ds) {
-	    	
-	      path.points.emplace_back(s, xc+r*std::cos(theta), yc+r*std::sin(theta), theta+M_PI/2, 1./r);    
-	    }
-*/
+
 	    return true;
-  }
+  	}
+
+  	bool myStateValidityCheckerFunction(const ob::State *state) {
+		return true;
+	}
 }
