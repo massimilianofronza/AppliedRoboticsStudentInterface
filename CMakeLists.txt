@@ -7,10 +7,14 @@ add_compile_options(-std=c++11)
 find_package(OpenCV REQUIRED )
 find_package(project_interface REQUIRED )
 
+## Add OMPL library for path planning
+find_package(OMPL REQUIRED)
+
 ## Specify additional locations of header files
 include_directories(
  ${OpenCV_INCLUDE_DIRS}
  ${project_interface_INCLUDE_DIRS}
+ ${OMPL_INCLUDE_DIRS}
  src/include	## custom headers folder
 )
 
@@ -46,6 +50,7 @@ add_library(student SHARED
 target_link_libraries(student
   ${OpenCV_LIBRARIES}
   ClipperLib
+  ${OMPL_LIBRARIES}
 )
 
 target_link_libraries(calibrate
