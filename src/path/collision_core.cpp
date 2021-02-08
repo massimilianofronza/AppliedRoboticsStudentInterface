@@ -30,7 +30,7 @@ namespace student {
 			 (maxY1 < minY2) || 	// first line totally below the second
 			 (maxY2 < minY1) ) 		// first line totally above the second
 		{
-			plotXLine(res, x1, y1, x2, y2, x3, y3, x4, y4);
+			//plotXLine(res, x1, y1, x2, y2, x3, y3, x4, y4);
 			return res;
 		}
 
@@ -79,7 +79,9 @@ namespace student {
 			}
 		}
 
-		plotXLine(res, x1, y1, x2, y2, x3, y3, x4, y4);
+		if (res) {
+			plotXLine(res, x1, y1, x2, y2, x3, y3, x4, y4);
+		}
 		return res;
 	}
 	

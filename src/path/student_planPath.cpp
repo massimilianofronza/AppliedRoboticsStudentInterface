@@ -2,7 +2,7 @@
 #include "student_planning_interface.hpp"
 #include "visual_functions.hpp"
 #include "path_functions.hpp"
-#include "dubins_functions.hpp"
+#include "collision_functions.hpp"
 
 /// Path planning specific imports
 #include <ompl/base/SpaceInformation.h>
@@ -19,6 +19,8 @@
 #include <ompl/config.h>
 #include <iostream>
 
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/geometries.hpp>
 #include <boost/geometry/algorithms/within.hpp>
 #include <boost/geometry/geometries/point_xy.hpp>
 #include <boost/geometry/geometries/polygon.hpp>
@@ -26,6 +28,7 @@
 
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
+namespace bg = boost::geometry;
 /// End of planning imports
 
 namespace student{
@@ -35,11 +38,81 @@ namespace student{
 	bool myStateValidityCheckerFunction(const ob::State *state);
 	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation*si);
 
-
+	typedef bg::model::d2::point_xy<double> point_type;
+	typedef bg::model::polygon<point_type> polygon_type;
+	
 	Polygon this_borders;
-	std::vector<Polygon> this_obstacle_list;
-	typedef boost::geometry::model::d2::point_xy<double> point_type;
-	typedef boost::geometry::model::polygon<point_type> polygon_type;
+	polygon_type arena;
+	std::vector<polygon_type> this_obstacle_list;
+	std::vector<Polygon> coll_obstacles;
+	std::vector<Point> full_tree;
+
+	/// Class for motion validation
+	class myMotionValidator : public ob::MotionValidator {
+		
+		private:
+			ob::StateSpace *stateSpace_;
+
+		public:
+
+			myMotionValidator(ob::SpaceInformation *si) : ob::MotionValidator(si) {
+				//ob::MotionValidator::defaultSettings();
+				stateSpace_ = si_->getStateSpace().get();
+	    		if (stateSpace_ == nullptr) {
+	        		throw ompl::Exception("No state space for motion validator");
+	    		}
+			}
+
+			myMotionValidator(const ob::SpaceInformationPtr &si) : ob::MotionValidator(si) {
+				stateSpace_ = si_->getStateSpace().get();
+	    		if (stateSpace_ == nullptr) {
+	        		throw ompl::Exception("No state space for motion validator");
+	    		}
+			}
+
+			bool checkMotion(const ob::State *s1, const ob::State *s2) const override {
+				//std::cout << "CIAO FRA STO USANDO LA PRIMA\n";
+				//full_tree.push_back(Point(s1->as<ob::SE2StateSpace::StateType>()->getX(), 
+				//						  s1->as<ob::SE2StateSpace::StateType>()->getY()));
+				double s1_x = s1->as<ob::SE2StateSpace::StateType>()->getX();
+				double s1_y = s1->as<ob::SE2StateSpace::StateType>()->getY();
+				double s2_x = s2->as<ob::SE2StateSpace::StateType>()->getX();
+				double s2_y = s2->as<ob::SE2StateSpace::StateType>()->getY();
+
+				if (myStateValidityCheckerFunction(s2)) {
+					
+					for (const auto& obstacle : coll_obstacles) {
+						
+						for(int i=1; i<obstacle.size(); i++) {
+							std::cout << "i: " << i << " and " << obstacle.size() << std::endl;
+							double start_x = obstacle[i-1].x;
+							double start_y = obstacle[i-1].y;
+							double end_x = obstacle[i].x;
+							double end_y = obstacle[i].y;
+							
+							if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, start_x, start_y, end_x, end_y)) {
+								std::cerr << "Collision detected for new sample point.\n";
+								return false;
+							}
+						}
+						/// Close with the last segment
+						if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, 
+										  obstacle[0].x, obstacle[0].y, obstacle[obstacle.size()-1].x, obstacle[obstacle.size()-1].y)) {
+							std::cerr << "Collision detected for new sample point.\n";
+							return false;
+						}
+					}
+				}
+
+				return true;
+			}
+
+			bool checkMotion(const ob::State *s1, const ob::State *s2, std::pair<ob::State *, double> &lastValid) const override {
+				std::cout << "CIAO FRA STO USANDO LA SECONDA\n";
+				return true;
+			}
+	};
+
 	// TODO represent arena and obstacles with the boost geometry types to check
 	// if the points are inside the polygons (for state validity)
 	// check: boost.org/doc/libs/1_62_0/libs/geometry/doc/html/geometry/reference/algorithms/within/within_2.html
@@ -55,17 +128,34 @@ namespace student{
                  const std::string& config_folder){
 
 		this_borders = borders;
+		coll_obstacles = obstacle_list;
+
 		for (const auto& vertex : borders){
 			std::cout << "Arena corner: " << vertex.x << "," << vertex.y << std::endl;
-		} 
+			bg::append(arena.outer(), point_type(vertex.x, vertex.y));
+		}
+		/// Close the arena polygon
+		bg::append(arena.outer(), point_type(borders[0].x, borders[0].y));
 
-		this_obstacle_list = obstacle_list;
+		for (const auto& obstacle : obstacle_list) {
+			polygon_type polygon;
+
+			for (const auto& obst_vertex : obstacle) {
+				bg::append(polygon.outer(), point_type(obst_vertex.x, obst_vertex.y));
+			}
+			/// Close the obstacle polygon
+			bg::append(polygon.outer(), point_type(obstacle[0].x, obstacle[0].y));
+
+			this_obstacle_list.emplace_back(polygon);
+		}
+
 		// TODO these two global variables don't work
 		//std::cout << "Inside student_planPath, size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl; // here, should be != 0
 		//std::cout << "SCALE " << SCALE << std::endl;
 		// debug image
-		cv::Mat image = cv::Mat::zeros(300,300, CV_8UC3);
+		cv::Mat image = cv::Mat::zeros(600, 600, CV_8UC3);
 
+		image.setTo(cv::Scalar(255, 255, 255));
 
 
 		// Variables to keep victims and their centroid sorted 
@@ -149,7 +239,7 @@ namespace student{
 
 			// Debug: draw victim centers
 			for (const Point& pt : point_list) {
-				cv::Point visualCent(pt.x*100, pt.y*100);
+				cv::Point visualCent(pt.x*300, pt.y*300);
 				cv::circle(image, visualCent, radiusCircle, colorCircle1, thicknessCircle1);				
 			}
 		
@@ -188,8 +278,8 @@ namespace student{
     	
 		// set the bounds for the R^2 part of SE(2)
 	    ob::RealVectorBounds bounds(2);
-	    bounds.setLow(0);
-	    bounds.setHigh(2);
+	    bounds.setLow(-1);
+	    bounds.setHigh(3);
 	  
 	  	space->setBounds(bounds);
 
@@ -204,6 +294,9 @@ namespace student{
 		si->setStateValidityChecker(myStateValidityCheckerFunction);
 		si->setStateValidityCheckingResolution(0.03);
 		si->setValidStateSamplerAllocator(allocOBValidStateSampler);
+		
+		//ob::MotionValidatorPtr mvPtr(new myMotionValidator(si));
+		//si->setMotionValidator(mvPtr);
 
 		si->setup();
 		
@@ -218,7 +311,7 @@ namespace student{
 		// environment, or (1,1).
 		ob::ScopedState<> goal(space);
 		goal->as<ob::SE2StateSpace::StateType>()->setX(gate_center.x);
-		goal->as<ob::SE2StateSpace::StateType>()->setY(gate_center.y);
+		goal->as<ob::SE2StateSpace::StateType>()->setY(gate_center.y-0.3);
 		
 		auto pdef(std::make_shared<ob::ProblemDefinition>(si));
 		
@@ -253,11 +346,62 @@ namespace student{
 				RRT_list.emplace_back(state->getX(), state->getY());
 				std::cout << "State " << i << ": " << state->getX() << ", " << state->getY() << "\n";
 			}
+
+			for (int j=1; j<RRT_list.size(); j++) {
+				double s1_x = RRT_list[j-1].x;
+				double s1_y = RRT_list[j-1].y;
+				double s2_x = RRT_list[j].x;
+				double s2_y = RRT_list[j].y;
+
+				for (const auto& obstacle : coll_obstacles) {
+
+					for(int i=1; i<obstacle.size(); i++) {
+						double start_x = obstacle[i-1].x;
+						double start_y = obstacle[i-1].y;
+						double end_x = obstacle[i].x;
+						double end_y = obstacle[i].y;
+						
+						if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, start_x, start_y, end_x, end_y)) {
+							std::cerr << "Collision detected for final path.\n";
+							return false;
+						}
+					}
+					/// Close with the last segment
+					if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, 
+									  obstacle[0].x, obstacle[0].y, obstacle[obstacle.size()-1].x, obstacle[obstacle.size()-1].y)) {
+						std::cerr << "Collision detected for final path.\n";
+						return false;
+					}
+				}
+			}
+
 	        //og::PathGeometric path = pdef->as<og::PathGeometric>getSolutionPath();
 	        std::cout << "Found solution:" << std::endl;
 	 
 	        // print the path to screen
 	        path.print(std::cout);
+
+	        if (DEBUG){
+				int radiusCircle = 1;
+				cv::Scalar colorCircle1(255,0,0);
+				int thicknessCircle1 = 2;
+
+				// Debug: draw victim centers
+				for (const Point& pt : full_tree) {
+					cv::Point visualCent(pt.x*300, pt.y*300);
+					cv::circle(image, visualCent, radiusCircle, colorCircle1, thicknessCircle1);				
+				}
+			
+		        char centers[] = "Full points on arena";
+				cv::namedWindow(centers, 10);
+				cv::imshow(centers, image);
+				cv::waitKey(0);
+				cv::destroyWindow(centers); 
+			}
+
+			/// Motion validation
+
+	        
     	}
 		std::cout << "Start " << start << std::endl;
 		std::cout << "Goal " << goal << std::endl;   	
@@ -299,11 +443,29 @@ namespace student{
   		//ob::SE2StateSpace::StateType *D2state = state->as<ob::SE2StateSpace::StateType>();
   		double x = state->as<ob::SE2StateSpace::StateType>()->getX(); 
   		double y = state->as<ob::SE2StateSpace::StateType>()->getY();
+  		
   		std::cout << "Checking validity of point " << x << "," << y << std::endl;
+
+  		point_type p(x, y);
+  		if (!(bg::within(p, arena))) {
+  			std::cerr << "Point external w.r.t. the arena.\n";
+  			return false;
+  		}
+
+  		for (const auto& obstacle : this_obstacle_list) {
+  			if (bg::within(p, obstacle)) {
+	  			std::cerr << "Point inside some obstacle.\n";
+	  			return false;
+  			}
+  		}
+
+		full_tree.push_back(Point(x, y));
+  		
 		return true;
 	}
 
 	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation*si){
 		return std::make_shared<ob::ObstacleBasedValidStateSampler>(si);
 	}
+
 }
