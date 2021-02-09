@@ -38,12 +38,12 @@ namespace student{
 
 	bool myStateValidityCheckerFunction(const ob::State *state);
 	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation*si);
-
+		void drawSolutionTree(std::vector<Point> RRT_list, cv::Mat& image);
 	typedef bg::model::d2::point_xy<double> point_type;
 	typedef bg::model::polygon<point_type> polygon_type;
 	
 	Polygon this_borders;
-	polygon_type arena;
+	polygon_type arena, valid_gate;
 	std::vector<polygon_type> this_obstacle_list;
 	std::vector<Polygon> coll_obstacles;
 	std::vector<Point> full_tree;
@@ -148,6 +148,11 @@ namespace student{
 			bg::append(polygon.outer(), point_type(obstacle[0].x, obstacle[0].y));
 
 			this_obstacle_list.emplace_back(polygon);
+		}
+
+		for (const auto& vertex : gate){
+			std::cout << "Gate corner: " << vertex.x << "," << vertex.y << std::endl;
+			bg::append(valid_gate.outer(), point_type(vertex.x, vertex.y));
 		}
 
 		// TODO these two global variables don't work
@@ -279,8 +284,8 @@ namespace student{
     	
 		// set the bounds for the R^2 part of SE(2)
 	    ob::RealVectorBounds bounds(2);
-	    bounds.setLow(-1);
-	    bounds.setHigh(3);
+	    bounds.setLow(0);
+	    bounds.setHigh(1.6);
 	  
 	  	space->setBounds(bounds);
 
@@ -293,18 +298,18 @@ namespace student{
 
 		// Set the object used to check which states in the space are valid
 		si->setStateValidityChecker(myStateValidityCheckerFunction);
-		si->setStateValidityCheckingResolution(0.03);
+		si->setStateValidityCheckingResolution(0.01);
 		si->setValidStateSamplerAllocator(allocOBValidStateSampler);
 
-		//si->setMotionValidator(std::make_shared<ob::DiscreteMotionValidator>(si));
-		//ob::DiscreteMotionValidatorPtr mvPtr(new ob::DiscreteMotionValidator(si));
+		si->setMotionValidator(std::make_shared<ob::DiscreteMotionValidator>(si));
+		//ob::MotionValidatorPtr mvPtr(new ob::DiscreteMotionValidator(si));
 		//si->setMotionValidator(mvPtr);
 
 		si->setup();
 		
 		std::vector<Point> RRT_list;
 
-		for (int i=1; i<5/*point_list.size()*/; i++) {
+		for (int i=1; i < point_list.size(); i++) {
 			// Create an instance of a planner
 			auto planner(std::make_shared<og::RRTstar>(si));
 
@@ -332,7 +337,7 @@ namespace student{
 
 			// Returns a value from ompl::base::PlannerStatus which describes whether a solution has been found within the specified 
 			// amount of time (in seconds). If this value can be cast to true, a solution was found.
-			ob::PlannerStatus solved = planner->ob::Planner::solve(1.0);
+			ob::PlannerStatus solved = planner->ob::Planner::solve(5.0);
 
 			// If a solution has been found, display it. Simplification could be done, but we would need to create an instance 
 			// of ompl::geometric::PathSimplifier.
@@ -372,17 +377,18 @@ namespace student{
 							double end_x = obstacle[l].x;
 							double end_y = obstacle[l].y;
 							
-							if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, start_x, start_y, end_x, end_y)) {
-								std::cerr << "Collision detected for final path.\n";
+						//	if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, start_x, start_y, end_x, end_y)) {
+						//		std::cerr << "Collision detected for final path.\n";
 								//return false;
-							}
+						//	}
 						}
 						/// Close with the last segment
-						if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, 
+		/*				if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, 
 										  obstacle[0].x, obstacle[0].y, obstacle[obstacle.size()-1].x, obstacle[obstacle.size()-1].y)) {
 							std::cerr << "Collision detected for final path.\n";
 							//return false;
 						}
+		*/
 					}
 				}
 
@@ -411,6 +417,10 @@ namespace student{
 				}
 			}
 		}
+
+		cv::Mat sol_image = cv::Mat::zeros(600, 600, CV_8UC3);
+		sol_image.setTo(cv::Scalar(255, 255, 255));
+		drawSolutionTree(RRT_list, sol_image);
 
 		std::vector<dubinsCurve> curves = multipoint(robot, RRT_list);
 
@@ -443,7 +453,7 @@ namespace student{
 	    return true;
   	}
 
-  	// 
+  	
   	bool myStateValidityCheckerFunction(const ob::State *state) {
   		//ob::SE2StateSpace::StateType *D2state = state->as<ob::SE2StateSpace::StateType>();
   		double x = state->as<ob::SE2StateSpace::StateType>()->getX(); 
@@ -455,6 +465,10 @@ namespace student{
   		if (!(bg::within(p, arena))) {
   			//std::cerr << "Point external w.r.t. the arena.\n";
   			return false;
+  		}
+
+  		if (bg::within(p, valid_gate)){
+  			return true;
   		}
 
   		for (const auto& obstacle : this_obstacle_list) {
@@ -471,6 +485,20 @@ namespace student{
 
 	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation*si){
 		return std::make_shared<ob::ObstacleBasedValidStateSampler>(si);
+	}
+
+	void drawSolutionTree(std::vector<Point> RRT_list, cv::Mat& image){
+		for(int i = 1; i< RRT_list.size(); i++){
+			cv::Point p1(RRT_list[i-1].x*300, RRT_list[i-1].y*300);
+			cv::Point p2(RRT_list[i].x*300, RRT_list[i].y*300);
+			cv::line(image, p1, p2, cv::Scalar(255,0,0), 3, cv::LINE_8);
+		}
+		char tree[] = "Tree";
+		cv::namedWindow(tree, 10);
+		cv::imshow(tree, image);
+		cv::waitKey(0);
+		cv::destroyWindow(tree); 
+
 	}
 
 }
