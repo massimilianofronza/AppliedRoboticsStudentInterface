@@ -14,7 +14,6 @@
 
 #include <ompl/geometric/planners/rrt/RRTConnect.h>
 #include <ompl/geometric/planners/rrt/RRTstar.h>
-
 #include <ompl/geometric/PathGeometric.h>
   
 #include <ompl/config.h>
@@ -34,11 +33,11 @@ namespace bg = boost::geometry;
 
 namespace student{
 
-	const bool DEBUG = true;
+	const bool DEBUG_plan = false;
 
 	bool myStateValidityCheckerFunction(const ob::State *state);
 	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation*si);
-		void drawSolutionTree(std::vector<Point> RRT_list, cv::Mat& image);
+	void drawSolutionTree(std::vector<Point> RRT_list, cv::Mat& image);
 	typedef bg::model::d2::point_xy<double> point_type;
 	typedef bg::model::polygon<point_type> polygon_type;
 	
@@ -85,31 +84,37 @@ namespace student{
 					for (const auto& obstacle : coll_obstacles) {
 						
 						for(int i=1; i<obstacle.size(); i++) {
-							std::cout << "i: " << i << " and " << obstacle.size() << std::endl;
+							//std::cout << "i: " << i << " and " << obstacle.size() << std::endl;
 							double start_x = obstacle[i-1].x;
 							double start_y = obstacle[i-1].y;
 							double end_x = obstacle[i].x;
 							double end_y = obstacle[i].y;
 							
 							if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, start_x, start_y, end_x, end_y)) {
-								std::cerr << "Collision detected for new sample point.\n";
-								return false;
+								return false;	/// Collision detected
 							}
 						}
 						/// Close with the last segment
 						if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, 
 										  obstacle[0].x, obstacle[0].y, obstacle[obstacle.size()-1].x, obstacle[obstacle.size()-1].y)) {
-							std::cerr << "Collision detected for new sample point.\n";
-							return false;
+							return false;	/// Collision detected
 						}
 					}
-				}
 
-				return true;
+					return true;
+				}
+				else {
+					return false;
+				}
 			}
 
 			bool checkMotion(const ob::State *s1, const ob::State *s2, std::pair<ob::State *, double> &lastValid) const override {
-				std::cout << "CIAO FRA STO USANDO LA SECONDA\n";
+				cv::Mat image = cv::Mat::zeros(800, 800, CV_8UC3);
+				char name[] = "I'M THE SECOND checkMotion()";
+				cv::namedWindow(name, 10);
+				cv::imshow(name, image);
+				cv::waitKey(0);
+				cv::destroyWindow(name); 		
 				return true;
 			}
 	};
@@ -238,7 +243,7 @@ namespace student{
 		point_list.emplace_back(gate_center);
 
 		// Viualize
-		if (DEBUG){
+		if (DEBUG_plan){
 			int radiusCircle = 2;
 			cv::Scalar colorCircle1(0,0,255);
 			int thicknessCircle1 = 2;
@@ -298,11 +303,12 @@ namespace student{
 
 		// Set the object used to check which states in the space are valid
 		si->setStateValidityChecker(myStateValidityCheckerFunction);
-		si->setStateValidityCheckingResolution(0.01);
+		si->setStateValidityCheckingResolution(0.03);
 		si->setValidStateSamplerAllocator(allocOBValidStateSampler);
 
-		si->setMotionValidator(std::make_shared<ob::DiscreteMotionValidator>(si));
-		//ob::MotionValidatorPtr mvPtr(new ob::DiscreteMotionValidator(si));
+		//si->setMotionValidator(std::make_shared<ob::DiscreteMotionValidator>(si));
+		si->setMotionValidator(std::make_shared<myMotionValidator>(si));
+		//ob::MotionValidatorPtr mvPtr(new myMotionValidator(si));//ob::DiscreteMotionValidator(si));
 		//si->setMotionValidator(mvPtr);
 
 		si->setup();
@@ -337,7 +343,7 @@ namespace student{
 
 			// Returns a value from ompl::base::PlannerStatus which describes whether a solution has been found within the specified 
 			// amount of time (in seconds). If this value can be cast to true, a solution was found.
-			ob::PlannerStatus solved = planner->ob::Planner::solve(5.0);
+			ob::PlannerStatus solved = planner->ob::Planner::solve(1.0);
 
 			// If a solution has been found, display it. Simplification could be done, but we would need to create an instance 
 			// of ompl::geometric::PathSimplifier.
@@ -372,7 +378,7 @@ namespace student{
 					for (const auto& obstacle : coll_obstacles) {
 
 						for(int l=1; l<obstacle.size(); l++) {
-							double start_x = obstacle[l-1].x;
+							double start_x = obstacle[l-1].x;	
 							double start_y = obstacle[l-1].y;
 							double end_x = obstacle[l].x;
 							double end_y = obstacle[l].y;
@@ -398,7 +404,7 @@ namespace student{
 		        // print the path to screen
 		        path.print(std::cout);
 
-		        if (DEBUG){
+		        if (DEBUG_plan) {
 					int radiusCircle = 1;
 					cv::Scalar colorCircle1(255,0,0);
 					int thicknessCircle1 = 2;
@@ -416,6 +422,8 @@ namespace student{
 					cv::destroyWindow(centers); 
 				}
 			}
+
+			pdef->clearGoal();	/// Free the memory from the previous goal
 		}
 
 		cv::Mat sol_image = cv::Mat::zeros(600, 600, CV_8UC3);
@@ -424,23 +432,40 @@ namespace student{
 
 		std::vector<dubinsCurve> curves = multipoint(robot, RRT_list);
 
-		float ds = 0.02;
+		float ds = 0.005;
 
 		for (const auto& curve: curves){
 
-			for (float s = 0; s <= curve.a1.len; s+=ds) {
+			float trace = 0;
+
+			for (float s = 0; s < curve.a1.len; s+=ds) {
 				configuration intermediate = getNextConfig(curve.a1.currentConf, curve.a1.k, s);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a1.k);
+				//if ((curve.a1.len-s) < ds) {
+				//	s += curve.a1.len-s-ds;
+				//}
+				trace = s;
 			}
 
-			for (float s = 0; s <= curve.a2.len; s+=ds) {
-				configuration intermediate = getNextConfig(curve.a2.currentConf, curve.a2.k, s);
+			float old_trace = trace;
+
+			for (float s = old_trace; s < curve.a2.len + old_trace; s+=ds) {
+				configuration intermediate = getNextConfig(curve.a2.currentConf, curve.a2.k, s-old_trace);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a2.k);
+				//if ((curve.a2.len-s) < ds) {
+				//	s += curve.a2.len-s-ds;
+				//}
+				trace = s;
 			}
 
-			for (float s = 0; s <= curve.a3.len; s+=ds) {
-				configuration intermediate = getNextConfig(curve.a3.currentConf, curve.a3.k, s);
+			old_trace = trace;
+
+			for (float s = old_trace; s < curve.a3.len + old_trace; s+=ds) {
+				configuration intermediate = getNextConfig(curve.a3.currentConf, curve.a3.k, s-old_trace);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a3.k);
+				//if ((curve.a3.len-s) < ds) {
+				//	s += curve.a3.len-s-ds;
+				//}
 			}
 			//path.points.emplace_back(curve.a1.len, curve.a1.currentConf.x, curve.a1.currentConf.y,curve.a1.currentConf.th, curve.a1.k);
 		
@@ -462,8 +487,7 @@ namespace student{
   		//std::cout << "Checking validity of point " << x << "," << y << std::endl;
 
   		point_type p(x, y);
-  		if (!(bg::within(p, arena))) {
-  			//std::cerr << "Point external w.r.t. the arena.\n";
+  		if (!(bg::within(p, arena))) {	/// Point external w.r.t. the arena
   			return false;
   		}
 
@@ -472,8 +496,7 @@ namespace student{
   		}
 
   		for (const auto& obstacle : this_obstacle_list) {
-  			if (bg::within(p, obstacle)) {
-	  			//std::cerr << "Point inside some obstacle.\n";
+  			if (bg::within(p, obstacle)) {	/// Point inside some obstacle
 	  			return false;
   			}
   		}
