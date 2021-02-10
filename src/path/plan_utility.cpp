@@ -101,4 +101,34 @@ namespace student {
 			}
 		}
 	}
+
+	/// Find the point closest to a given point
+    int find_closest(Point &self, std::vector<Point> &samples) {
+        double min_dist = 99999999;
+        int min_index = -1;
+ 
+        for (int i=0; i<samples.size(); i++) {
+            double dist = distance(self, samples[i]);
+            if(dist < min_dist) {
+                min_dist = dist;
+                min_index = i;
+			}
+        }
+        return min_index;
+    }
+
+    /// Returns an euclidean distance
+    double distance(Point &a, Point &b) {
+    	return sqrt(pow((a.x - b.x), 2.0) + pow((a.y - b.y), 2.0));
+    }
+
+	// print all adjacent vertices of given vertex
+    void printAdjList(adjNode* ptr, int i) {
+	    while (ptr != nullptr) {
+	        std::cout << "(" << i << ", " << ptr->id
+	            << ", " << ptr->cost << ") ";
+	        ptr = ptr->next;
+	    }
+	    std::cout << std::endl;
+	}
 }

@@ -7,7 +7,7 @@ namespace student{
 	std::vector<polygon_type> this_obstacle_list;
 	std::vector<Polygon> coll_obstacles;
 	std::vector<Point> full_tree;
-	double SOL_TIME = 5.0;
+	double SOL_TIME = 1.0;
 	cv::Mat graph_image;
 	bool done = false;
 
@@ -111,8 +111,20 @@ namespace student{
   			}
   		}
 
-		full_tree.push_back(Point(x, y));
-  		
+  		/// Check if points is already there
+/*  		for (int i=0; i<full_tree.size(); i++) {
+  			if ((x == full_tree[i].x) && (y == full_tree[i].y)) {
+  				std::cout << "Point already thereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\n";
+  			}
+  			else {
+  				full_tree.push_back(Point(x, y));
+  			}
+  		}
+*/  		
+  		if (!done) {
+  			full_tree.push_back(Point(x, y));
+  		}
+
 		return true;
 	}
 
@@ -287,6 +299,7 @@ namespace student{
 
 		
   		missionOne(point_list, RRT_list, si, space, image);
+  		missionTwo(si, point_list);
   		
 
 		cv::Mat sol_image = cv::Mat::zeros(600, 600, CV_8UC3);
@@ -386,9 +399,31 @@ namespace student{
   	}
 
 
-  	void missionTwo(ob::SpaceInformation& si){
+  	void missionTwo(std::shared_ptr<ompl::base::SpaceInformation> si, std::vector<Point> &point_list) {
+  		
+	    // graph edges array.
+	    graphEdge edges[] = {
+	        // (x, y, w) -> edge from x to y with weight w
+	        {0,1,2}, {0,2,4}, {1,4,3}, {2,3,2}, {3,1,4}, {4,3,3}
+	    };
+	    int N = 6;      // Number of vertices in the graph
+	    // calculate number of edges
+	    int n = sizeof(edges)/sizeof(edges[0]);
+	    // construct graph
+	    graph adjGraph(edges, n, N);
+	    // print adjacency list representation of graph
+	    std::cout << "Graph adjacency list " << std::endl << "(start_vertex, end_vertex, weight): " << std::endl;
+	    for (int i = 0; i < N; i++) {
+	        // display adjacent vertices of vertex i
+	        printAdjList(adjGraph.head[i], i);
+	    }
 
+  		for (int i=1; i<point_list.size(); i++) {
+
+  		}
   	}
+
+
 
   	void missionOne(std::vector<Point>& point_list, std::vector<Point>& RRT_list, std::shared_ptr<ompl::base::SpaceInformation> si, std::shared_ptr<ob::SE2StateSpace> space, cv::Mat& image){
   		for (int i=1; i < point_list.size(); i++) {
