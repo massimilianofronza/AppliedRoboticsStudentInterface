@@ -35,6 +35,11 @@ namespace student {
 
 	const bool DEBUG_plan = false;
 
+	struct triplet{
+		int id, next;
+		double cost;
+	};
+
 	struct adjNode {
 		int id, cost;
 		adjNode* next;
@@ -42,12 +47,13 @@ namespace student {
 
 	// structure to store edges
 	struct graphEdge {
-	    int startNode, endNode, weight;
+	    int startNode, endNode; 
+	    double weight;
 	};
 	
 	class graph {
 	    // insert new nodes into adjacency list from given graph
-	    adjNode* getAdjListNode(int newId, int weight, adjNode* head) {
+	    adjNode* getAdjListNode(int newId, double weight, adjNode* head) {
 	        adjNode* newNode = new adjNode;
 	        newNode->id = newId;
 	        newNode->cost = weight; 
@@ -60,7 +66,7 @@ namespace student {
 	public:
 	    adjNode **head;                //adjacency list as array of pointers
 	    // Constructor
-	    graph(graphEdge edges[], int n, int N) {
+	    graph(std::vector<graphEdge>& edges, int n, int N) {
 	        
 	        // allocate new node
 	        head = new adjNode*[N]();
@@ -75,7 +81,7 @@ namespace student {
 	        for (unsigned i = 0; i < n; i++)  {
 	            int startNode = edges[i].startNode;
 	            int endNode = edges[i].endNode;
-	            int weight = edges[i].weight;
+	            double weight = edges[i].weight;
 	            
 	            // insert in the beginning
 	            adjNode* newNode = getAdjListNode(endNode, weight, head[startNode]);

@@ -11,6 +11,11 @@ namespace student{
 	cv::Mat graph_image;
 	bool done = false;
 
+	/// Adjacency list of sampled points, with 
+	/// - index: it is the index of the node in the full tree
+	/// - int: index of next node 
+	/// - double: cost of link in euclidea distance
+ 	std::vector<std::vector<triplet>> free_edges;
 
 	/// Class for motion validation
 	class myMotionValidator : public ob::MotionValidator {
@@ -69,6 +74,18 @@ namespace student{
 							cv::Point p1(s1_x*400, 400-s1_y*400);
 							cv::Point p2(s2_x*400, 400-s2_y*400);
 							cv::line(graph_image, p1, p2, cv::Scalar(255,0,0), 1, cv::LINE_8);	
+					  		
+					  		full_tree.push_back(Point(s1_x,s1_y));
+
+					  		full_tree.push_back(Point(s2_x,s2_y));
+					  		
+					  		Point n1(s1_x,s1_y), n2(s2_x,s2_y);
+							double dist = distance(n1,n2);
+							int index1 = full_tree.size()-2;
+							int index2 = full_tree.size()-1;
+
+							free_edges.emplace_back({index1, index2, dist});
+
 					}
 
 					return true;
@@ -120,10 +137,7 @@ namespace student{
   				full_tree.push_back(Point(x, y));
   			}
   		}
-*/  		
-  		if (!done) {
-  			full_tree.push_back(Point(x, y));
-  		}
+*/
 
 		return true;
 	}
@@ -399,32 +413,6 @@ namespace student{
   	}
 
 
-  	void missionTwo(std::shared_ptr<ompl::base::SpaceInformation> si, std::vector<Point> &point_list) {
-  		
-	    // graph edges array.
-	    graphEdge edges[] = {
-	        // (x, y, w) -> edge from x to y with weight w
-	        {0,1,2}, {0,2,4}, {1,4,3}, {2,3,2}, {3,1,4}, {4,3,3}
-	    };
-	    int N = 6;      // Number of vertices in the graph
-	    // calculate number of edges
-	    int n = sizeof(edges)/sizeof(edges[0]);
-	    // construct graph
-	    graph adjGraph(edges, n, N);
-	    // print adjacency list representation of graph
-	    std::cout << "Graph adjacency list " << std::endl << "(start_vertex, end_vertex, weight): " << std::endl;
-	    for (int i = 0; i < N; i++) {
-	        // display adjacent vertices of vertex i
-	        printAdjList(adjGraph.head[i], i);
-	    }
-
-  		for (int i=1; i<point_list.size(); i++) {
-
-  		}
-  	}
-
-
-
   	void missionOne(std::vector<Point>& point_list, std::vector<Point>& RRT_list, std::shared_ptr<ompl::base::SpaceInformation> si, std::shared_ptr<ob::SE2StateSpace> space, cv::Mat& image){
   		for (int i=1; i < point_list.size(); i++) {
   			if(i==2){
@@ -545,5 +533,36 @@ namespace student{
 			pdef->clearGoal();	/// Free the memory from the previous goal TODO remove
 		}
   	}
+
+
+  	void missionTwo(std::shared_ptr<ompl::base::SpaceInformation> si, std::vector<Point> &point_list) {
+  		
+  	/*	
+	    // graph edges array.
+	    graphEdge edges[] = {
+	        // (x, y, w) -> edge from x to y with weight w
+	        {0,1,2}, {0,2,4}, {1,4,3}, {2,3,2}, {3,1,4}, {4,3,3}
+	    };
+	    int N = 6;      // Number of vertices in the graph
+	    // calculate number of edges
+	    int n = sizeof(edges)/sizeof(edges[0]);
+
+	    // construct graph
+	    graph adjGraph(free_edges, n, free_edges.size());
+
+
+	    // print adjacency list representation of graph
+	    std::cout << "Graph adjacency list " << std::endl << "(startNode, endNode, weight): " << std::endl;
+	    for (int i = 0; i < N; i++) {
+	        // display adjacent vertices of vertex i
+	        printAdjList(adjGraph.head[i], i);
+	    }
+
+  		for (int i=1; i<point_list.size(); i++) {
+
+  		}
+	*/
+  	}
+
 
 }
