@@ -706,7 +706,7 @@ namespace student {
 	    }
 
 	   
-
+/*
 	    std::vector<polygon_type> boost_obstacles;
 	    polygon_type boost_gate;
 
@@ -740,14 +740,8 @@ namespace student {
 		    }
 
 		}
-
+*/
 		
-
-
-	   
-
-
-
     	return gate_found;
 	}
 

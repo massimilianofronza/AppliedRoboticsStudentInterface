@@ -134,7 +134,7 @@ namespace student{
 			// Output variables
 			x = center_x;
 			y = center_y;
-			double theta = std::atan2(dy, dx);
+			theta = std::atan2(dy, dx);
 
 			if (DEBUG) { std::cout << "Rotation angle: " << theta << std::endl; }
 
