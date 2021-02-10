@@ -136,7 +136,9 @@ namespace student{
 			y = center_y;
 			theta = std::atan2(dy, dx);
 
-			if (DEBUG) { std::cout << "Rotation angle: " << theta << std::endl; }
+			if (DEBUG) { 
+				std::cout << "Rotation angle: " << theta << std::endl; 
+			}
 
 		}
 		//std::cout << "\t\tROBOT FOUND" << std::endl; 

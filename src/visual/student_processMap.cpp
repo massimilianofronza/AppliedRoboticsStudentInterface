@@ -926,7 +926,7 @@ namespace student {
 		return max_id + 1;
 	}
 
-	// Function to rotate a ROI by a certain angle    
+	/// Function to rotate a part of an image by a certain angle, used when processing the victims and doing template matching.    
 	cv::Mat rotate(cv::Mat src, double angle) {
 
 		// Output

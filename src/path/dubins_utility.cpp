@@ -6,7 +6,7 @@ namespace student {
 	// AUXILIARY UTILITY FUNCTIONS
 	// -------------------------------------------
 
-	// Sinc with Taylor series approximation, used to check correctness of solution 
+	/// Sinc with Taylor series approximation, used to check correctness of solution.
 	double sinc(double x) {
         double y;
         if (abs(x) < 0.002) {
@@ -18,7 +18,7 @@ namespace student {
         return y;
 	}
 
-	// Normalize an angle, [0, 2*PI) (can be useful for findRobot as well)
+	/// Normalize an angle, [0, 2*PI) (can be useful for findRobot as well)
 	double mod2pi(double angle) {
 	    double normalized = angle;
 	    while (normalized < 0){
@@ -30,7 +30,7 @@ namespace student {
 	    return normalized;
 	}
 
-	// Normalize an angular difference (range (-pi, pi])
+	/// Normalize an angular difference (range (-pi, pi])
 	double rangeSymm(double angle) {
 	    double inRange = angle;
 	    while (inRange <= -PI){
@@ -42,7 +42,7 @@ namespace student {
 	    return inRange;
 	}
 
-	// Take as input the scaled parameters
+	/// Checks the correctness of a Dubin's solution by taking as input the scaled parameters
 	bool check(double s1, double k0, double s2, double k1,
 	            double s3, double k2, double th0, double thf) {
 
@@ -83,7 +83,7 @@ namespace student {
 
 	/** 
 	 * Computes next configuration given the current one, the length of the 
-	 * arc and the curvature. Applied to get the nextConf in dubinsArc
+	 * arc and the curvature. Applied to get the nextConf in dubinsArc.
 	 * */
 	configuration getNextConfig(configuration curr, double k, double s) {
 	    configuration next; 
@@ -95,7 +95,7 @@ namespace student {
 
 	/**
 	 * Returns a dubinsArc datastructure, which uniquely identifies the arc
-	 * given its initial and final configurations, its length and curvature
+	 * given its initial and final configurations, its length and curvature.
 	 * */
 	dubinsArc constructArc(configuration currConf, double k, double L) {
 	    dubinsArc arc; 
@@ -129,13 +129,13 @@ namespace student {
 	    return curve;
 	}
 
-	// Prints info about the configuration
+	/// Prints info about the configuration of the robot (x,y, yaw).
 	void printConfiguration(configuration config) {
 	    std::cout << "Point: (x,y) = (" << config.x << "," << config.y << ")" << std::endl;
 	    std::cout << "Orientation: theta = " <<  config.th << std::endl;
 	}
 
-	// Prints info about arcs that compose the Dubins Curve
+	/// Prints info about arcs that compose the Dubin's Curve.
 	void printArc(dubinsArc arc) {
 	    std::cout << "Starting configuration: " << std::endl;
 	    printConfiguration(arc.currentConf);
@@ -146,12 +146,12 @@ namespace student {
 	    std::cout << std::endl;
 	}
 
-	// Returns this moment in time
+	/// Returns this moment in time.
 	std::chrono::high_resolution_clock::time_point startTime() {
 		return std::chrono::high_resolution_clock::now();
 	}
 
-	// Gets the start moment and tells how much time passed between that and now
+	/// Gets the start moment and tells how much time passed between that and now.
 	void stopTime(std::chrono::high_resolution_clock::time_point start, bool unit) {
 		auto stop = std::chrono::high_resolution_clock::now();
 

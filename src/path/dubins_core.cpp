@@ -2,8 +2,10 @@
 
 namespace student {
 
-	// Definition of the curvatue signs corresponding to the different
-	// dubins primitives functions
+	/**
+	* Definition of the curvatue signs corresponding to the different
+	* dubins primitives functions.
+	*/
 	int dubins_primitives_ksigns[6][3] = {
 	    {  1,  0,  1 },     // LSL
 	    { -1,  0, -1 },     // RSR
@@ -18,7 +20,7 @@ namespace student {
 	// METHODS TO SCALE AND SOLVE DUBINS PROBLEMS
 	// -------------------------------------------
 
-	/// Scale path finding problem into (-1,0) - (1,0) range 
+	/// Scale path finding problem into (-1,0) - (1,0) range.
 	void scaleToStandard(configuration initial, configuration final, 
 					double kmax, double &scTh0, double &scThf, 
 					double &scKmax, double &lambda) {
@@ -35,7 +37,7 @@ namespace student {
         scKmax = kmax * lambda;
 	}
 
-	/// Scale the solution to the standard problem back to the original problem
+	/// Scale the solution to the standard problem back to the original problem.
 	void scaleFromStandard(double lambda, double sc_s1, double sc_s2, 
 					double sc_s3, double& s1, double& s2, double& s3) {
 	    s1 = sc_s1 * lambda;
@@ -44,6 +46,12 @@ namespace student {
 	}
 
 
+	/**
+	* Performs the computation of the Dubin's curve composed by 
+	* an arc to the left, then a straight line, then an arc to the left.
+	* Takes as input the initial and final orientations, and the maximum curvature.
+	* It returns the length of the three segments.
+	*/
 	bool dubins_LSL(double sc_th0, double sc_thf, double sc_Kmax, 
                 	double& sc_s1, double& sc_s2, double& sc_s3) {
 	    double invK = 1.0 / sc_Kmax;
@@ -65,6 +73,12 @@ namespace student {
 	    return true;
 	}
 
+	/**
+	* Performs the computation to check for the Dubin's curve composed by 
+	* an arc to the right, then a straight line, then an arc to the right.
+	* Takes as input the initial and final orientations, and the maximum curvature.
+	* It returns the length of the three segments.
+	*/
 	bool dubins_RSR(double sc_th0, double sc_thf, double sc_Kmax, 
 	                double& sc_s1, double& sc_s2, double& sc_s3) {
 	    double invK = 1.0 / sc_Kmax;
@@ -87,6 +101,12 @@ namespace student {
 	    return true;
 	}
 
+	/**
+	* Performs the computation to check for the Dubin's curve composed by 
+	* an arc to the left, then a straight line, then an arc to the right.
+	* Takes as input the initial and final orientations, and the maximum curvature.
+	* It returns the length of the three segments.
+	*/
 	bool dubins_LSR(double sc_th0, double sc_thf, double sc_Kmax, 
 	                double& sc_s1, double& sc_s2, double& sc_s3) {
 	    double invK = 1.0 / sc_Kmax;
@@ -113,6 +133,8 @@ namespace student {
 	/**
 	 * Function to implement the finding of the path made of a Right curve, followed by a   
 	 * Straight line, followed by a Left curve. 
+	 * Takes as input the initial and final orientations, and the maximum curvature.
+	 * It returns the length of the three segments.
 	 */
 	bool dubins_RSL(double sc_th0, double sc_thf, double sc_Kmax, 
 	                double& sc_s1, double& sc_s2, double& sc_s3) {
@@ -142,7 +164,8 @@ namespace student {
 
 	/** 
 	 * Function to implement the finding of the path made of a Right curve, followed by a 
-	 * Left curve, followed by a Right curve. 
+	 * Left curve, followed by a Right curve. Takes as input the initial and final orientations, and the maximum curvature.
+	 * It returns the length of the three segments.
 	 */
 	bool dubins_RLR(double sc_th0, double sc_thf, double sc_Kmax, 
 	                double& sc_s1, double& sc_s2, double& sc_s3) {
@@ -169,7 +192,8 @@ namespace student {
 
 	/**
 	 * Function to implement the finding of the path made of a Left curve, followed by a  
-	 * Right curve, followed by a Left curve. 
+	 * Right curve, followed by a Left curve.  Takes as input the initial and final orientations, and the maximum curvature.
+	 * It returns the length of the three segments.
 	 */
 	bool dubins_LRL(double sc_th0, double sc_thf, double sc_Kmax, 
 	                double& sc_s1, double& sc_s2, double& sc_s3) {
@@ -308,8 +332,8 @@ namespace student {
 
 	/** 
 	* Computes the Dubin's shortest path between a list of points, the first of which
-	* if the robot and the last of which is the gate. 
-	* Both brute-approach and the optimized, iterative one are presented.
+	* is the robot and the last of which is the gate. 
+	* Both brute-froce approach and the optimized/iterative one are implemented.
 	*/
 	std::vector<dubinsCurve> multipoint(const configuration& robot, std::vector<Point>& points, double gate_th) {
 
