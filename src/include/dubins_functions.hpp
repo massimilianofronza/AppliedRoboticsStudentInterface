@@ -125,7 +125,7 @@ namespace student {
                                                 	 configuration final, 
                                                 	 double Kmax);
 
-	std::vector<dubinsCurve> multipoint(const configuration& robot, std::vector<Point>& points);
+	std::vector<dubinsCurve> multipoint(const configuration& robot, std::vector<Point>& points, double gate_th);
 
 
 	// -------------------------------------------

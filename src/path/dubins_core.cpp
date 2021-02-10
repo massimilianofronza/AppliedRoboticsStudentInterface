@@ -1,6 +1,5 @@
 #include "dubins_functions.hpp"
 
-
 namespace student {
 
 	// Definition of the curvatue signs corresponding to the different
@@ -312,7 +311,7 @@ namespace student {
 	* if the robot and the last of which is the gate. 
 	* Both brute-approach and the optimized, iterative one are presented.
 	*/
-	std::vector<dubinsCurve> multipoint(const configuration& robot, std::vector<Point>& points) {
+	std::vector<dubinsCurve> multipoint(const configuration& robot, std::vector<Point>& points, double gate_th) {
 
 		//double arena_limit[2] = {1.56, 1.06};
 		double Kmax = 35;
@@ -397,10 +396,10 @@ namespace student {
 						} else {
 							previous.th = angles[j];
 						}
-						for (int k = 0; k < no_angles; k++){
+						//for (int k = 0; k < no_angles; k++){
 							final.x = points[i].x;
 							final.y = points[i].y;
-							final.th = angles[k];
+							final.th = gate_th;//angles[k];
 
 							tmp = dubins_shortest_path(previous, final, Kmax);
 							if (tmp.second.L < bestLength){
@@ -409,7 +408,7 @@ namespace student {
 									bestCurve = tmp.second;
 									bestAngle = angles[j];
 							}
-						}
+						//}
 					}
 
 				} else { 

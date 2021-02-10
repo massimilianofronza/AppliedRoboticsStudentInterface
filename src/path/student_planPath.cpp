@@ -1,51 +1,13 @@
-#include "student_image_elab_interface.hpp"
-#include "student_planning_interface.hpp"
-#include "visual_functions.hpp"
 #include "path_functions.hpp"
-#include "collision_functions.hpp"
-
-/// Path planning specific imports
-#include <ompl/base/SpaceInformation.h>
-#include <ompl/base/spaces/SE2StateSpace.h>
-#include <ompl/base/StateValidityChecker.h>
-#include <ompl/base/MotionValidator.h>
-#include <ompl/base/DiscreteMotionValidator.h>
-#include <ompl/base/samplers/ObstacleBasedValidStateSampler.h>
-
-#include <ompl/geometric/planners/rrt/RRTConnect.h>
-#include <ompl/geometric/planners/rrt/RRTstar.h>
-#include <ompl/geometric/PathGeometric.h>
-  
-#include <ompl/config.h>
-#include <iostream>
-
-#include <boost/geometry.hpp>
-#include <boost/geometry/geometries/geometries.hpp>
-#include <boost/geometry/algorithms/within.hpp>
-#include <boost/geometry/geometries/point_xy.hpp>
-#include <boost/geometry/geometries/polygon.hpp>
-
-
-namespace ob = ompl::base;
-namespace og = ompl::geometric;
-namespace bg = boost::geometry;
-/// End of planning imports
 
 namespace student{
 
-	const bool DEBUG_plan = false;
-
-	bool myStateValidityCheckerFunction(const ob::State *state);
-	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation*si);
-	void drawSolutionTree(std::vector<Point> RRT_list, cv::Mat& image);
-	typedef bg::model::d2::point_xy<double> point_type;
-	typedef bg::model::polygon<point_type> polygon_type;
-	
 	Polygon this_borders;
 	polygon_type arena, valid_gate;
 	std::vector<polygon_type> this_obstacle_list;
 	std::vector<Polygon> coll_obstacles;
 	std::vector<Point> full_tree;
+
 
 	/// Class for motion validation
 	class myMotionValidator : public ob::MotionValidator {
@@ -71,9 +33,6 @@ namespace student{
 			}
 
 			bool checkMotion(const ob::State *s1, const ob::State *s2) const override {
-				//std::cout << "CIAO FRA STO USANDO LA PRIMA\n";
-				//full_tree.push_back(Point(s1->as<ob::SE2StateSpace::StateType>()->getX(), 
-				//						  s1->as<ob::SE2StateSpace::StateType>()->getY()));
 				double s1_x = s1->as<ob::SE2StateSpace::StateType>()->getX();
 				double s1_y = s1->as<ob::SE2StateSpace::StateType>()->getY();
 				double s2_x = s2->as<ob::SE2StateSpace::StateType>()->getX();
@@ -109,7 +68,7 @@ namespace student{
 			}
 
 			bool checkMotion(const ob::State *s1, const ob::State *s2, std::pair<ob::State *, double> &lastValid) const override {
-				cv::Mat image = cv::Mat::zeros(800, 800, CV_8UC3);
+				cv::Mat image = cv::Mat::zeros(800, 800, CV_8UC3);		// TODO delete this
 				char name[] = "I'M THE SECOND checkMotion()";
 				cv::namedWindow(name, 10);
 				cv::imshow(name, image);
@@ -118,6 +77,34 @@ namespace student{
 				return true;
 			}
 	};
+
+	bool myStateValidityCheckerFunction(const ob::State *state) {
+  		//ob::SE2StateSpace::StateType *D2state = state->as<ob::SE2StateSpace::StateType>();
+  		double x = state->as<ob::SE2StateSpace::StateType>()->getX(); 
+  		double y = state->as<ob::SE2StateSpace::StateType>()->getY();
+  		
+  		//std::cout << "Checking validity of point " << x << "," << y << std::endl;
+
+  		point_type p(x, y);
+  		if (!(bg::within(p, arena))) {	/// Point external w.r.t. the arena
+  			return false;
+  		}
+
+  		if (bg::within(p, valid_gate)){
+  			return true;
+  		}
+
+  		for (const auto& obstacle : this_obstacle_list) {
+  			if (bg::within(p, obstacle)) {	/// Point inside some obstacle
+	  			return false;
+  			}
+  		}
+
+		full_tree.push_back(Point(x, y));
+  		
+		return true;
+	}
+
 
 	// TODO represent arena and obstacles with the boost geometry types to check
 	// if the points are inside the polygons (for state validity)
@@ -185,17 +172,7 @@ namespace student{
 
 			//std::cout << i << "^ victim id: " << id << std::endl;
 
-			double cx = 0, cy = 0;
-			for (const auto& pt: victim){
-
-			//	std::cout << "\tPoint: (" << pt.x << "," << pt.y << ")" << std::endl;
-				cx += pt.x;
-				cy += pt.y;
-			}
-
-			cx /= victim.size();
-			cy /= victim.size();
-			Point center(cx, cy);
+			Point center = getCenter(victim);
 
 			// Ids of victims are put here with their index i in the sorted_index
 			// so that after sorting them we can get the center just with this index
@@ -228,18 +205,8 @@ namespace student{
 			std::cout << i << "^ victim id: " << id << " - Center: (" << center.x << "," << center.y << ")" << std::endl;
 		}
 
-		// Centroid of gate
-		double cx = 0, cy = 0;
-		for (const auto& pt: gate){
+		Point gate_center = getCenter(gate);
 
-		//	std::cout << "\tPoint: (" << pt.x << "," << pt.y << ")" << std::endl;
-			cx += pt.x;
-			cy += pt.y;
-		}
-
-		cx /= gate.size();
-		cy /= gate.size();
-		Point gate_center(cx, cy);
 		point_list.emplace_back(gate_center);
 
 		// Viualize
@@ -423,22 +390,48 @@ namespace student{
 				}
 			}
 
-			pdef->clearGoal();	/// Free the memory from the previous goal
+			pdef->clearGoal();	/// Free the memory from the previous goal TODO remove
 		}
 
 		cv::Mat sol_image = cv::Mat::zeros(600, 600, CV_8UC3);
 		sol_image.setTo(cv::Scalar(255, 255, 255));
 		drawSolutionTree(RRT_list, sol_image);
 
-		std::vector<dubinsCurve> curves = multipoint(robot, RRT_list);
+		for (int i=0; i<RRT_list.size(); i++) {
+			std::cout << "STAMP: x: " << RRT_list[i].x << ", y: " << RRT_list[i].y << std::endl;
+		}
 
-		float ds = 0.005;
+		point_type p(RRT_list[RRT_list.size()-1].x, RRT_list[RRT_list.size()-1].y);
+
+		if (!bg::within(p, valid_gate)){	/// Final point not on the gate
+  			if ((point_list[point_list.size()-2].x == RRT_list[RRT_list.size()-2].x) &&
+  				(point_list[point_list.size()-2].y == RRT_list[RRT_list.size()-2].y)) {		/// Final victim exactly the last-1 point found
+  				/// TODO collision checking
+  				RRT_list.push_back(point_list[point_list.size()-1]);						/// Append exact gate
+  			}
+  			else {
+  				RRT_list[RRT_list.size()-1] = point_list[point_list.size()-1];
+  			}
+  		}
+
+  		double gate_th = gate_angle(gate, borders);
+  		std::cout << "BIG GATE ANGLE: " << gate_th << std::endl;
+
+		std::vector<dubinsCurve> curves = multipoint(robot, RRT_list, gate_th);
+
+		float ds = 0.001;
+		bool entered = false;
+		int counter = 0;
 
 		for (const auto& curve: curves){
 
-			float trace = 0;
+			double trace = 0;
 
 			for (float s = 0; s < curve.a1.len; s+=ds) {
+				if (!entered) {
+					std::cout << "\tEntering 1/3\n";
+					entered = true;
+				}
 				configuration intermediate = getNextConfig(curve.a1.currentConf, curve.a1.k, s);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a1.k);
 				//if ((curve.a1.len-s) < ds) {
@@ -447,9 +440,15 @@ namespace student{
 				trace = s;
 			}
 
+			entered = false;
+			//std::cout << "MOVING, expected a1: " << curve.a1.len << ", performed: " << (trace-curve.a1.len) << ", trace: " << trace << std::endl;
 			float old_trace = trace;
 
 			for (float s = old_trace; s < curve.a2.len + old_trace; s+=ds) {
+				if (!entered) {
+					std::cout << "\tEntering 2/3\n";
+					entered = true;
+				}
 				configuration intermediate = getNextConfig(curve.a2.currentConf, curve.a2.k, s-old_trace);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a2.k);
 				//if ((curve.a2.len-s) < ds) {
@@ -458,70 +457,33 @@ namespace student{
 				trace = s;
 			}
 
+			entered = false;
+			//std::cout << "MOVING, expected a2: " << curve.a2.len << ", performed: " << (trace-curve.a2.len) << ", trace: " << trace << std::endl;
 			old_trace = trace;
 
 			for (float s = old_trace; s < curve.a3.len + old_trace; s+=ds) {
+				if (!entered) {
+					std::cout << "\tEntering 3/3\n";
+					entered = true;
+				}
 				configuration intermediate = getNextConfig(curve.a3.currentConf, curve.a3.k, s-old_trace);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a3.k);
 				//if ((curve.a3.len-s) < ds) {
 				//	s += curve.a3.len-s-ds;
 				//}
+				trace = s;
 			}
-			//path.points.emplace_back(curve.a1.len, curve.a1.currentConf.x, curve.a1.currentConf.y,curve.a1.currentConf.th, curve.a1.k);
-		
-			//path.points.emplace_back(curve.a2.len, curve.a2.currentConf.x, curve.a2.currentConf.y,curve.a2.currentConf.th, curve.a2.k);
-		
-			//path.points.emplace_back(curve.a3.len, curve.a3.currentConf.x, curve.a3.currentConf.y,curve.a3.currentConf.th, curve.a3.k);
+
+			entered = false;
+			//std::cout << "MOVING, expected a3: " << curve.a3.len << ", performed: " << (trace-curve.a3.len) << ", trace: " << trace << std::endl;
+			std::cout << "Expected curve length: " << curve.L << ", performed: " << trace << std::endl;
+			counter++;
+
 		}
 
+		std::cout << "Total # of curves: " << counter << std::endl;
 
 	    return true;
   	}
-
-  	
-  	bool myStateValidityCheckerFunction(const ob::State *state) {
-  		//ob::SE2StateSpace::StateType *D2state = state->as<ob::SE2StateSpace::StateType>();
-  		double x = state->as<ob::SE2StateSpace::StateType>()->getX(); 
-  		double y = state->as<ob::SE2StateSpace::StateType>()->getY();
-  		
-  		//std::cout << "Checking validity of point " << x << "," << y << std::endl;
-
-  		point_type p(x, y);
-  		if (!(bg::within(p, arena))) {	/// Point external w.r.t. the arena
-  			return false;
-  		}
-
-  		if (bg::within(p, valid_gate)){
-  			return true;
-  		}
-
-  		for (const auto& obstacle : this_obstacle_list) {
-  			if (bg::within(p, obstacle)) {	/// Point inside some obstacle
-	  			return false;
-  			}
-  		}
-
-		full_tree.push_back(Point(x, y));
-  		
-		return true;
-	}
-
-	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation*si){
-		return std::make_shared<ob::ObstacleBasedValidStateSampler>(si);
-	}
-
-	void drawSolutionTree(std::vector<Point> RRT_list, cv::Mat& image){
-		for(int i = 1; i< RRT_list.size(); i++){
-			cv::Point p1(RRT_list[i-1].x*300, RRT_list[i-1].y*300);
-			cv::Point p2(RRT_list[i].x*300, RRT_list[i].y*300);
-			cv::line(image, p1, p2, cv::Scalar(255,0,0), 3, cv::LINE_8);
-		}
-		char tree[] = "Tree";
-		cv::namedWindow(tree, 10);
-		cv::imshow(tree, image);
-		cv::waitKey(0);
-		cv::destroyWindow(tree); 
-
-	}
 
 }

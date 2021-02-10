@@ -45,6 +45,7 @@ add_library(student SHARED
    src/path/collision_utility.cpp
    src/path/collision_plot.cpp
    src/path/student_planPath.cpp
+   src/path/plan_utility.cpp
 )
 
 target_link_libraries(student

@@ -1,7 +1,48 @@
 #include "utils.hpp"
+#include "collision_functions.hpp"
+#include "student_image_elab_interface.hpp"
+#include "student_planning_interface.hpp"
+#include "visual_functions.hpp"
+
+/// Path planning specific imports
+#include <ompl/base/SpaceInformation.h>
+#include <ompl/base/spaces/SE2StateSpace.h>
+#include <ompl/base/StateValidityChecker.h>
+#include <ompl/base/MotionValidator.h>
+#include <ompl/base/DiscreteMotionValidator.h>
+#include <ompl/base/samplers/ObstacleBasedValidStateSampler.h>
+
+#include <ompl/geometric/planners/rrt/RRTConnect.h>
+#include <ompl/geometric/planners/rrt/RRTstar.h>
+#include <ompl/geometric/PathGeometric.h>
+  
+#include <ompl/config.h>
+#include <iostream>
 #include <algorithm>
 
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/geometries.hpp>
+#include <boost/geometry/algorithms/within.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
+#include <boost/geometry/geometries/polygon.hpp>
+
+namespace ob = ompl::base;
+namespace og = ompl::geometric;
+namespace bg = boost::geometry;
+/// End of planning imports
+
 namespace student {
+
+	const bool DEBUG_plan = false;
+
+	Point getCenter(const Polygon &poly);
+	bool myStateValidityCheckerFunction(const ob::State *state);
+	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation*si);
+	void drawSolutionTree(std::vector<Point> RRT_list, cv::Mat& image);
+	double gate_angle(const Polygon &gate, const Polygon &arena);
+	typedef bg::model::d2::point_xy<double> point_type;
+	typedef bg::model::polygon<point_type> polygon_type;
+
 
 	////////// PATH FUNCTIONS CALLED BY student_interface.cpp //////////
 
