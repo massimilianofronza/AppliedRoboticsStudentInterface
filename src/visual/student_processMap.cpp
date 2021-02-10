@@ -2,6 +2,13 @@
 #include "student_planning_interface.hpp"
 #include "clipper.hpp"
 #include "visual_functions.hpp"
+#include "unistd.h"
+#include <boost/geometry.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
+#include <boost/geometry/geometries/polygon.hpp>
+#include <boost/foreach.hpp>
+
+namespace bg = boost::geometry;
 
 namespace student {
 
@@ -23,7 +30,7 @@ namespace student {
 	bool processBorders(const cv::Mat& img_in, const cv::Mat& img_hsv, const double scale, std::vector<Polygon>& obstacle_list, bool DEBUG);	
 	
 	/// Finds the green gate.
-	bool processGate(const cv::Mat& img_hsv, cv::Mat& green_mask, const double scale, Polygon& gate, bool DEBUG);
+	bool processGate(const cv::Mat& img_hsv, cv::Mat& green_mask, const double scale, Polygon& gate, std::vector<Polygon>& off_borders, bool DEBUG);
 	
 	/// Processes the green circles that correspond to the victims, to collect their position and their id.
 	bool processVictims(const cv::Mat& img_in, const cv::Mat& img_hsv, cv::Mat& green_mask, const double scale, 
@@ -97,7 +104,7 @@ namespace student {
 			std::cout << "\tGREEN MASK PROCESSED\n" << std::flush;
 		}
 
-		const bool found_gate = processGate(img_hsv, green_mask, scale, gate, DEBUG);
+		const bool found_gate = processGate(img_hsv, green_mask, scale, gate, obstacle_list, DEBUG);
 	    if (!found_gate) {
 	    	std::cerr << "ERROR IN METHOD <processGate> of student_processMap.cpp.\n" << std::flush;
 	    }
@@ -638,7 +645,11 @@ namespace student {
 	}
 
 
-	bool processGate(const cv::Mat& img_hsv, cv::Mat& green_mask, const double scale, Polygon& gate, bool DEBUG) {
+	typedef bg::model::d2::point_xy<double> point_type;
+	typedef bg::model::polygon<point_type> polygon_type;
+	//typedef bg::model::polygon<bg::model::d2::point_xy<double> 
+
+	bool processGate(const cv::Mat& img_hsv, cv::Mat& green_mask, const double scale, Polygon& gate, std::vector<Polygon>& obstacle_list , bool DEBUG) {
 	
 		//////// STRUCTURES ////////
 
@@ -694,6 +705,49 @@ namespace student {
 			}
 	    }
 
+	   
+
+	    std::vector<polygon_type> boost_obstacles;
+	    polygon_type boost_gate;
+
+	    for (const auto& vertex : gate){
+			std::cout << "Gate corner: " << vertex.x << "," << vertex.y << std::endl;
+			bg::append(boost_gate.outer(), point_type(vertex.x, vertex.y));
+		}
+
+	    for (const auto& obstacle : obstacle_list) {
+			polygon_type polygon;
+
+			for (const auto& obst_vertex : obstacle) {
+				bg::append(polygon.outer(), point_type(obst_vertex.x, obst_vertex.y));
+			}
+			/// Close the obstacle polygon
+			bg::append(polygon.outer(), point_type(obstacle[0].x, obstacle[0].y));
+
+			boost_obstacles.emplace_back(polygon);
+
+			std::cout << "OFFSETTED OBSTACLE AREA: "<< boost::geometry::area(polygon) << std::endl;
+
+			std::list<polygon_type> output;
+
+			//subtract the gate from the border
+	    	bg::difference(polygon, boost_gate, output);
+	    	int i = 0;
+		    std::cout << "Obstacle - gate:" << std::endl;
+		    BOOST_FOREACH(polygon_type const& p, output)
+		    {
+		        std::cout << i++ << ": " << boost::geometry::area(p) << std::endl;
+		    }
+
+		}
+
+		
+
+
+	   
+
+
+
     	return gate_found;
 	}
 
@@ -720,10 +774,16 @@ namespace student {
 		//////// VICTIMS IDENTIFICATION ////////
 		
 		////// Load template images for victim numbers /////
-		
-		std::string folder = "/home/ubuntu/workspace/project/templates/";
+				
+		char* cwd;
+		cwd = (char*) malloc( FILENAME_MAX * sizeof(char) );
+		getcwd(cwd,FILENAME_MAX);
+
+		std::cout << cwd << std::endl;
+		std::string folder = "../workspace/project/templates/";
 		std::vector<cv::Mat> templates;
 		for (int i = 1; i <= 5; i++){
+			std::cout << folder << i << ".png" << std::endl;
 			cv::Mat num = cv::imread(folder + std::to_string(i) + ".png");	
 			if (!num.data) {
 				printf("Error opening template!\n");
