@@ -315,7 +315,7 @@ namespace student {
 	std::vector<dubinsCurve> multipoint(const configuration& robot, std::vector<Point>& points) {
 
 		//double arena_limit[2] = {1.56, 1.06};
-		double Kmax = 10;
+		double Kmax = 35;
 		int N_POINTS = points.size();
 
 
