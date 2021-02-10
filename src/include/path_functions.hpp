@@ -37,13 +37,18 @@ namespace student {
 
 	Point getCenter(const Polygon &poly);
 	bool myStateValidityCheckerFunction(const ob::State *state);
-	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation*si);
+	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation* si);
 	void drawSolutionTree(std::vector<Point> RRT_list, cv::Mat& image);
 	double gate_angle(const Polygon &gate, const Polygon &arena);
+
 	typedef bg::model::d2::point_xy<double> point_type;
 	typedef bg::model::polygon<point_type> polygon_type;
 
+	void missionTwo(ob::SpaceInformation& si);
 
+  	
+  	void missionOne(std::vector<Point>& point_list, std::vector<Point>& RRT_list, std::shared_ptr<ompl::base::SpaceInformation> si, std::shared_ptr<ob::SE2StateSpace> space, cv::Mat& image);
+  	
 	////////// PATH FUNCTIONS CALLED BY student_interface.cpp //////////
 
 	//void student_loadImage(cv::Mat& img_out, const std::string& config_folder);

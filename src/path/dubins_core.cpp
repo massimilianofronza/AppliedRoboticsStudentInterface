@@ -370,7 +370,7 @@ namespace student {
 
 						tmp = dubins_shortest_path(current, next, Kmax);
 						if (tmp.second.L < bestLength){
-							std::cout << i-1 << "th step: found a better Dubins path of length: " << tmp.second.L << std::endl;
+						//	std::cout << i-1 << "th step: found a better Dubins path of length: " << tmp.second.L << std::endl;
 							bestLength = tmp.second.L;
 							bestCurve = tmp.second;
 						}

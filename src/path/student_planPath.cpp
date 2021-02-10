@@ -7,6 +7,9 @@ namespace student{
 	std::vector<polygon_type> this_obstacle_list;
 	std::vector<Polygon> coll_obstacles;
 	std::vector<Point> full_tree;
+	double SOL_TIME = 5.0;
+	cv::Mat graph_image;
+	bool done = false;
 
 
 	/// Class for motion validation
@@ -52,12 +55,20 @@ namespace student{
 							if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, start_x, start_y, end_x, end_y)) {
 								return false;	/// Collision detected
 							}
+
 						}
 						/// Close with the last segment
 						if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, 
 										  obstacle[0].x, obstacle[0].y, obstacle[obstacle.size()-1].x, obstacle[obstacle.size()-1].y)) {
 							return false;	/// Collision detected
 						}
+						
+					}
+
+					if (!done){
+							cv::Point p1(s1_x*400, 400-s1_y*400);
+							cv::Point p2(s2_x*400, 400-s2_y*400);
+							cv::line(graph_image, p1, p2, cv::Scalar(255,0,0), 1, cv::LINE_8);	
 					}
 
 					return true;
@@ -152,9 +163,10 @@ namespace student{
 		//std::cout << "SCALE " << SCALE << std::endl;
 		// debug image
 		cv::Mat image = cv::Mat::zeros(600, 600, CV_8UC3);
-
 		image.setTo(cv::Scalar(255, 255, 255));
 
+		graph_image = cv::Mat::zeros(900, 650, CV_8UC3);
+		graph_image.setTo(cv::Scalar(255, 255, 255));
 
 		// Variables to keep victims and their centroid sorted 
 		std::vector<std::pair<int, int>> sorted_index;
@@ -230,40 +242,15 @@ namespace student{
 			cv::destroyWindow(centers); 
 		}
 
-
-		// FIND DUBINS PATH TO CONNECT THE POINTS
-		// final configuration is given by the gate center and an angle that should be in a certain range:
-		// theta = 1.45 - 1.65 if the gate is above, 4.6 - 4.8 if it is below
-		configuration robot;
-		robot.x = x;
-		robot.y = y;
-		robot.th = theta;
-
-		
-
-	/*	//CODE from the professor interface
-	    float xc = 0, yc = 1.5, r = 1.4;
-	    float ds = 0.05;
-	    std::cout << "M_PI =" << M_PI << std::endl;
-	    for (float theta = -M_PI/2, s = 0; theta<(-M_PI/2 + 1.2); theta+=ds/r, s+=ds) {
-	    	
-	      path.points.emplace_back(s, xc+r*std::cos(theta), yc+r*std::sin(theta), theta+M_PI/2, 1./r);    
-	    }
-*/
-
+		// Setup planner
 		auto space(std::make_shared<ob::SE2StateSpace>());
-		//ob::StateSpacePtr space(new ob::RealVectorStateSpace(2));
     	
 		// set the bounds for the R^2 part of SE(2)
 	    ob::RealVectorBounds bounds(2);
 	    bounds.setLow(0);
 	    bounds.setHigh(1.6);
 	  
-	  	space->setBounds(bounds);
-
-
-    	// Set the bounds of space to be in [0,1].
-		//space->as<ob::RealVectorStateSpace>()->setBounds(0.0, 2.0);		
+	  	space->setBounds(bounds);	
 
 		// Construct a space information instance for this state space
 		auto si(std::make_shared<ob::SpaceInformation>(space));
@@ -277,133 +264,22 @@ namespace student{
 		si->setMotionValidator(std::make_shared<myMotionValidator>(si));
 		//ob::MotionValidatorPtr mvPtr(new myMotionValidator(si));//ob::DiscreteMotionValidator(si));
 		//si->setMotionValidator(mvPtr);
-
 		si->setup();
 		
 		std::vector<Point> RRT_list;
 
-		for (int i=1; i < point_list.size(); i++) {
-			// Create an instance of a planner
-			auto planner(std::make_shared<og::RRTstar>(si));
-
-			// Set our robot's starting state to be the bottom-left corner of
-			// the environment, or (0,0).
-			ob::ScopedState<> start(space);
-			start->as<ob::SE2StateSpace::StateType>()->setX(point_list[i-1].x);
-			start->as<ob::SE2StateSpace::StateType>()->setY(point_list[i-1].y);
-			//start->as<ob::SE2StateSpace::StateType>()->setYaw(robot.th);
-
-			ob::ScopedState<> goal(space);
-			goal->as<ob::SE2StateSpace::StateType>()->setX(point_list[i].x);
-			goal->as<ob::SE2StateSpace::StateType>()->setY(point_list[i].y);
-
-			std::cout << "i: " << i << ", start: " << start << ", goal: " << goal << std::endl;
-
-			auto pdef(std::make_shared<ob::ProblemDefinition>(si));
-
-			// Set the start and goal states
-			pdef->setStartAndGoalStates(start, goal);
-
-			// Tell the planner which problem we are interested in solving
-			planner->setProblemDefinition(pdef);
-			planner->setup();
-
-			// Returns a value from ompl::base::PlannerStatus which describes whether a solution has been found within the specified 
-			// amount of time (in seconds). If this value can be cast to true, a solution was found.
-			ob::PlannerStatus solved = planner->ob::Planner::solve(1.0);
-
-			// If a solution has been found, display it. Simplification could be done, but we would need to create an instance 
-			// of ompl::geometric::PathSimplifier.
-			if (solved) {
-				// get the goal representation from the problem definition (not the same as the goal state)
-			    // and inquire about the found path
-				og::PathGeometric path(dynamic_cast<const og::PathGeometric&>(*pdef->getSolutionPath()));
-				const std::vector<ob::State*> &states = path.getStates();
-				ob::SE2StateSpace::StateType *state;
-
-				for(size_t j=0; j < states.size() ; ++j) {
-					if (i==1) {
-						state = states[j]->as<ob::SE2StateSpace::StateType>();
-						RRT_list.emplace_back(state->getX(), state->getY());
-						std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
-					}
-					else {
-						if (j!=0) {
-							state = states[j]->as<ob::SE2StateSpace::StateType>();
-							RRT_list.emplace_back(state->getX(), state->getY());
-							std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
-						}
-					}
-				}
-
-				for (int k=1; k<RRT_list.size(); k++) {
-					double s1_x = RRT_list[k-1].x;
-					double s1_y = RRT_list[k-1].y;
-					double s2_x = RRT_list[k].x;
-					double s2_y = RRT_list[k].y;
-
-					for (const auto& obstacle : coll_obstacles) {
-
-						for(int l=1; l<obstacle.size(); l++) {
-							double start_x = obstacle[l-1].x;	
-							double start_y = obstacle[l-1].y;
-							double end_x = obstacle[l].x;
-							double end_y = obstacle[l].y;
-							
-						//	if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, start_x, start_y, end_x, end_y)) {
-						//		std::cerr << "Collision detected for final path.\n";
-								//return false;
-						//	}
-						}
-						/// Close with the last segment
-		/*				if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, 
-										  obstacle[0].x, obstacle[0].y, obstacle[obstacle.size()-1].x, obstacle[obstacle.size()-1].y)) {
-							std::cerr << "Collision detected for final path.\n";
-							//return false;
-						}
-		*/
-					}
-				}
-
-		        //og::PathGeometric path = pdef->as<og::PathGeometric>getSolutionPath();
-		        std::cout << "Found solution: " << i << std::endl;
-		 
-		        // print the path to screen
-		        path.print(std::cout);
-
-		        if (DEBUG_plan) {
-					int radiusCircle = 1;
-					cv::Scalar colorCircle1(255,0,0);
-					int thicknessCircle1 = 2;
-
-					// Debug: draw victim centers
-					for (const Point& pt : full_tree) {
-						cv::Point visualCent(pt.x*300, pt.y*300);
-						cv::circle(image, visualCent, radiusCircle, colorCircle1, thicknessCircle1);				
-					}
-				
-			        char centers[] = "Full points on arena";
-					cv::namedWindow(centers, 10);
-					cv::imshow(centers, image);
-					cv::waitKey(0);
-					cv::destroyWindow(centers); 
-				}
-			}
-
-			pdef->clearGoal();	/// Free the memory from the previous goal TODO remove
-		}
+		
+  		missionOne(point_list, RRT_list, si, space, image);
+  		
 
 		cv::Mat sol_image = cv::Mat::zeros(600, 600, CV_8UC3);
 		sol_image.setTo(cv::Scalar(255, 255, 255));
 		drawSolutionTree(RRT_list, sol_image);
 
-		for (int i=0; i<RRT_list.size(); i++) {
-			std::cout << "STAMP: x: " << RRT_list[i].x << ", y: " << RRT_list[i].y << std::endl;
-		}
+		// Try to connect Gate directly to last victim
+		point_type final_p(RRT_list[RRT_list.size()-1].x, RRT_list[RRT_list.size()-1].y);
 
-		point_type p(RRT_list[RRT_list.size()-1].x, RRT_list[RRT_list.size()-1].y);
-
-		if (!bg::within(p, valid_gate)){	/// Final point not on the gate
+		if (!bg::within(final_p, valid_gate)){	/// Final point not on the gate
   			if ((point_list[point_list.size()-2].x == RRT_list[RRT_list.size()-2].x) &&
   				(point_list[point_list.size()-2].y == RRT_list[RRT_list.size()-2].y)) {		/// Final victim exactly the last-1 point found
   				/// TODO collision checking
@@ -416,6 +292,14 @@ namespace student{
 
   		double gate_th = gate_angle(gate, borders);
   		std::cout << "BIG GATE ANGLE: " << gate_th << std::endl;
+
+  		// FIND DUBINS PATH TO CONNECT THE POINTS
+		// final configuration is given by the gate center and an angle that should be in a certain range:
+		// theta = 1.45 - 1.65 if the gate is above, 4.6 - 4.8 if it is below
+		configuration robot;
+		robot.x = x;
+		robot.y = y;
+		robot.th = theta;
 
 		std::vector<dubinsCurve> curves = multipoint(robot, RRT_list, gate_th);
 
@@ -484,6 +368,132 @@ namespace student{
 		std::cout << "Total # of curves: " << counter << std::endl;
 
 	    return true;
+  	}
+
+
+  	void missionTwo(ob::SpaceInformation& si){
+
+  	}
+
+  	void missionOne(std::vector<Point>& point_list, std::vector<Point>& RRT_list, std::shared_ptr<ompl::base::SpaceInformation> si, std::shared_ptr<ob::SE2StateSpace> space, cv::Mat& image){
+  		for (int i=1; i < point_list.size(); i++) {
+  			if(i==2){
+  				done = true;
+  				char graph[] = "Graph";
+				cv::namedWindow(graph, 10);
+				cv::imshow(graph, graph_image);
+				cv::waitKey(0);
+				cv::destroyWindow(graph); 
+  			}
+			// Create an instance of a planner
+			auto planner(std::make_shared<og::RRTstar>(si));
+
+			// Set our robot's starting state to be the bottom-left corner of
+			// the environment, or (0,0).
+			ob::ScopedState<> start(space);
+			start->as<ob::SE2StateSpace::StateType>()->setX(point_list[i-1].x);
+			start->as<ob::SE2StateSpace::StateType>()->setY(point_list[i-1].y);
+		
+
+			ob::ScopedState<> goal(space);
+			goal->as<ob::SE2StateSpace::StateType>()->setX(point_list[i].x);
+			goal->as<ob::SE2StateSpace::StateType>()->setY(point_list[i].y);
+
+			std::cout << "i: " << i << ", start: " << start << ", goal: " << goal << std::endl;
+
+			auto pdef(std::make_shared<ob::ProblemDefinition>(si));
+
+			// Set the start and goal states
+			pdef->setStartAndGoalStates(start, goal);
+
+			// Tell the planner which problem we are interested in solving
+			planner->setProblemDefinition(pdef);
+			planner->setup();
+
+			// Returns a value from ompl::base::PlannerStatus which describes whether a solution has been found within the specified 
+			// amount of time (in seconds). If this value can be cast to true, a solution was found.
+			ob::PlannerStatus solved = planner->ob::Planner::solve(SOL_TIME);
+
+			// If a solution has been found, display it. Simplification could be done, but we would need to create an instance 
+			// of ompl::geometric::PathSimplifier.
+			if (solved) {
+				// get the goal representation from the problem definition (not the same as the goal state)
+			    // and inquire about the found path
+				og::PathGeometric path(dynamic_cast<const og::PathGeometric&>(*pdef->getSolutionPath()));
+				const std::vector<ob::State*> &states = path.getStates();
+				ob::SE2StateSpace::StateType *state;
+
+				for(size_t j=0; j < states.size() ; ++j) {
+					if (i==1) {
+						state = states[j]->as<ob::SE2StateSpace::StateType>();
+						RRT_list.emplace_back(state->getX(), state->getY());
+						std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
+					}
+					else {
+						if (j!=0) {
+							state = states[j]->as<ob::SE2StateSpace::StateType>();
+							RRT_list.emplace_back(state->getX(), state->getY());
+							std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
+						}
+					}
+				}
+
+				for (int k=1; k<RRT_list.size(); k++) {
+					double s1_x = RRT_list[k-1].x;
+					double s1_y = RRT_list[k-1].y;
+					double s2_x = RRT_list[k].x;
+					double s2_y = RRT_list[k].y;
+
+					for (const auto& obstacle : coll_obstacles) {
+
+						for(int l=1; l<obstacle.size(); l++) {
+							double start_x = obstacle[l-1].x;	
+							double start_y = obstacle[l-1].y;
+							double end_x = obstacle[l].x;
+							double end_y = obstacle[l].y;
+							
+						//	if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, start_x, start_y, end_x, end_y)) {
+						//		std::cerr << "Collision detected for final path.\n";
+								//return false;
+						//	}
+						}
+						/// Close with the last segment
+		/*				if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, 
+										  obstacle[0].x, obstacle[0].y, obstacle[obstacle.size()-1].x, obstacle[obstacle.size()-1].y)) {
+							std::cerr << "Collision detected for final path.\n";
+							//return false;
+						}
+		*/
+					} 
+				}
+
+		        //og::PathGeometric path = pdef->as<og::PathGeometric>getSolutionPath();
+		        std::cout << "Found solution: " << i << std::endl;
+		 
+		        // print the path to screen
+		        path.print(std::cout);
+
+		        if (DEBUG_plan) {
+					int radiusCircle = 1;
+					cv::Scalar colorCircle1(255,0,0);
+					int thicknessCircle1 = 2;
+
+					// Debug: draw victim centers
+					for (const Point& pt : full_tree) {
+						cv::Point visualCent(pt.x*300, pt.y*300);
+						cv::circle(image, visualCent, radiusCircle, colorCircle1, thicknessCircle1);				
+					}
+				
+			        char centers[] = "Full points on arena";
+					cv::namedWindow(centers, 10);
+					cv::imshow(centers, image);
+					cv::waitKey(0);
+					cv::destroyWindow(centers); 
+				}
+			}
+
+			pdef->clearGoal();	/// Free the memory from the previous goal TODO remove
+		}
   	}
 
 }
