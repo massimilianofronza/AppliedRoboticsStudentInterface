@@ -36,7 +36,7 @@ namespace student {
 		cv::destroyWindow(tree); 
 	}
 
-	double gate_angle(const Polygon &gate, const Polygon &arena) {
+	double gate_angle(const Polygon &gate, const Polygon &arena,double& gate_mid_w, double& gate_mid_h) {
 		Point gate_center = getCenter(gate);
 		Point arena_center = getCenter(arena);
 		
@@ -67,7 +67,10 @@ namespace student {
 			if (tmp_h > gate_height) {
 				gate_height = tmp_h;
 			}
-		}
+		}	
+
+		gate_mid_w = gate_width/2.0;
+		gate_mid_h = gate_height/2.0;
 
 		/// Now deciding the angle
 		if (gate_center.x < arena_center.x) {			/// Gate on the left side

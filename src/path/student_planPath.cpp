@@ -165,7 +165,7 @@ namespace student{
 		cv::Mat image = cv::Mat::zeros(600, 600, CV_8UC3);
 		image.setTo(cv::Scalar(255, 255, 255));
 
-		graph_image = cv::Mat::zeros(900, 650, CV_8UC3);
+		graph_image = cv::Mat::zeros(600, 900, CV_8UC3);
 		graph_image.setTo(cv::Scalar(255, 255, 255));
 
 		// Variables to keep victims and their centroid sorted 
@@ -217,7 +217,24 @@ namespace student{
 			std::cout << i << "^ victim id: " << id << " - Center: (" << center.x << "," << center.y << ")" << std::endl;
 		}
 
+
+		double gate_mid_w, gate_mid_h;
+  		double gate_th = gate_angle(gate, borders, gate_mid_w, gate_mid_h);
+  		std::cout << "BIG GATE ANGLE: " << gate_th << std::endl;
+
 		Point gate_center = getCenter(gate);
+		if (gate_th == 0){
+			gate_center.x -= gate_mid_w;
+		} 
+		else if (gate_th == PI){
+			gate_center.x += gate_mid_w;
+		}
+		else if (gate_th == PI/2.0){			
+			gate_center.y -= gate_mid_h;
+		}
+		else if (gate_th == 3.0*PI/2.0){			
+			gate_center.y += gate_mid_h;
+		}
 
 		point_list.emplace_back(gate_center);
 
@@ -277,11 +294,11 @@ namespace student{
 		drawSolutionTree(RRT_list, sol_image);
 
 		// Try to connect Gate directly to last victim
-		point_type final_p(RRT_list[RRT_list.size()-1].x, RRT_list[RRT_list.size()-1].y);
+/*		point_type final_p(RRT_list[RRT_list.size()-1].x, RRT_list[RRT_list.size()-1].y);
 
 		if (!bg::within(final_p, valid_gate)){	/// Final point not on the gate
-  			if ((point_list[point_list.size()-2].x == RRT_list[RRT_list.size()-2].x) &&
-  				(point_list[point_list.size()-2].y == RRT_list[RRT_list.size()-2].y)) {		/// Final victim exactly the last-1 point found
+  			if ((point_list[point_list.size()-2].x == RRT_list[RRT_list.size()-1].x) &&
+  				(point_list[point_list.size()-2].y == RRT_list[RRT_list.size()-1].y)) {		/// Final victim exactly the last-1 point found
   				/// TODO collision checking
   				RRT_list.push_back(point_list[point_list.size()-1]);						/// Append exact gate
   			}
@@ -289,9 +306,7 @@ namespace student{
   				RRT_list[RRT_list.size()-1] = point_list[point_list.size()-1];
   			}
   		}
-
-  		double gate_th = gate_angle(gate, borders);
-  		std::cout << "BIG GATE ANGLE: " << gate_th << std::endl;
+*/
 
   		// FIND DUBINS PATH TO CONNECT THE POINTS
 		// final configuration is given by the gate center and an angle that should be in a certain range:

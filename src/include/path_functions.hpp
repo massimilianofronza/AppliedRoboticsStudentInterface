@@ -39,7 +39,7 @@ namespace student {
 	bool myStateValidityCheckerFunction(const ob::State *state);
 	ob::ValidStateSamplerPtr allocOBValidStateSampler(const ob::SpaceInformation* si);
 	void drawSolutionTree(std::vector<Point> RRT_list, cv::Mat& image);
-	double gate_angle(const Polygon &gate, const Polygon &arena);
+	double gate_angle(const Polygon &gate, const Polygon &arena, double& gate_mid_w, double& gate_mid_h);
 
 	typedef bg::model::d2::point_xy<double> point_type;
 	typedef bg::model::polygon<point_type> polygon_type;
