@@ -16,7 +16,7 @@ namespace student {
 	//std::vector<Polygon> offsetted_obstacles;
 	double SCALE;
 	bool DEBUG_VICT = false;
-	int additional_off = 20;
+	int additional_off = 7;
 	//////// AUXILIARY FUNCTIONS ////////
 
 
