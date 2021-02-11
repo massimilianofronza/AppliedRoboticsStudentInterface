@@ -64,7 +64,7 @@ namespace student{
 		for (int i = 0; i<contours.size(); i++){
 
 			// Approximates the found shapes to closed shapes with less vertices
-			cv::approxPolyDP(contours[i], approx_curve, 7, true);
+			cv::approxPolyDP(contours[i], approx_curve, 10, true);
 			approximated = {approx_curve};
 	
 			// If it is not a triangle, continue searching 

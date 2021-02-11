@@ -528,7 +528,7 @@ namespace student {
 
   	void missionOne(std::vector<Point>& point_list, std::vector<Point>& RRT_list, std::shared_ptr<ompl::base::SpaceInformation> si, std::shared_ptr<ob::SE2StateSpace> space, cv::Mat& image){
   		for (int i=1; i < point_list.size(); i++) {
-  			if(i==2){
+  	/*		if(i==2){
   				done = true;
   				char graph[] = "Graph";
 				cv::namedWindow(graph, 10);
@@ -536,6 +536,8 @@ namespace student {
 				cv::waitKey(0);
 				cv::destroyWindow(graph); 
   			}
+  	*/
+
 			// Create an instance of a planner
 			auto planner(std::make_shared<og::RRTstar>(si));
 
