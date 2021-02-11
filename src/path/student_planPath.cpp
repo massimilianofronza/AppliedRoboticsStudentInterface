@@ -11,11 +11,11 @@ namespace student {
 	cv::Mat graph_image;
 	bool done = false;
 
-	/// Adjacency list of sampled points, with 
-	/// - index: it is the index of the node in the full tree
-	/// - int: index of next node 
-	/// - double: cost of link in euclidea distance
- 	///std::vector<std::vector<triplet>> free_edges;
+	// Adjacency list of sampled points, with 
+	// - index: it is the index of the node in the full tree
+	// - int: index of next node 
+	// - double: cost of link in euclidea distance
+ 	//std::vector<std::vector<triplet>> free_edges;
  	//graphEdge free_edges[];
  	double **free_edges;
 
@@ -490,9 +490,13 @@ namespace student {
 				}
 				configuration intermediate = getNextConfig(curve.a1.currentConf, curve.a1.k, s);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a1.k);
-				//if ((curve.a1.len-s) < ds) {
-				//	s += curve.a1.len-s-ds;
-				//}
+				/*if ((curve.a1.len-s) < ds) {
+					//s += curve.a1.len-s-ds;
+					configuration intermediate = getNextConfig(curve.a1.currentConf, curve.a1.k, curve.a1.len);
+					path.points.emplace_back(curve.a1.len, intermediate.x, intermediate.y, intermediate.th, curve.a1.k);
+					trace = curve.a1.len;
+					break;
+				}*/
 				trace = s;
 			}
 
@@ -507,9 +511,13 @@ namespace student {
 				}
 				configuration intermediate = getNextConfig(curve.a2.currentConf, curve.a2.k, s-old_trace);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a2.k);
-				//if ((curve.a2.len-s) < ds) {
-				//	s += curve.a2.len-s-ds;
-				//}
+				/*if (((curve.a2.len + old_trace) - s) < ds) {
+					//s += curve.a2.len+old_trace-s-ds;
+					configuration intermediate = getNextConfig(curve.a2.currentConf, curve.a2.k, curve.a2.len-old_trace);
+					path.points.emplace_back(curve.a2.len+old_trace, intermediate.x, intermediate.y, intermediate.th, curve.a2.k);
+					trace = curve.a2.len + old_trace;
+					break;
+				}*/
 				trace = s;
 			}
 
@@ -524,9 +532,12 @@ namespace student {
 				}
 				configuration intermediate = getNextConfig(curve.a3.currentConf, curve.a3.k, s-old_trace);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a3.k);
-				//if ((curve.a3.len-s) < ds) {
-				//	s += curve.a3.len-s-ds;
-				//}
+				/*if (((curve.a3.len + old_trace) - s) < ds) {
+					//s += curve.a3.len+old_trace-s-ds;
+					//configuration intermediate = getNextConfig(curve.a3.currentConf, curve.a3.k, curve.a3.len-old_trace);
+					//path.points.emplace_back(curve.a3.len+old_trace, intermediate.x, intermediate.y, intermediate.th, curve.a3.k);
+					//break;
+				}*/
 				trace = s;
 			}
 
@@ -606,13 +617,13 @@ namespace student {
 					if (i==1) {
 						state = states[j]->as<ob::SE2StateSpace::StateType>();
 						RRT_list.emplace_back(state->getX(), state->getY());
-						std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
+						//std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
 					}
 					else {
 						if (j!=0) {
 							state = states[j]->as<ob::SE2StateSpace::StateType>();
 							RRT_list.emplace_back(state->getX(), state->getY());
-							std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
+							//std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
 						}
 					}
 				}
@@ -651,7 +662,7 @@ namespace student {
 		        std::cout << "TREE: " << full_tree.size() << std::endl;
 		 
 		        // print the path to screen
-		        path.print(std::cout);
+		        // path.print(std::cout);
 
 		        if (DEBUG_plan) {
 					int radiusCircle = 1;
