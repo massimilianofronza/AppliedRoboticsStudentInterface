@@ -11,15 +11,18 @@ namespace student {
 	cv::Mat graph_image;
 	bool done = false;
 
-	// Adjacency list of sampled points, with 
-	// - index: it is the index of the node in the full tree
-	// - int: index of next node 
-	// - double: cost of link in euclidea distance
- 	//std::vector<std::vector<triplet>> free_edges;
+	/// Adjacency list of sampled points, with 
+	/// - index: it is the index of the node in the full tree
+	/// - int: index of next node 
+	/// - double: cost of link in euclidea distance
+ 	///std::vector<std::vector<triplet>> free_edges;
  	//graphEdge free_edges[];
  	double **free_edges;
 
-	/// Class for motion validation
+	/** 
+	* Class for motion validation, used by the planner to check if
+	* two states can be connected. It relies on our implementation of collision checking.
+	*/
 	class myMotionValidator : public ob::MotionValidator {
 		
 		private:
@@ -108,6 +111,12 @@ namespace student {
 			}
 	};
 
+	/** 
+	* State validity checker, used by the sampler in order to see if a point 
+	* is valid.
+	* @returns true if the point is inside the arena and in a free area, or on the gate. False
+	* if it is outside the arena or on an obstacle.
+	*/
 	bool myStateValidityCheckerFunction(const ob::State *state) {
   		double x = state->as<ob::SE2StateSpace::StateType>()->getX(); 
   		double y = state->as<ob::SE2StateSpace::StateType>()->getY();
@@ -183,9 +192,9 @@ namespace student {
 	// check: boost.org/doc/libs/1_62_0/libs/geometry/doc/html/geometry/reference/algorithms/within/within_2.html
 	
 	/**
-	* Performs the computation of a collision free path, that goes through all the victims's centers 
+	* Performs the computation of a collision free path, that goes through all the victims's
 	* in order (mission 1) by using Dubin's manoeuvres.
-	*
+	* It uses the RRTstar library of OMPL. 
 	*/
 	bool student_planPath(const Polygon& borders, const std::vector<Polygon>& obstacle_list, 
                  const std::vector<std::pair<int,Polygon>>& victim_list, const Polygon& gate, 
@@ -253,12 +262,12 @@ namespace student {
 			std::cout << i << "^ victim id: " << id << " - Center: (" << center.x << "," << center.y << ")" << std::endl;
 		}
 
-		// Debug prints
+/*		// Debug prints
 		std::cout << "Unsorted list of ids-index:" << std::endl;
 		for (int i = 0; i < sorted_index.size(); ++i){
 			std::cout << "\t  Id - index: " << sorted_index[i].first << " - " << sorted_index[i].second << std::endl;
 		}
-
+*/
 		sort(sorted_index.begin(), sorted_index.end());
 
 		// Debug prints
@@ -267,7 +276,7 @@ namespace student {
 			std::cout << "\tS Id - index: " << sorted_index[i].first << " - " << sorted_index[i].second << std::endl;
 		}
 
-		// Final check: now we can get victims in order
+/*		// Final check: now we can get victims in order
 		for (int i = 0; i < sorted_index.size(); ++i){
 			int id = sorted_index[i].first;
 			int index = sorted_index[i].second;
@@ -275,8 +284,8 @@ namespace student {
 //			point_list.emplace_back(center);
 			//std::cout << i << "^ victim id: " << id << " - Center: (" << center.x << "," << center.y << ")" << std::endl;
 		}
-
-		// Save victims into boost polygons
+*/
+		// Check if victim is on obstacle
 		for (int i=0; i < sorted_index.size(); i++) {
 			
 			int victimIndex = sorted_index[i].second;	// Used to access to the victim's polygon
@@ -356,7 +365,7 @@ namespace student {
   			}
 		}
 
-
+		// Compute the final configuration
 		double gate_mid_w, gate_mid_h;
   		double gate_th = gate_angle(gate, borders, gate_mid_w, gate_mid_h);
 
@@ -430,7 +439,9 @@ namespace student {
 
 		cv::Mat sol_image = cv::Mat::zeros(600, 600, CV_8UC3);
 		sol_image.setTo(cv::Scalar(255, 255, 255));
-		drawSolutionTree(RRT_list, sol_image);
+		if (DEBUG_plan) {
+			drawSolutionTree(RRT_list, sol_image);
+		}
 
 		// Try to connect Gate directly to last victim
 		point_type final_p(RRT_list[RRT_list.size()-1].x, RRT_list[RRT_list.size()-1].y);
@@ -439,7 +450,20 @@ namespace student {
 		if ((RRT_list[RRT_list.size()-1].x != gate_center.x) && (RRT_list[RRT_list.size()-1].y != gate_center.y)){
 			RRT_list.push_back(gate_center);
 		}
-
+		/*
+		if ( !bg::within(final_p, valid_gate)){	/// Final point not on the gate
+  		
+  			if ((point_list[point_list.size()-2].x == RRT_list[RRT_list.size()-1].x) &&
+  				(point_list[point_list.size()-2].y == RRT_list[RRT_list.size()-1].y)) {		/// Final victim exactly the last-1 point found
+  				/// TODO collision checking
+  				RRT_list.push_back(point_list[point_list.size()-1]);						/// Append exact gate
+  			}
+  		
+  			else {
+  				RRT_list[RRT_list.size()-1] = point_list[point_list.size()-1];
+  			}
+  		}
+*/
 
   		// FIND DUBINS PATH TO CONNECT THE POINTS
 		// final configuration is given by the gate center and an angle that should be in a certain range:
@@ -466,17 +490,14 @@ namespace student {
 				}
 				configuration intermediate = getNextConfig(curve.a1.currentConf, curve.a1.k, s);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a1.k);
-				/*if ((curve.a1.len-s) < ds) {
-					//s += curve.a1.len-s-ds;
-					configuration intermediate = getNextConfig(curve.a1.currentConf, curve.a1.k, curve.a1.len);
-					path.points.emplace_back(curve.a1.len, intermediate.x, intermediate.y, intermediate.th, curve.a1.k);
-					trace = curve.a1.len;
-					break;
-				}*/
+				//if ((curve.a1.len-s) < ds) {
+				//	s += curve.a1.len-s-ds;
+				//}
 				trace = s;
 			}
 
 			entered = false;
+			//std::cout << "MOVING, expected a1: " << curve.a1.len << ", performed: " << (trace-curve.a1.len) << ", trace: " << trace << std::endl;
 			float old_trace = trace;
 
 			for (float s = old_trace; s < curve.a2.len + old_trace; s+=ds) {
@@ -486,17 +507,14 @@ namespace student {
 				}
 				configuration intermediate = getNextConfig(curve.a2.currentConf, curve.a2.k, s-old_trace);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a2.k);
-				/*if (((curve.a2.len + old_trace) - s) < ds) {
-					//s += curve.a2.len+old_trace-s-ds;
-					configuration intermediate = getNextConfig(curve.a2.currentConf, curve.a2.k, curve.a2.len-old_trace);
-					path.points.emplace_back(curve.a2.len+old_trace, intermediate.x, intermediate.y, intermediate.th, curve.a2.k);
-					trace = curve.a2.len + old_trace;
-					break;
-				}*/
+				//if ((curve.a2.len-s) < ds) {
+				//	s += curve.a2.len-s-ds;
+				//}
 				trace = s;
 			}
 
 			entered = false;
+			//std::cout << "MOVING, expected a2: " << curve.a2.len << ", performed: " << (trace-curve.a2.len) << ", trace: " << trace << std::endl;
 			old_trace = trace;
 
 			for (float s = old_trace; s < curve.a3.len + old_trace; s+=ds) {
@@ -506,16 +524,14 @@ namespace student {
 				}
 				configuration intermediate = getNextConfig(curve.a3.currentConf, curve.a3.k, s-old_trace);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a3.k);
-				/*if (((curve.a3.len + old_trace) - s) < ds) {
-					//s += curve.a3.len+old_trace-s-ds;
-					//configuration intermediate = getNextConfig(curve.a3.currentConf, curve.a3.k, curve.a3.len-old_trace);
-					//path.points.emplace_back(curve.a3.len+old_trace, intermediate.x, intermediate.y, intermediate.th, curve.a3.k);
-					//break;
-				}*/
+				//if ((curve.a3.len-s) < ds) {
+				//	s += curve.a3.len-s-ds;
+				//}
 				trace = s;
 			}
 
 			entered = false;
+			//std::cout << "MOVING, expected a3: " << curve.a3.len << ", performed: " << (trace-curve.a3.len) << ", trace: " << trace << std::endl;
 			std::cout << "Expected curve length: " << curve.L << ", performed: " << trace << std::endl;
 			counter++;
 
@@ -527,6 +543,15 @@ namespace student {
   	}
 
 
+  	/**
+  	* Implementation of the mission one: collect all the victims in order and go to the gate,
+  	* by avoiding the obstacles. Takes as input:
+  	* @param point_list The victims, in order, and the gate
+  	* @param RRT_list the output list containing a series of states along the path
+  	* @param si A variable of OMPL needed by the planner
+  	* @param space Another variable of OMPL
+  	* @param image An image for debugging purposes.
+  	*/
   	void missionOne(std::vector<Point>& point_list, std::vector<Point>& RRT_list, std::shared_ptr<ompl::base::SpaceInformation> si, std::shared_ptr<ob::SE2StateSpace> space, cv::Mat& image){
   		for (int i=1; i < point_list.size(); i++) {
   	/*		if(i==2){
@@ -559,7 +584,7 @@ namespace student {
 
 			// Set the start and goal states
 			pdef->setStartAndGoalStates(start, goal);
-
+					
 			// Tell the planner which problem we are interested in solving
 			planner->setProblemDefinition(pdef);
 			planner->setup();
@@ -581,13 +606,13 @@ namespace student {
 					if (i==1) {
 						state = states[j]->as<ob::SE2StateSpace::StateType>();
 						RRT_list.emplace_back(state->getX(), state->getY());
-						//std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
+						std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
 					}
 					else {
 						if (j!=0) {
 							state = states[j]->as<ob::SE2StateSpace::StateType>();
 							RRT_list.emplace_back(state->getX(), state->getY());
-							//std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
+							std::cout << "State " << j << ": " << state->getX() << ", " << state->getY() << "\n";
 						}
 					}
 				}
@@ -621,11 +646,12 @@ namespace student {
 					} 
 				}
 
+		        //og::PathGeometric path = pdef->as<og::PathGeometric>getSolutionPath();
 		        std::cout << "Found solution: " << i << std::endl;
-		        std::cout << "Tree size: " << full_tree.size() << std::endl;
+		        std::cout << "TREE: " << full_tree.size() << std::endl;
 		 
 		        // print the path to screen
-		        //path.print(std::cout);
+		        path.print(std::cout);
 
 		        if (DEBUG_plan) {
 					int radiusCircle = 1;
@@ -650,7 +676,10 @@ namespace student {
 		}
   	}
 
-
+  	/**
+  	* Trial of implementing mission two, by connecting all the points found in one iteration of the RRTstar
+  	* between each other (a sort of PRM). 
+  	*/
   	void missionTwo(std::shared_ptr<ompl::base::SpaceInformation> si, std::vector<Point> &point_list) {
  
 		int npts = full_tree.size();
