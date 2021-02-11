@@ -16,7 +16,7 @@ namespace student {
 	//std::vector<Polygon> offsetted_obstacles;
 	double SCALE;
 	bool DEBUG_VICT = false;
-
+	int additional_off = 20;
 	//////// AUXILIARY FUNCTIONS ////////
 
 
@@ -212,7 +212,7 @@ namespace student {
 
 
 		// OFFSET OBSTACLES TO GET NEW POLIGONS
-		float OFFSET = findRobotRadius(img_in, img_hsv, scale, DEBUG)+7;
+		float OFFSET = findRobotRadius(img_in, img_hsv, scale, DEBUG)+additional_off;
 		// To process all the obstacles together: (either do this or the offsetting inside the processObstacles) 
 		std::vector<Polygon> offsetted_obstacles;
 	    const bool offset_obstacles = offsetObstacles(OFFSET, img_in, scale, found_obstacles, offsetted_obstacles, DEBUG);
@@ -414,7 +414,7 @@ namespace student {
 
 
 		// OFFSET OBSTACLES TO GET NEW POLIGONS
-		float OFFSET = findRobotRadius(img_in, img_hsv, scale, DEBUG)+7;
+		float OFFSET = findRobotRadius(img_in, img_hsv, scale, DEBUG) +additional_off;
 		std::vector<Polygon> offsetted_obstacles;
 		// To process all the obstacles together: (either do this or the offsetting inside the processObstacles) 
 		offsetEachObstacle(OFFSET, img_in, scale, found_borders, offsetted_obstacles, DEBUG);

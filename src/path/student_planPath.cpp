@@ -293,7 +293,7 @@ namespace student {
 			}
 
 			cv::minEnclosingCircle(conversion, cv_center, radius);
-			std::cout << "RAGGIO: " << radius << " AND CENTER: " << cv_center.x << ", " << cv_center.y << std::endl;
+		//	std::cout << "RAGGIO: " << radius << " AND CENTER: " << cv_center.x << ", " << cv_center.y << std::endl;
 			double tmpRadius = radius/500;
 			double tmpCenter_x = center.x;
 			double tmpCenter_y = center.y;
@@ -343,7 +343,7 @@ namespace student {
   						totallyFree = false;
   					}
   					else {
-  						std::cout << "OKKKKKKK: " << center.x << ", " << center.y << ", 2: " << tmpCenter_x << ", " << tmpCenter_y << std::endl;
+  						//std::cout << "OK: " << center.x << ", " << center.y << ", 2: " << tmpCenter_x << ", " << tmpCenter_y << std::endl;
   						totallyFree = true;
   					}
   					// Center collisions-free
@@ -359,16 +359,15 @@ namespace student {
 
 		double gate_mid_w, gate_mid_h;
   		double gate_th = gate_angle(gate, borders, gate_mid_w, gate_mid_h);
-  		std::cout << "BIG GATE ANGLE: " << gate_th << std::endl;
 
 		Point gate_center = getCenter(gate);
 		if (gate_th == 0){
 			gate_center.x -= gate_mid_w;
-		} 
+		}
 		else if (gate_th == PI){
 			gate_center.x += gate_mid_w;
 		}
-		else if (gate_th == PI/2.0){			
+		else if (gate_th == PI/2.0){		
 			gate_center.y -= gate_mid_h;
 		}
 		else if (gate_th == 3.0*PI/2.0){			
@@ -434,14 +433,21 @@ namespace student {
 		drawSolutionTree(RRT_list, sol_image);
 
 		// Try to connect Gate directly to last victim
-/*		point_type final_p(RRT_list[RRT_list.size()-1].x, RRT_list[RRT_list.size()-1].y);
+		point_type final_p(RRT_list[RRT_list.size()-1].x, RRT_list[RRT_list.size()-1].y);
 
-		if (!bg::within(final_p, valid_gate)){	/// Final point not on the gate
+
+		if ((RRT_list[RRT_list.size()-1].x != gate_center.x) && (RRT_list[RRT_list.size()-1].y != gate_center.y)){
+			RRT_list.push_back(gate_center);
+		}
+		/*
+		if ( !bg::within(final_p, valid_gate)){	/// Final point not on the gate
+  		
   			if ((point_list[point_list.size()-2].x == RRT_list[RRT_list.size()-1].x) &&
   				(point_list[point_list.size()-2].y == RRT_list[RRT_list.size()-1].y)) {		/// Final victim exactly the last-1 point found
   				/// TODO collision checking
   				RRT_list.push_back(point_list[point_list.size()-1]);						/// Append exact gate
   			}
+  		
   			else {
   				RRT_list[RRT_list.size()-1] = point_list[point_list.size()-1];
   			}
