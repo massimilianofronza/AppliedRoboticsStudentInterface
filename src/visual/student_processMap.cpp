@@ -217,7 +217,7 @@ namespace student {
 		std::vector<Polygon> offsetted_obstacles;
 	    const bool offset_obstacles = offsetObstacles(OFFSET, img_in, scale, found_obstacles, offsetted_obstacles, DEBUG);
 //		offsetEachObstacle(OFFSET, img_in, scale, found_obstacles, offsetted_obstacles, DEBUG);
-		std::cout << "Size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl;
+		//std::cout << "Size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl;
 		
 		for (const auto& off: offsetted_obstacles){
 			obstacle_list.push_back(off);
@@ -281,7 +281,7 @@ namespace student {
 		for (int i = 0; i < contours.size(); i++) { // here there should be only one contour, the whole arena 
 
 			const double area = cv::contourArea(contours[i]);
-			std::cout << "Area of " << i << "th identified contour: " << area << std::endl;
+			std::cout << "Area of " << i << "th identified black contour: " << area << std::endl;
 			if (area > 12000) { // the whole arena
 				foundArena = true;
 				cv::approxPolyDP(contours[i], approx_curve, 7, true);
@@ -418,7 +418,7 @@ namespace student {
 		std::vector<Polygon> offsetted_obstacles;
 		// To process all the obstacles together: (either do this or the offsetting inside the processObstacles) 
 		offsetEachObstacle(OFFSET, img_in, scale, found_borders, offsetted_obstacles, DEBUG);
-		std::cout << "Size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl;
+	//	std::cout << "Size of offsetted_obstacles: " << offsetted_obstacles.size() << std::endl;
 		
 		for (const auto& off: offsetted_obstacles){
 			obstacle_list.push_back(off);
@@ -435,7 +435,7 @@ namespace student {
 	    ClipperLib::ClipperOffset co;
 
 	    //const double INT_ROUND = 1000.;
-	    std::cout << "Tot obstacles to process: " << found_obstacles.size() << std::endl;
+	 // std::cout << "Tot obstacles to process: " << found_obstacles.size() << std::endl;
 	    for (const auto& object: found_obstacles) {
 	          
 	        ClipperLib::Path srcObstacle;
@@ -486,8 +486,8 @@ namespace student {
 	    }
 
 
-        std::cout << "Processed obstacles: " << offsetted_obstacles.size() << std::endl;
-        std::cout << "Processed visual obstacles: " << visualObstacles.size() << std::endl;
+     //  std::cout << "Processed obstacles: " << offsetted_obstacles.size() << std::endl;
+     //  std::cout << "Processed visual obstacles: " << visualObstacles.size() << std::endl;
 
         if (DEBUG) { 
 		    cv::Mat contours_img = img_in.clone();
@@ -807,7 +807,7 @@ namespace student {
 		std::vector<cv::Rect> boundRect(contours.size());
  		for (int i=0; i<contours.size(); ++i)
         	{
-			std::cout << "Processing contour " << i << std::endl;
+			std::cout << "Processing green contour: " << i << std::endl;
 		  	const double area = cv::contourArea(contours[i]);
 
 			if(area < 500) continue;   // remove false positives
@@ -926,7 +926,7 @@ namespace student {
 		return max_id + 1;
 	}
 
-	// Function to rotate a ROI by a certain angle    
+	/// Function to rotate a part of an image by a certain angle, used when processing the victims and doing template matching.    
 	cv::Mat rotate(cv::Mat src, double angle) {
 
 		// Output
