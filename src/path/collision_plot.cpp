@@ -16,13 +16,13 @@ namespace student {
 		image.setTo(cv::Scalar(255, 255, 255));
 
 		// Defining a scaling factor and an y-offset
-		double fact = 40;
+		double fact = 50;
 		double off = 3;
 
 		// Defining points
-		cv::Point s1 = cv::Point(x1*fact, COLL_PLOT_Y_SIZE - (y4 + off) *fact);
-		cv::Point e1 = cv::Point(x2*fact, COLL_PLOT_Y_SIZE - (y4 + off) *fact);
-		cv::Point s2 = cv::Point(x3*fact, COLL_PLOT_Y_SIZE - (y4 + off) *fact);
+		cv::Point s1 = cv::Point(x1*fact, COLL_PLOT_Y_SIZE - (y1 + off) *fact);
+		cv::Point e1 = cv::Point(x2*fact, COLL_PLOT_Y_SIZE - (y2 + off) *fact);
+		cv::Point s2 = cv::Point(x3*fact, COLL_PLOT_Y_SIZE - (y3 + off) *fact);
 		cv::Point e2 = cv::Point(x4*fact, COLL_PLOT_Y_SIZE - (y4 + off) *fact);
 
 		// Plot the lines
@@ -81,10 +81,10 @@ namespace student {
 		cv::line(image, s1, e1, cv::Scalar(255, 0, 0), 3, cv::LINE_8);
 
 		if (verse > 0) {		/// Left turn
-			cv::putText(image, "LEFT", a1, cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,0), 0.8);
+			cv::putText(image, "LEFT", a1, cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,0), 2.3);
 		}
 		else if (verse < 0) {	/// Left turn
-			cv::putText(image, "RIGHT", a1, cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,0), 0.8);
+			cv::putText(image, "RIGHT", a1, cv::FONT_HERSHEY_SIMPLEX, 0.8, cv::Scalar(0,0,0), 2.3);
 		}
 		else {
 			std::cerr << "________ERROR IN METHOD <plotXCircle> of collision_plot.cpp: a straight line was passed instead of an arc.________\n";

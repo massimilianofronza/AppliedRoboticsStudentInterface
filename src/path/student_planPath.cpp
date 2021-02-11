@@ -564,7 +564,7 @@ namespace student {
 
 			// Set the start and goal states
 			pdef->setStartAndGoalStates(start, goal);
-					
+
 			// Tell the planner which problem we are interested in solving
 			planner->setProblemDefinition(pdef);
 			planner->setup();

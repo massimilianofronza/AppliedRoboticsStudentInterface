@@ -4,6 +4,15 @@ namespace student {
 
 	/**
 	 * Detects collisions between a couple of segments, and returns the boolean outcome.
+	 * @param x1 First x coordinate of the first segment
+	 * @param y1 First y coordinate of the first segment
+	 * @param x2 Second x coordinate of the first segment
+	 * @param y2 Second y coordinate of the first segment
+	 * @param x3 First x coordinate of the second segment
+	 * @param y3 First y coordinate of the second segment
+	 * @param x4 Second x coordinate of the second segment
+	 * @param y4 Second y coordinate of the second segment
+	 * @return The result of the collision check
 	 */
 	bool coll_LineLine(double x1, double y1, double x2, double y2,
 					   double x3, double y3, double x4, double y4) {
@@ -11,7 +20,6 @@ namespace student {
 		bool res = false;
 
 		// Compute maximum and minimum x and y of the segments
-		// TODO compare w.r.t. the <algorithm> max and min
 		// First segment:
 		double minX1 = min(x1, x2);
 		double minY1 = min(y1, y2);
@@ -87,13 +95,19 @@ namespace student {
 	
 	/**
 	 * Detects collisions between a segment and an arc, identified as a circle
+	 * @param x1 First x coordinate of the segment
+	 * @param y1 First y coordinate of the segment
+	 * @param x2 Second x coordinate of the segment
+	 * @param y2 Second y coordinate of the segment
+	 * @param arc dubinsArc
+	 * @return The result of the collision check
 	 */
 	bool coll_LineCircle(double x1, double y1, double x2, double y2, dubinsArc arc) {
 
 		bool res = false;
 		
-		/// Ensure that an arc was passed, not a straight line.
-		/// Stop the execution to avoid problems.
+		// Ensure that an arc was passed, not a straight line.
+		// Stop the execution to avoid problems.
 		if (arc.k == 0) {
 			std::cerr << "________ERROR IN METHOD <coll_LineCircle> of collision_core.cpp: a straight line was passed instead of an arc.________\n";
 			exit(-1);
@@ -104,6 +118,7 @@ namespace student {
 			radius -= radius*2.0;
 		}
 
+		// Getting the circle's center coordinates
 		double xC = arc.currentConf.x - sin(arc.currentConf.th) * radius;
 		double yC = arc.currentConf.y + cos(arc.currentConf.th) * radius;
 
@@ -168,7 +183,7 @@ namespace student {
 			res = true;
 		}
 
-		/// Defining angles of collisions w.r.t. the circle center
+		// Defining angles of collisions w.r.t. the circle center
 		double th_T[2] = {0, 0};
 		
 		if (collisions > 0) {
@@ -176,20 +191,20 @@ namespace student {
 				th_T[i] = atan2(yT[i] - yC, xT[i] - xC);
 			}
 		}
-		else {	/// No actual collision
+		else {	// No actual collision
 			if (DEBUG_COLL) {
 				plotXCircle(res, x1, y1, x2, y2, xC, yC, radius, 
 					cv::Point(arc.currentConf.x, arc.currentConf.y),
 					cv::Point(arc.nextConf.x, arc.nextConf.y), arc.k);
 			}
-			return res;		/// Would be false
+			return res;		// Would be false
 		}
 
 		if (DEBUG_COLL) {
 			std::cout << "COLLISION WITH CIRCLE FOUND.\n";
 		}
 
-		/// Defining angles of the two points defining the arc w.r.t. the circle center
+		// Defining angles of the two points defining the arc w.r.t. the circle center
 		double th_Arc[2] = {0, 0};
 		th_Arc[0] = atan2(arc.currentConf.y - yC, arc.currentConf.x - xC);
 		th_Arc[1] = atan2(arc.nextConf.y - yC,    arc.nextConf.x - xC);
@@ -201,7 +216,7 @@ namespace student {
 		}
 
 
-		/// Arc peforming a left turn, make each angle positive.
+		// Arc peforming a left turn, make each angle positive.
 		if (arc.k > 0) {
 			if (th_Arc[0] < 0) {
 				th_Arc[0] += 2.0*PI;
@@ -210,7 +225,7 @@ namespace student {
 				th_Arc[1] += 2.0*PI;
 			}
 			
-			/// If there was no collision, the function would have already returned.
+			// If there was no collision, the function would have already returned.
 			if (th_T[0] < 0) {
 				th_T[0] += 2.0*PI;
 			}
@@ -220,7 +235,7 @@ namespace student {
 				}
 			}
 		}
-		/// If the arc peforms a right turn, make each angle negative.
+		// If the arc peforms a right turn, make each angle negative.
 		else if (arc.k < 0) {
 			if (th_Arc[0] > 0) {
 				th_Arc[0] -= 2.0*PI;
@@ -229,7 +244,7 @@ namespace student {
 				th_Arc[1] -= 2.0*PI;
 			}
 			
-			/// If there was no collision, the function would have already returned.
+			// If there was no collision, the function would have already returned.
 			if (th_T[0] > 0) {
 				th_T[0] -= 2.0*PI;
 			}
@@ -246,15 +261,15 @@ namespace student {
 			std::cout << "NOW VERIFYING THE CIRCLE COLLISION.\n";
 		}
 		
-		/// Final comparison between angles
+		// Final comparison between angles
 		int i = 0;
 		while (i < collisions) {
 
-			if (arc.k > 0) {				/// Left turn
+			if (arc.k > 0) {				// Left turn
 				if (th_Arc[1] >= th_Arc[0]) {
-					if ((th_Arc[1] >= th_T[i]) && (th_T[i] >= th_Arc[0])) {	/// Real arc collision
+					if ((th_Arc[1] >= th_T[i]) && (th_T[i] >= th_Arc[0])) {	// Real arc collision
 						res = true;
-						i = collisions;		/// Exit, collision found
+						i = collisions;		// Exit, collision found
 					}
 					else {
 						res = false;
