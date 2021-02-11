@@ -4,7 +4,7 @@
 #include "student_planning_interface.hpp"
 #include "visual_functions.hpp"
 
-/// Path planning specific imports
+// Path planning specific imports
 #include <ompl/base/SpaceInformation.h>
 #include <ompl/base/spaces/SE2StateSpace.h>
 #include <ompl/base/StateValidityChecker.h>
@@ -29,7 +29,7 @@
 namespace ob = ompl::base;
 namespace og = ompl::geometric;
 namespace bg = boost::geometry;
-/// End of planning imports
+// End of planning imports
 
 namespace student {
 

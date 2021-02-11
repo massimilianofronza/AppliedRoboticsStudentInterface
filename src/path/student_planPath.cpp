@@ -1,10 +1,10 @@
 #include "path_functions.hpp"
 
-namespace student{
+namespace student {
 
 	Polygon this_borders;
 	polygon_type arena, valid_gate;
-	std::vector<polygon_type> this_obstacle_list;
+	std::vector<polygon_type> boost_obstacle_list;
 	std::vector<Polygon> coll_obstacles;
 	std::vector<Point> full_tree;
 	double SOL_TIME = 1.0;
@@ -15,7 +15,9 @@ namespace student{
 	/// - index: it is the index of the node in the full tree
 	/// - int: index of next node 
 	/// - double: cost of link in euclidea distance
- 	std::vector<std::vector<triplet>> free_edges;
+ 	///std::vector<std::vector<triplet>> free_edges;
+ 	//graphEdge free_edges[];
+ 	double **free_edges;
 
 	/// Class for motion validation
 	class myMotionValidator : public ob::MotionValidator {
@@ -58,36 +60,36 @@ namespace student{
 							double end_y = obstacle[i].y;
 							
 							if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, start_x, start_y, end_x, end_y)) {
-								return false;	/// Collision detected
+								return false;	// Collision detected
 							}
 
 						}
 						/// Close with the last segment
 						if (coll_LineLine(s1_x, s1_y, s2_x, s2_y, 
 										  obstacle[0].x, obstacle[0].y, obstacle[obstacle.size()-1].x, obstacle[obstacle.size()-1].y)) {
-							return false;	/// Collision detected
+							return false;		// Collision detected
 						}
 						
 					}
 
-					if (!done){
+/*					if (!done){
 							cv::Point p1(s1_x*400, 400-s1_y*400);
 							cv::Point p2(s2_x*400, 400-s2_y*400);
 							cv::line(graph_image, p1, p2, cv::Scalar(255,0,0), 1, cv::LINE_8);	
 					  		
-					  		full_tree.push_back(Point(s1_x,s1_y));
-
-					  		full_tree.push_back(Point(s2_x,s2_y));
+					  		full_tree.push_back(Point(s1_x, s1_y));
+					  		full_tree.push_back(Point(s2_x, s2_y));
 					  		
 					  		Point n1(s1_x,s1_y), n2(s2_x,s2_y);
 							double dist = distance(n1,n2);
 							int index1 = full_tree.size()-2;
 							int index2 = full_tree.size()-1;
 
-							free_edges.emplace_back({index1, index2, dist});
+							student::triplet newP(index1, index2, dist);
+							//free_edges.emplace_back(triplet());
 
 					}
-
+*/
 					return true;
 				}
 				else {
@@ -107,14 +109,11 @@ namespace student{
 	};
 
 	bool myStateValidityCheckerFunction(const ob::State *state) {
-  		//ob::SE2StateSpace::StateType *D2state = state->as<ob::SE2StateSpace::StateType>();
   		double x = state->as<ob::SE2StateSpace::StateType>()->getX(); 
   		double y = state->as<ob::SE2StateSpace::StateType>()->getY();
   		
-  		//std::cout << "Checking validity of point " << x << "," << y << std::endl;
-
   		point_type p(x, y);
-  		if (!(bg::within(p, arena))) {	/// Point external w.r.t. the arena
+  		if (!(bg::within(p, arena))) {	// Point external w.r.t. the arena
   			return false;
   		}
 
@@ -122,27 +121,63 @@ namespace student{
   			return true;
   		}
 
-  		for (const auto& obstacle : this_obstacle_list) {
-  			if (bg::within(p, obstacle)) {	/// Point inside some obstacle
+  		for (const auto& obstacle : boost_obstacle_list) {
+  			if (bg::within(p, obstacle)) {	// Point inside some obstacle
 	  			return false;
   			}
   		}
 
-  		/// Check if points is already there
-/*  		for (int i=0; i<full_tree.size(); i++) {
-  			if ((x == full_tree[i].x) && (y == full_tree[i].y)) {
-  				std::cout << "Point already thereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\n";
-  			}
-  			else {
-  				full_tree.push_back(Point(x, y));
-  			}
-  		}
-*/
+  		if (!done) {
+	  		if (full_tree.size() == 0) {
+	  			full_tree.push_back(Point(x, y));
+	  		}
+	  		// Check if points is already there
+	  		int i = 0;
+	  		bool found = false;
+	  		while ((!found) && (i<full_tree.size())) {
+	  			if ((x == full_tree[i].x) && (y == full_tree[i].y)) {
+	  				found = true;
+	  			}
+
+	  			i++;
+	  		}
+	  		if (!found) {
+	  			full_tree.push_back(Point(x, y));
+	  		}
+	  	}
 
 		return true;
 	}
+/*
+	class myGoal : public ob::Goal {
+		
+		private:
+			ob::SpaceInformationPtr si_;
 
+		public:
+			myGoal(ob::SpaceInformationPtr si) : ob::Goal(si) {
+				si_ = si;
+	    		if (si_ == nullptr) {
+	        		throw ompl::Exception("No state space for custom goal");
+	    		}
+			}
 
+			bool isSatisfied(const ob::State* st) const {
+				return true;
+			}
+
+			bool isSatisfied(const ob::State *st, double *distance) const {
+				if (distance != nullptr) {
+         			*distance = std::numeric_limits<double>::max();
+         			//if (distance == 0) {
+         			//	return true;
+         			//}
+				}
+     			return isSatisfied(st);
+			}
+
+	};
+*/
 	// TODO represent arena and obstacles with the boost geometry types to check
 	// if the points are inside the polygons (for state validity)
 	// check: boost.org/doc/libs/1_62_0/libs/geometry/doc/html/geometry/reference/algorithms/within/within_2.html
@@ -176,7 +211,7 @@ namespace student{
 			/// Close the obstacle polygon
 			bg::append(polygon.outer(), point_type(obstacle[0].x, obstacle[0].y));
 
-			this_obstacle_list.emplace_back(polygon);
+			boost_obstacle_list.emplace_back(polygon);
 		}
 
 		for (const auto& vertex : gate){
@@ -208,8 +243,6 @@ namespace student{
 			int id = victim_list[i].first;
 			Polygon victim = victim_list[i].second;
 
-			//std::cout << i << "^ victim id: " << id << std::endl;
-
 			Point center = getCenter(victim);
 
 			// Ids of victims are put here with their index i in the sorted_index
@@ -238,9 +271,89 @@ namespace student{
 		for (int i = 0; i < sorted_index.size(); ++i){
 			int id = sorted_index[i].first;
 			int index = sorted_index[i].second;
-			Point center = victim_centers[index];
-			point_list.emplace_back(center);
-			std::cout << i << "^ victim id: " << id << " - Center: (" << center.x << "," << center.y << ")" << std::endl;
+			
+//			point_list.emplace_back(center);
+			//std::cout << i << "^ victim id: " << id << " - Center: (" << center.x << "," << center.y << ")" << std::endl;
+		}
+
+		// Save victims into boost polygons
+		for (int i=0; i < sorted_index.size(); i++) {
+			
+			int victimIndex = sorted_index[i].second;	// Used to access to the victim's polygon
+			
+			Point center = victim_centers[victimIndex];
+			Polygon current = victim_list[victimIndex].second;
+
+			std::vector<cv::Point> conversion;
+			cv::Point2f cv_center;
+			float radius;
+
+			for (const auto& vict_vertex : current) {
+				conversion.emplace_back(cv::Point(vict_vertex.x*500, vict_vertex.y*500));
+			}
+
+			cv::minEnclosingCircle(conversion, cv_center, radius);
+			std::cout << "RAGGIO: " << radius << " AND CENTER: " << cv_center.x << ", " << cv_center.y << std::endl;
+			double tmpRadius = radius/500;
+			double tmpCenter_x = center.x;
+			double tmpCenter_y = center.y;
+
+			point_type p(center.x, center.y);
+			bool totallyFree = true;
+			bool free = false;
+
+			for (const auto& obstacle : boost_obstacle_list) {
+  				if (bg::within(p, obstacle)) {	// Point inside some obstacle	
+  					free = false;
+  					double increment = 0.05;
+
+  					while ((!free) && (increment < 0.7)) {	// Obstacle not free and not covered to the 70%
+  						tmpCenter_x = center.x;
+						tmpCenter_y = center.y;
+						increment += 0.05;
+
+  						for (int j=0; j<4; j++) {
+  							if (j==0) {
+  								tmpCenter_x += increment*tmpRadius;
+  								tmpCenter_y += increment*tmpRadius;
+  							}
+  							if (j==1) {
+  								tmpCenter_x -= 2.0*increment*tmpRadius;
+  							}
+  							if (j==2) {
+  								tmpCenter_y -= 2.0*increment*tmpRadius;
+  							}
+  							if (j==3) {
+  								tmpCenter_x += 2.0*increment*tmpRadius;
+  							}
+  							for (const auto& innerObstacle : boost_obstacle_list) {
+  								if (bg::within(point_type(tmpCenter_x, tmpCenter_y), innerObstacle)) {
+  									free = false;
+  									break;
+  								}
+  								free = true;
+  							}
+  							if (free) {
+  								break;
+  							}
+  						}
+  					}
+  					if (!free) {
+  						std::cout << "Victim is too covered, returning...\n";
+  						totallyFree = false;
+  					}
+  					else {
+  						std::cout << "OKKKKKKK: " << center.x << ", " << center.y << ", 2: " << tmpCenter_x << ", " << tmpCenter_y << std::endl;
+  						totallyFree = true;
+  					}
+  					// Center collisions-free
+  					break;
+  				}
+  			}
+  			// Outside cycle for obstacles
+  			if (totallyFree) {
+				point_list.emplace_back(Point(tmpCenter_x, tmpCenter_y));
+  			}
 		}
 
 
@@ -311,9 +424,9 @@ namespace student{
 		
 		std::vector<Point> RRT_list;
 
-		
   		missionOne(point_list, RRT_list, si, space, image);
-  		missionTwo(si, point_list);
+
+		//missionTwo(si, point_list);
   		
 
 		cv::Mat sol_image = cv::Mat::zeros(600, 600, CV_8UC3);
@@ -443,7 +556,7 @@ namespace student{
 
 			// Set the start and goal states
 			pdef->setStartAndGoalStates(start, goal);
-
+					
 			// Tell the planner which problem we are interested in solving
 			planner->setProblemDefinition(pdef);
 			planner->setup();
@@ -507,6 +620,7 @@ namespace student{
 
 		        //og::PathGeometric path = pdef->as<og::PathGeometric>getSolutionPath();
 		        std::cout << "Found solution: " << i << std::endl;
+		        std::cout << "TREEEEEEEEEEEE: " << full_tree.size() << std::endl;
 		 
 		        // print the path to screen
 		        path.print(std::cout);
@@ -536,7 +650,57 @@ namespace student{
 
 
   	void missionTwo(std::shared_ptr<ompl::base::SpaceInformation> si, std::vector<Point> &point_list) {
-  		
+ 
+		int npts = full_tree.size();
+  		std::cout << "STAMPA " << npts << std::endl;
+  		free_edges = new double *[npts];
+
+  		for(int i=0; i<npts; i++) {
+            free_edges[i] = new double[npts];
+        }
+        for (int i=0; i<npts; i++) {
+        	for (int j=0; j<npts; j++) {
+        		free_edges[i][j] = 0;
+        	}
+        }
+
+  		for (int i=0; i<npts; i++) {
+        	for (int j=0; j<npts; j++) {
+        		if (i != j) {
+        			bool collisionFound = false;
+        			for (const auto& obstacle : coll_obstacles) {
+						for(int k=1; k<obstacle.size(); k++) {
+							double start_x = obstacle[i-1].x;
+							double start_y = obstacle[i-1].y;
+							double end_x = obstacle[i].x;
+							double end_y = obstacle[i].y;
+							
+							if (coll_LineLine(full_tree[i].x, full_tree[i].y, full_tree[j].x, full_tree[j].y, start_x, start_y, end_x, end_y)) {
+								collisionFound = true;
+							}
+						}
+						// Close with the last segment
+						if (coll_LineLine(full_tree[i].x, full_tree[i].y, full_tree[j].x, full_tree[j].y,
+										  obstacle[0].x, obstacle[0].y, obstacle[obstacle.size()-1].x, obstacle[obstacle.size()-1].y)) {
+							collisionFound = true;
+						}				
+					}
+
+        			if (!collisionFound) {
+	        			free_edges[i][j] = distance(full_tree[i], full_tree[j]);
+	        			cv::line(graph_image, cv::Point(full_tree[i].x*400, 400-full_tree[i].y*400), 
+	        								  cv::Point(full_tree[i].x*400, 400-full_tree[i].y*400), cv::Scalar(255,0,0), 1, cv::LINE_8);
+        			}
+        		}
+        	}
+        }
+
+        char graph[] = "Mission2 graph";
+		cv::namedWindow(graph, 10);
+		cv::imshow(graph, graph_image);
+		cv::waitKey(0);
+		cv::destroyWindow(graph);
+
   	/*	
 	    // graph edges array.
 	    graphEdge edges[] = {

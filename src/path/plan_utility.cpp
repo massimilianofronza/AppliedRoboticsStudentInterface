@@ -2,6 +2,9 @@
 
 namespace student {
 
+	/**
+	 * Returns the Point struct with the coordinates of the passed Polygon's center
+	 */
 	Point getCenter(const Polygon &poly) {
 		
 		double cx = 0, cy = 0;
@@ -40,7 +43,7 @@ namespace student {
 		Point gate_center = getCenter(gate);
 		Point arena_center = getCenter(arena);
 		
-		/// Computing gate's height and width
+		// Computing gate's height and width
 		double gate_width = 0;
 		double gate_height = 0;
 		
@@ -72,14 +75,14 @@ namespace student {
 		gate_mid_w = gate_width/2.0;
 		gate_mid_h = gate_height/2.0;
 
-		/// Now deciding the angle
-		if (gate_center.x < arena_center.x) {			/// Gate on the left side
+		// Now deciding the angle
+		if (gate_center.x < arena_center.x) {			// Gate on the left side
 							
 			if (gate_height > gate_width) {
 				return PI;
 			}
 			else {
-				if (gate_center.y > arena_center.y) {	/// Gate on the upper side
+				if (gate_center.y > arena_center.y) {	// Gate on the upper side
 					return PI/2.0;
 				}
 				else {
@@ -87,12 +90,12 @@ namespace student {
 				}
 			}
 		}
-		else {											/// Gate on the right side
+		else {											// Gate on the right side
 			if (gate_height > gate_width) {
 				return 0;
 			}
 			else {
-				if (gate_center.y > arena_center.y) {	/// Gate on the upper side
+				if (gate_center.y > arena_center.y) {	// Gate on the upper side
 					return PI/2.0;
 				}
 				else {

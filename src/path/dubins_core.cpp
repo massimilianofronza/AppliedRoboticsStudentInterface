@@ -321,8 +321,7 @@ namespace student {
 		//std::vector<configuration> configs;
 		std::vector<dubinsCurve> curves;
 
-/////////////////////////////////
-		auto start = startTime();
+		//auto start = startTime();
 		
 		dubinsCurve bestCurve;
 		double bestLength = 999999;
@@ -410,7 +409,7 @@ namespace student {
 
 							tmp = dubins_shortest_path(previous, final, Kmax);
 							if (tmp.second.L < bestLength){
-									std::cout << i-1 << "th step: found a better Dubins path of length: " << tmp.second.L << std::endl;
+									//std::cout << i-1 << "th step: found a better Dubins path of length: " << tmp.second.L << std::endl;
 									bestLength = tmp.second.L;
 									bestCurve = tmp.second;
 									bestAngle = angles[j];
@@ -436,7 +435,7 @@ namespace student {
 						}
 						tmp = dubins_shortest_path(current, next, Kmax);
 						if (tmp.second.L < bestLength){
-								std::cout << i-1 << "th step: found a better Dubins path of length: " << tmp.second.L << std::endl;
+								//std::cout << i-1 << "th step: found a better Dubins path of length: " << tmp.second.L << std::endl;
 								bestLength = tmp.second.L;
 								bestCurve = tmp.second;
 								bestAngle = angles[j];
@@ -451,12 +450,12 @@ namespace student {
 
 		} 
 
-		stopTime(start, false);
+		//stopTime(start, false);
 
 		for (int i = reverse.size()-1; i >= 0; i--){
 			curves.emplace_back(reverse[i]);
 		}
-/////////////////////////////////
+
 		plot_dubins(curves);
 
 		return curves;
