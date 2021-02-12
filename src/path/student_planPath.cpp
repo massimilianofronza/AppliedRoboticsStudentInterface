@@ -476,18 +476,17 @@ namespace student {
 		std::vector<dubinsCurve> curves = multipoint(robot, RRT_list, gate_th);
 
 		float ds = 0.001;
-		bool entered = false;
-		int counter = 0;
+//		bool entered = false;
 
 		for (const auto& curve: curves){
 
 			double trace = 0;
 
 			for (float s = 0; s < curve.a1.len; s+=ds) {
-				if (!entered) {
+				/*if (!entered) {
 					std::cout << "\tEntering 1/3\n";
 					entered = true;
-				}
+				}*/
 				configuration intermediate = getNextConfig(curve.a1.currentConf, curve.a1.k, s);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a1.k);
 				/*if ((curve.a1.len-s) < ds) {
@@ -500,15 +499,15 @@ namespace student {
 				trace = s;
 			}
 
-			entered = false;
+//			entered = false;
 			//std::cout << "MOVING, expected a1: " << curve.a1.len << ", performed: " << (trace-curve.a1.len) << ", trace: " << trace << std::endl;
 			float old_trace = trace;
 
 			for (float s = old_trace; s < curve.a2.len + old_trace; s+=ds) {
-				if (!entered) {
+				/*if (!entered) {
 					std::cout << "\tEntering 2/3\n";
 					entered = true;
-				}
+				}*/
 				configuration intermediate = getNextConfig(curve.a2.currentConf, curve.a2.k, s-old_trace);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a2.k);
 				/*if (((curve.a2.len + old_trace) - s) < ds) {
@@ -521,15 +520,15 @@ namespace student {
 				trace = s;
 			}
 
-			entered = false;
+//			entered = false;
 			//std::cout << "MOVING, expected a2: " << curve.a2.len << ", performed: " << (trace-curve.a2.len) << ", trace: " << trace << std::endl;
 			old_trace = trace;
 
 			for (float s = old_trace; s < curve.a3.len + old_trace; s+=ds) {
-				if (!entered) {
+				/*if (!entered) {
 					std::cout << "\tEntering 3/3\n";
 					entered = true;
-				}
+				}*/
 				configuration intermediate = getNextConfig(curve.a3.currentConf, curve.a3.k, s-old_trace);
 				path.points.emplace_back(s, intermediate.x, intermediate.y, intermediate.th, curve.a3.k);
 				/*if (((curve.a3.len + old_trace) - s) < ds) {
@@ -541,14 +540,9 @@ namespace student {
 				trace = s;
 			}
 
-			entered = false;
-			//std::cout << "MOVING, expected a3: " << curve.a3.len << ", performed: " << (trace-curve.a3.len) << ", trace: " << trace << std::endl;
-			std::cout << "Expected curve length: " << curve.L << ", performed: " << trace << std::endl;
-			counter++;
+//			entered = false;
 
 		}
-
-		std::cout << "Total # of curves: " << counter << std::endl;
 
 	    return true;
   	}
