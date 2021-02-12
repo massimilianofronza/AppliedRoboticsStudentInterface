@@ -1,0 +1,39 @@
+\hypertarget{classstudent_1_1myMotionValidator}{}\doxysection{student\+::my\+Motion\+Validator Class Reference}
+\label{classstudent_1_1myMotionValidator}\index{student::myMotionValidator@{student::myMotionValidator}}
+Inheritance diagram for student\+::my\+Motion\+Validator\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classstudent_1_1myMotionValidator}
+\end{center}
+\end{figure}
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classstudent_1_1myMotionValidator_a6c313b2d90f5fb4fa1f7294b276c5d04}\label{classstudent_1_1myMotionValidator_a6c313b2d90f5fb4fa1f7294b276c5d04}} 
+{\bfseries my\+Motion\+Validator} (ob\+::\+Space\+Information $\ast$si)
+\item 
+\mbox{\Hypertarget{classstudent_1_1myMotionValidator_ae40a12e314cbc6827e842ee5f88cca51}\label{classstudent_1_1myMotionValidator_ae40a12e314cbc6827e842ee5f88cca51}} 
+{\bfseries my\+Motion\+Validator} (const ob\+::\+Space\+Information\+Ptr \&si)
+\item 
+bool \mbox{\hyperlink{classstudent_1_1myMotionValidator_a49f4e6665bcb12251a9a599175630a05}{check\+Motion}} (const ob\+::\+State $\ast$s1, const ob\+::\+State $\ast$s2) const override
+\item 
+\mbox{\Hypertarget{classstudent_1_1myMotionValidator_a7bae866d671ee911fdf207651d55e446}\label{classstudent_1_1myMotionValidator_a7bae866d671ee911fdf207651d55e446}} 
+bool {\bfseries check\+Motion} (const ob\+::\+State $\ast$s1, const ob\+::\+State $\ast$s2, std\+::pair$<$ ob\+::\+State $\ast$, double $>$ \&last\+Valid) const override
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Class for motion validation, used by the planner to check if two states can be connected. It relies on our implementation of collision checking. 
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classstudent_1_1myMotionValidator_a49f4e6665bcb12251a9a599175630a05}\label{classstudent_1_1myMotionValidator_a49f4e6665bcb12251a9a599175630a05}} 
+\index{student::myMotionValidator@{student::myMotionValidator}!checkMotion@{checkMotion}}
+\index{checkMotion@{checkMotion}!student::myMotionValidator@{student::myMotionValidator}}
+\doxysubsubsection{\texorpdfstring{checkMotion()}{checkMotion()}}
+{\footnotesize\ttfamily bool student\+::my\+Motion\+Validator\+::check\+Motion (\begin{DoxyParamCaption}\item[{const ob\+::\+State $\ast$}]{s1,  }\item[{const ob\+::\+State $\ast$}]{s2 }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [override]}}
+
+Close with the last segment
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+path/student\+\_\+plan\+Path.\+cpp\end{DoxyCompactItemize}

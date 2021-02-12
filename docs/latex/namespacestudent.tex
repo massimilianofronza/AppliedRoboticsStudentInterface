@@ -1,0 +1,648 @@
+\hypertarget{namespacestudent}{}\doxysection{student Namespace Reference}
+\label{namespacestudent}\index{student@{student}}
+\doxysubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \mbox{\hyperlink{structstudent_1_1configuration}{configuration}}
+\item 
+struct \mbox{\hyperlink{structstudent_1_1dubinsArc}{dubins\+Arc}}
+\item 
+struct \mbox{\hyperlink{structstudent_1_1dubinsCurve}{dubins\+Curve}}
+\item 
+struct \mbox{\hyperlink{structstudent_1_1triplet}{triplet}}
+\item 
+struct \mbox{\hyperlink{structstudent_1_1adjNode}{adj\+Node}}
+\item 
+struct \mbox{\hyperlink{structstudent_1_1graphEdge}{graph\+Edge}}
+\item 
+class \mbox{\hyperlink{classstudent_1_1graph}{graph}}
+\item 
+class \mbox{\hyperlink{classstudent_1_1myMotionValidator}{my\+Motion\+Validator}}
+\end{DoxyCompactItemize}
+\doxysubsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{namespacestudent_ac7fa28175e545df200c45a9cbf274518}\label{namespacestudent_ac7fa28175e545df200c45a9cbf274518}} 
+typedef bg\+::model\+::d2\+::point\+\_\+xy$<$ double $>$ {\bfseries point\+\_\+type}
+\item 
+\mbox{\Hypertarget{namespacestudent_a071ca3cb393a194f602ef251efdc5e7b}\label{namespacestudent_a071ca3cb393a194f602ef251efdc5e7b}} 
+typedef bg\+::model\+::polygon$<$ point\+\_\+type $>$ {\bfseries polygon\+\_\+type}
+\end{DoxyCompactItemize}
+\doxysubsection*{Enumerations}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{namespacestudent_a3693d71776252074ce550535378b50d5}\label{namespacestudent_a3693d71776252074ce550535378b50d5}} 
+enum {\bfseries dubins\+\_\+primitives} \{ \newline
+{\bfseries LSL}
+, {\bfseries RSR}
+, {\bfseries LSR}
+, {\bfseries RSL}
+, \newline
+{\bfseries RLR}
+, {\bfseries LRL}
+, {\bfseries MAXIMUM\+\_\+\+NUMBER\+\_\+\+OF\+\_\+\+CURVES}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \mbox{\hyperlink{namespacestudent_a5b674b3695610f840b28b97b1bcd82de}{coll\+\_\+\+Line\+Line}} (double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)
+\item 
+bool \mbox{\hyperlink{namespacestudent_a2d7550d88430bcb695137e5976b94e3a}{coll\+\_\+\+Line\+Circle}} (double x1, double y1, double x2, double y2, \mbox{\hyperlink{structstudent_1_1dubinsArc}{dubins\+Arc}} arc)
+\item 
+double \mbox{\hyperlink{namespacestudent_a13283ab20308fde8c6f0175f6c2ddf44}{max}} (double a, double b)
+\item 
+\mbox{\Hypertarget{namespacestudent_a9321c7b71ce1a4a7ef152d6020c917d5}\label{namespacestudent_a9321c7b71ce1a4a7ef152d6020c917d5}} 
+double {\bfseries min} (double a, double b)
+\item 
+double \mbox{\hyperlink{namespacestudent_a1683a6357c9495deae1b46f1f23d716e}{cross2D}} (double M\+\_\+00, double M\+\_\+01, double M\+\_\+10, double M\+\_\+11)
+\item 
+double \mbox{\hyperlink{namespacestudent_a1ab33418a119017635f5f69558fd7c43}{dot2D}} (double M\+\_\+00, double M\+\_\+01, double M\+\_\+10, double M\+\_\+11)
+\item 
+void \mbox{\hyperlink{namespacestudent_a7c29d7d15cf5e0736336cb908aaf0c71}{plot\+XLine}} (bool res, double x1, double y1, double x2, double y2, double x3, double y3, double x4, double y4)
+\item 
+void \mbox{\hyperlink{namespacestudent_a218f733020135d62f2caa53a28210869}{plot\+XCircle}} (bool res, double x1, double y1, double x2, double y2, double xC, double yC, double radius, cv\+::\+Point a1, cv\+::\+Point a2, double verse)
+\item 
+\mbox{\Hypertarget{namespacestudent_ac357295a3e0a58316ce8884b898963be}\label{namespacestudent_ac357295a3e0a58316ce8884b898963be}} 
+double \mbox{\hyperlink{namespacestudent_ac357295a3e0a58316ce8884b898963be}{sinc}} (double x)
+\begin{DoxyCompactList}\small\item\em Sinc with Taylor series approximation, used to check correctness of solution. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_ac04dc56712a80369cb1e11b6a5949f11}\label{namespacestudent_ac04dc56712a80369cb1e11b6a5949f11}} 
+double \mbox{\hyperlink{namespacestudent_ac04dc56712a80369cb1e11b6a5949f11}{mod2pi}} (double angle)
+\begin{DoxyCompactList}\small\item\em Normalize an angle, \mbox{[}0, 2$\ast$\+PI) (can be useful for find\+Robot as well) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_afb63c2f209d6eab72af17735e25b5201}\label{namespacestudent_afb63c2f209d6eab72af17735e25b5201}} 
+double \mbox{\hyperlink{namespacestudent_afb63c2f209d6eab72af17735e25b5201}{range\+Symm}} (double angle)
+\begin{DoxyCompactList}\small\item\em Normalize an angular difference (range (-\/pi, pi\mbox{]}) \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_a43a7551fd4d068a2400a7398e2f7bd3f}\label{namespacestudent_a43a7551fd4d068a2400a7398e2f7bd3f}} 
+bool \mbox{\hyperlink{namespacestudent_a43a7551fd4d068a2400a7398e2f7bd3f}{check}} (double s1, double k0, double s2, double k1, double s3, double k2, double th0, double thf)
+\begin{DoxyCompactList}\small\item\em Checks the correctness of a Dubin\textquotesingle{}s solution by taking as input the scaled parameters. \end{DoxyCompactList}\item 
+\mbox{\hyperlink{structstudent_1_1configuration}{configuration}} \mbox{\hyperlink{namespacestudent_a343d9cd6d6fd1747e42374104cee6cba}{get\+Next\+Config}} (\mbox{\hyperlink{structstudent_1_1configuration}{configuration}} curr, double k, double s)
+\item 
+\mbox{\hyperlink{structstudent_1_1dubinsArc}{dubins\+Arc}} \mbox{\hyperlink{namespacestudent_a7e804115ed7fd271368146f5cf78fce6}{construct\+Arc}} (\mbox{\hyperlink{structstudent_1_1configuration}{configuration}} curr\+Conf, double k, double L)
+\item 
+\mbox{\hyperlink{structstudent_1_1dubinsCurve}{dubins\+Curve}} \mbox{\hyperlink{namespacestudent_ac881c09e990c34189df7dee9cd43ed39}{construct\+Dubins\+Curve}} (\mbox{\hyperlink{structstudent_1_1configuration}{configuration}} initial\+Conf, double s1, double s2, double s3, double k0, double k1, double k2)
+\item 
+\mbox{\Hypertarget{namespacestudent_ae614b490c6c0f172cfb9b2e4e5081475}\label{namespacestudent_ae614b490c6c0f172cfb9b2e4e5081475}} 
+void \mbox{\hyperlink{namespacestudent_ae614b490c6c0f172cfb9b2e4e5081475}{print\+Configuration}} (\mbox{\hyperlink{structstudent_1_1configuration}{configuration}} config)
+\begin{DoxyCompactList}\small\item\em Prints info about the configuration of the robot (x,y, yaw). \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_a04925f5e7d32b35d2dcfddada4700917}\label{namespacestudent_a04925f5e7d32b35d2dcfddada4700917}} 
+void \mbox{\hyperlink{namespacestudent_a04925f5e7d32b35d2dcfddada4700917}{print\+Arc}} (\mbox{\hyperlink{structstudent_1_1dubinsArc}{dubins\+Arc}} arc)
+\begin{DoxyCompactList}\small\item\em Prints info about arcs that compose the Dubin\textquotesingle{}s Curve. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_acbae8965481236d070acd985a858dbb6}\label{namespacestudent_acbae8965481236d070acd985a858dbb6}} 
+std\+::chrono\+::high\+\_\+resolution\+\_\+clock\+::time\+\_\+point \mbox{\hyperlink{namespacestudent_acbae8965481236d070acd985a858dbb6}{start\+Time}} ()
+\begin{DoxyCompactList}\small\item\em Returns this moment in time. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_ae18abd9a1eb16a0a5da711c37d1be60e}\label{namespacestudent_ae18abd9a1eb16a0a5da711c37d1be60e}} 
+void \mbox{\hyperlink{namespacestudent_ae18abd9a1eb16a0a5da711c37d1be60e}{stop\+Time}} (std\+::chrono\+::high\+\_\+resolution\+\_\+clock\+::time\+\_\+point start, bool unit)
+\begin{DoxyCompactList}\small\item\em Gets the start moment and tells how much time passed between that and now. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_ae11644897731eda6b93e6335de865c59}\label{namespacestudent_ae11644897731eda6b93e6335de865c59}} 
+void \mbox{\hyperlink{namespacestudent_ae11644897731eda6b93e6335de865c59}{scale\+To\+Standard}} (\mbox{\hyperlink{structstudent_1_1configuration}{configuration}} initial, \mbox{\hyperlink{structstudent_1_1configuration}{configuration}} final, double kmax, double \&sc\+Th0, double \&sc\+Thf, double \&sc\+Kmax, double \&lambda)
+\begin{DoxyCompactList}\small\item\em Scale path finding problem into (-\/1,0) -\/ (1,0) range. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_ad4a4d92c94017de500472c4363b498c9}\label{namespacestudent_ad4a4d92c94017de500472c4363b498c9}} 
+void \mbox{\hyperlink{namespacestudent_ad4a4d92c94017de500472c4363b498c9}{scale\+From\+Standard}} (double lambda, double sc\+\_\+s1, double sc\+\_\+s2, double sc\+\_\+s3, double \&s1, double \&s2, double \&s3)
+\begin{DoxyCompactList}\small\item\em Scale the solution to the standard problem back to the original problem. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacestudent_a80f21f358569ce086b2be919cd3c7607}{dubins\+\_\+\+LSL}} (double sc\+\_\+th0, double sc\+\_\+thf, double sc\+\_\+\+Kmax, double \&sc\+\_\+s1, double \&sc\+\_\+s2, double \&sc\+\_\+s3)
+\item 
+bool \mbox{\hyperlink{namespacestudent_a79074a60055dba829304da1ba43cfdfb}{dubins\+\_\+\+RSR}} (double sc\+\_\+th0, double sc\+\_\+thf, double sc\+\_\+\+Kmax, double \&sc\+\_\+s1, double \&sc\+\_\+s2, double \&sc\+\_\+s3)
+\item 
+bool \mbox{\hyperlink{namespacestudent_a255f1fd6ee3a8a404469459c51fd8e76}{dubins\+\_\+\+LSR}} (double sc\+\_\+th0, double sc\+\_\+thf, double sc\+\_\+\+Kmax, double \&sc\+\_\+s1, double \&sc\+\_\+s2, double \&sc\+\_\+s3)
+\item 
+bool \mbox{\hyperlink{namespacestudent_ada1e4d5c3ea5d2032812cce24ac5a479}{dubins\+\_\+\+RSL}} (double sc\+\_\+th0, double sc\+\_\+thf, double sc\+\_\+\+Kmax, double \&sc\+\_\+s1, double \&sc\+\_\+s2, double \&sc\+\_\+s3)
+\item 
+bool \mbox{\hyperlink{namespacestudent_acc22c326309c1c531da2d15d271e009c}{dubins\+\_\+\+RLR}} (double sc\+\_\+th0, double sc\+\_\+thf, double sc\+\_\+\+Kmax, double \&sc\+\_\+s1, double \&sc\+\_\+s2, double \&sc\+\_\+s3)
+\item 
+bool \mbox{\hyperlink{namespacestudent_aa356091fcb55ee1924e097c9c97129a1}{dubins\+\_\+\+LRL}} (double sc\+\_\+th0, double sc\+\_\+thf, double sc\+\_\+\+Kmax, double \&sc\+\_\+s1, double \&sc\+\_\+s2, double \&sc\+\_\+s3)
+\item 
+std\+::pair$<$ int, \mbox{\hyperlink{structstudent_1_1dubinsCurve}{dubins\+Curve}} $>$ \mbox{\hyperlink{namespacestudent_ad16c5106a18eaaea0d105ba30403eedd}{dubins\+\_\+shortest\+\_\+path}} (\mbox{\hyperlink{structstudent_1_1configuration}{configuration}} initial, \mbox{\hyperlink{structstudent_1_1configuration}{configuration}} final, double Kmax)
+\item 
+std\+::vector$<$ \mbox{\hyperlink{structstudent_1_1dubinsCurve}{dubins\+Curve}} $>$ \mbox{\hyperlink{namespacestudent_a37eabf8488e510a598c21787bb66cfea}{multipoint}} (const \mbox{\hyperlink{structstudent_1_1configuration}{configuration}} \&robot, std\+::vector$<$ Point $>$ \&points, double gate\+\_\+th)
+\item 
+\mbox{\Hypertarget{namespacestudent_ad425975095ed9cfa9bb01a275f15f32a}\label{namespacestudent_ad425975095ed9cfa9bb01a275f15f32a}} 
+void {\bfseries plot} (cv\+::\+Mat image, double $\ast$$\ast$pts\+\_\+1, cv\+::\+Scalar c1, double $\ast$$\ast$pts\+\_\+2, cv\+::\+Scalar c2, double $\ast$$\ast$pts\+\_\+3, cv\+::\+Scalar c3)
+\item 
+\mbox{\Hypertarget{namespacestudent_a6fbb6825a0763a87837133d4c2bb2fc5}\label{namespacestudent_a6fbb6825a0763a87837133d4c2bb2fc5}} 
+double $\ast$$\ast$ {\bfseries get\+\_\+arc\+\_\+points} (\mbox{\hyperlink{structstudent_1_1dubinsArc}{dubins\+Arc}} arc, int npts)
+\item 
+\mbox{\Hypertarget{namespacestudent_af078e298febf8de3fa6c787b163e4e44}\label{namespacestudent_af078e298febf8de3fa6c787b163e4e44}} 
+void {\bfseries plot\+\_\+dubins} (std\+::vector$<$ \mbox{\hyperlink{structstudent_1_1dubinsCurve}{dubins\+Curve}} $>$ curves)
+\item 
+\mbox{\Hypertarget{namespacestudent_a540784e0ef9fac7b3f5ed24aa8a1f93d}\label{namespacestudent_a540784e0ef9fac7b3f5ed24aa8a1f93d}} 
+void {\bfseries print\+Adj\+List} (\mbox{\hyperlink{structstudent_1_1adjNode}{adj\+Node}} $\ast$ptr, int i)
+\item 
+Point \mbox{\hyperlink{namespacestudent_ae40970d4d45d273f2571d70f5e75a054}{get\+Center}} (const Polygon \&poly)
+\item 
+bool \mbox{\hyperlink{namespacestudent_a6c480ab8ffeff46887387b8b54c4dcb9}{my\+State\+Validity\+Checker\+Function}} (const ob\+::\+State $\ast$state)
+\item 
+\mbox{\Hypertarget{namespacestudent_a3b31fbfd67fbf04c6e71e71a7cef417c}\label{namespacestudent_a3b31fbfd67fbf04c6e71e71a7cef417c}} 
+ob\+::\+Valid\+State\+Sampler\+Ptr {\bfseries alloc\+OBValid\+State\+Sampler} (const ob\+::\+Space\+Information $\ast$si)
+\item 
+\mbox{\Hypertarget{namespacestudent_a3f9b35f6b5dad47513757e4211a5bcbe}\label{namespacestudent_a3f9b35f6b5dad47513757e4211a5bcbe}} 
+void {\bfseries draw\+Solution\+Tree} (std\+::vector$<$ Point $>$ RRT\+\_\+list, cv\+::\+Mat \&image)
+\item 
+\mbox{\Hypertarget{namespacestudent_a84d208aba3d19c6988ed675165bfe44e}\label{namespacestudent_a84d208aba3d19c6988ed675165bfe44e}} 
+double {\bfseries gate\+\_\+angle} (const Polygon \&gate, const Polygon \&arena, double \&gate\+\_\+mid\+\_\+w, double \&gate\+\_\+mid\+\_\+h)
+\item 
+void \mbox{\hyperlink{namespacestudent_af0e78c9c1bb3fcd9536f328335d64def}{mission\+Two}} (std\+::shared\+\_\+ptr$<$ ompl\+::base\+::\+Space\+Information $>$ si, std\+::vector$<$ Point $>$ \&point\+\_\+list)
+\item 
+void \mbox{\hyperlink{namespacestudent_aabfea618c10c13f73ac9e6ddca052db2}{mission\+One}} (std\+::vector$<$ Point $>$ \&point\+\_\+list, std\+::vector$<$ Point $>$ \&RRT\+\_\+list, std\+::shared\+\_\+ptr$<$ ompl\+::base\+::\+Space\+Information $>$ si, std\+::shared\+\_\+ptr$<$ ob\+::\+SE2\+State\+Space $>$ space, cv\+::\+Mat \&image)
+\item 
+\mbox{\Hypertarget{namespacestudent_a43029d54847618c772ba6ae1a933da78}\label{namespacestudent_a43029d54847618c772ba6ae1a933da78}} 
+int \mbox{\hyperlink{namespacestudent_a43029d54847618c772ba6ae1a933da78}{find\+\_\+closest}} (Point \&self, std\+::vector$<$ Point $>$ \&samples)
+\begin{DoxyCompactList}\small\item\em Find the point closest to a given point. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_a7e03cabaecd9d8cef67f5d5f5aa628d9}\label{namespacestudent_a7e03cabaecd9d8cef67f5d5f5aa628d9}} 
+double \mbox{\hyperlink{namespacestudent_a7e03cabaecd9d8cef67f5d5f5aa628d9}{distance}} (Point \&a, Point \&b)
+\begin{DoxyCompactList}\small\item\em Returns an euclidean distance. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{namespacestudent_aa3e0aecde54620c30d46a5dcc6c9fb7a}{student\+\_\+plan\+Path}} (const Polygon \&borders, const std\+::vector$<$ Polygon $>$ \&obstacle\+\_\+list, const std\+::vector$<$ std\+::pair$<$ int, Polygon $>$$>$ \&victim\+\_\+list, const Polygon \&gate, const float x, const float y, const float theta, Path \&path, const std\+::string \&config\+\_\+folder)
+\item 
+void \mbox{\hyperlink{namespacestudent_a3c8c9cb0a117359291d6800b0dd9461f}{student\+\_\+load\+Image}} (cv\+::\+Mat \&img\+\_\+out, const std\+::string \&config\+\_\+folder)
+\item 
+void \mbox{\hyperlink{namespacestudent_a9056dc07d30ae7657be42b03dfe3a2a0}{student\+\_\+generic\+Image\+Listener}} (const cv\+::\+Mat \&img\+\_\+in, std\+::string topic, const std\+::string \&config\+\_\+folder)
+\item 
+void \mbox{\hyperlink{namespacestudent_a187cfd6d82aaffa5c634c4ef24271f7d}{student\+\_\+image\+Undistort}} (const cv\+::\+Mat \&img\+\_\+in, cv\+::\+Mat \&img\+\_\+out, const cv\+::\+Mat \&cam\+\_\+matrix, const cv\+::\+Mat \&dist\+\_\+coeffs, const std\+::string \&config\+\_\+folder)
+\item 
+bool \mbox{\hyperlink{namespacestudent_a4d70460143a4151dd1ef09ee21bbe767}{student\+\_\+extrinsic\+Calib}} (const cv\+::\+Mat \&img\+\_\+in, std\+::vector$<$ cv\+::\+Point3f $>$ object\+\_\+points, const cv\+::\+Mat \&camera\+\_\+matrix, cv\+::\+Mat \&rvec, cv\+::\+Mat \&tvec, const std\+::string \&config\+\_\+folder)
+\item 
+void \mbox{\hyperlink{namespacestudent_a41af80cd00041a3f7159a5d3f4fb6116}{student\+\_\+find\+Plane\+Transform}} (const cv\+::\+Mat \&cam\+\_\+matrix, const cv\+::\+Mat \&rvec, const cv\+::\+Mat \&tvec, const std\+::vector$<$ cv\+::\+Point3f $>$ \&object\+\_\+points\+\_\+plane, const std\+::vector$<$ cv\+::\+Point2f $>$ \&dest\+\_\+image\+\_\+points\+\_\+plane, cv\+::\+Mat \&plane\+\_\+transf, const std\+::string \&config\+\_\+folder)
+\item 
+void \mbox{\hyperlink{namespacestudent_a7b33d29b9e4396350ed75aac2ef2d3ce}{student\+\_\+unwarp}} (const cv\+::\+Mat \&img\+\_\+in, cv\+::\+Mat \&img\+\_\+out, const cv\+::\+Mat \&transf, const std\+::string \&config\+\_\+folder)
+\item 
+bool \mbox{\hyperlink{namespacestudent_a04e9d0633e36ea78c4bb946f593c8f8e}{student\+\_\+find\+Robot}} (const cv\+::\+Mat \&img\+\_\+in, const double scale, Polygon \&triangle, double \&x, double \&y, double \&theta, const std\+::string \&config\+\_\+folder, const bool DEBUG)
+\item 
+bool \mbox{\hyperlink{namespacestudent_a261bfa62778cb6adf492f7d50827da78}{student\+\_\+process\+Map}} (const cv\+::\+Mat \&img\+\_\+in, const double scale, std\+::vector$<$ Polygon $>$ \&obstacle\+\_\+list, std\+::vector$<$ std\+::pair$<$ int, Polygon $>$$>$ \&victim\+\_\+list, Polygon \&gate, const std\+::string \&config\+\_\+folder, const bool DEBUG)
+\item 
+\mbox{\Hypertarget{namespacestudent_abe064aafb1dcccadf8d38ebc0457aa05}\label{namespacestudent_abe064aafb1dcccadf8d38ebc0457aa05}} 
+void {\bfseries get\+\_\+arc\+\_\+points} (double $\ast$$\ast$pts, \mbox{\hyperlink{structstudent_1_1dubinsArc}{dubins\+Arc}} arc, int npts)
+\item 
+\mbox{\Hypertarget{namespacestudent_a3117c968a47bf95f86bdb813a3b64e56}\label{namespacestudent_a3117c968a47bf95f86bdb813a3b64e56}} 
+void {\bfseries load\+Image} (cv\+::\+Mat \&img\+\_\+out, const std\+::string \&config\+\_\+folder)
+\item 
+\mbox{\Hypertarget{namespacestudent_a3b726e7af03a643c06dcde23057a82ea}\label{namespacestudent_a3b726e7af03a643c06dcde23057a82ea}} 
+void {\bfseries generic\+Image\+Listener} (const cv\+::\+Mat \&img\+\_\+in, std\+::string topic, const std\+::string \&config\+\_\+folder)
+\item 
+\mbox{\Hypertarget{namespacestudent_a6103f938ce28f8820c48c089d5f95098}\label{namespacestudent_a6103f938ce28f8820c48c089d5f95098}} 
+bool {\bfseries extrinsic\+Calib} (const cv\+::\+Mat \&img\+\_\+in, std\+::vector$<$ cv\+::\+Point3f $>$ object\+\_\+points, const cv\+::\+Mat \&camera\+\_\+matrix, cv\+::\+Mat \&rvec, cv\+::\+Mat \&tvec, const std\+::string \&config\+\_\+folder)
+\item 
+\mbox{\Hypertarget{namespacestudent_aceb2a29362b8223a9d3601d9496e1c98}\label{namespacestudent_aceb2a29362b8223a9d3601d9496e1c98}} 
+void {\bfseries image\+Undistort} (const cv\+::\+Mat \&img\+\_\+in, cv\+::\+Mat \&img\+\_\+out, const cv\+::\+Mat \&cam\+\_\+matrix, const cv\+::\+Mat \&dist\+\_\+coeffs, const std\+::string \&config\+\_\+folder)
+\item 
+\mbox{\Hypertarget{namespacestudent_a528d33658d0d4d982a46f18b7abb4a70}\label{namespacestudent_a528d33658d0d4d982a46f18b7abb4a70}} 
+void {\bfseries find\+Plane\+Transform} (const cv\+::\+Mat \&cam\+\_\+matrix, const cv\+::\+Mat \&rvec, const cv\+::\+Mat \&tvec, const std\+::vector$<$ cv\+::\+Point3f $>$ \&object\+\_\+points\+\_\+plane, const std\+::vector$<$ cv\+::\+Point2f $>$ \&dest\+\_\+image\+\_\+points\+\_\+plane, cv\+::\+Mat \&plane\+\_\+transf, const std\+::string \&config\+\_\+folder)
+\item 
+\mbox{\Hypertarget{namespacestudent_a6b8caf348979f55e58a75193233c219d}\label{namespacestudent_a6b8caf348979f55e58a75193233c219d}} 
+void {\bfseries unwarp} (const cv\+::\+Mat \&img\+\_\+in, cv\+::\+Mat \&img\+\_\+out, const cv\+::\+Mat \&transf, const std\+::string \&config\+\_\+folder)
+\item 
+\mbox{\Hypertarget{namespacestudent_a153a17ef667d7c10b8f33d815b9bc1bc}\label{namespacestudent_a153a17ef667d7c10b8f33d815b9bc1bc}} 
+bool {\bfseries process\+Map} (const cv\+::\+Mat \&img\+\_\+in, const double scale, std\+::vector$<$ Polygon $>$ \&obstacle\+\_\+list, std\+::vector$<$ std\+::pair$<$ int, Polygon $>$$>$ \&victim\+\_\+list, Polygon \&gate, const std\+::string \&config\+\_\+folder)
+\item 
+\mbox{\Hypertarget{namespacestudent_afd56b779672a672e15ac45dc927b8a6b}\label{namespacestudent_afd56b779672a672e15ac45dc927b8a6b}} 
+bool {\bfseries find\+Robot} (const cv\+::\+Mat \&img\+\_\+in, const double scale, Polygon \&triangle, double \&x, double \&y, double \&theta, const std\+::string \&config\+\_\+folder)
+\item 
+\mbox{\Hypertarget{namespacestudent_acfe62076a49d23bb083f2f880fd24c77}\label{namespacestudent_acfe62076a49d23bb083f2f880fd24c77}} 
+bool {\bfseries plan\+Path} (const Polygon \&borders, const std\+::vector$<$ Polygon $>$ \&obstacle\+\_\+list, const std\+::vector$<$ std\+::pair$<$ int, Polygon $>$$>$ \&victim\+\_\+list, const Polygon \&gate, const float x, const float y, const float theta, Path \&path, const std\+::string \&config\+\_\+folder)
+\item 
+void \mbox{\hyperlink{namespacestudent_ab3f1d6c8dd4caa817efc0cd3c46eb2e0}{mouse\+Callback}} (int event, int x, int y, int, void $\ast$p)
+\item 
+std\+::vector$<$ cv\+::\+Point2f $>$ \mbox{\hyperlink{namespacestudent_a01244e0e0a28d974de100ffcad7a2583}{pick\+NPoints}} (int n0, const cv\+::\+Mat \&img)
+\item 
+\mbox{\Hypertarget{namespacestudent_a5a53db039172e2b837294b6c1fc0da9d}\label{namespacestudent_a5a53db039172e2b837294b6c1fc0da9d}} 
+bool \mbox{\hyperlink{namespacestudent_a5a53db039172e2b837294b6c1fc0da9d}{process\+Green}} (const cv\+::\+Mat \&img\+\_\+hsv, cv\+::\+Mat \&green\+\_\+mask, bool DEBUG)
+\begin{DoxyCompactList}\small\item\em Function to process the green color of the image that comes from the simulator. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_ac7f50d3d0d74de628aee5793485bdca3}\label{namespacestudent_ac7f50d3d0d74de628aee5793485bdca3}} 
+bool \mbox{\hyperlink{namespacestudent_ac7f50d3d0d74de628aee5793485bdca3}{process\+Obstacles}} (const cv\+::\+Mat \&img\+\_\+in, const cv\+::\+Mat \&img\+\_\+hsv, const double scale, std\+::vector$<$ Polygon $>$ \&obstacle\+\_\+list, bool DEBUG)
+\begin{DoxyCompactList}\small\item\em Finds the red obstacles and saves them in the obstacle\+\_\+list. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_a1731194eb6c5da34057e2fdf703cf708}\label{namespacestudent_a1731194eb6c5da34057e2fdf703cf708}} 
+bool \mbox{\hyperlink{namespacestudent_a1731194eb6c5da34057e2fdf703cf708}{process\+Borders}} (const cv\+::\+Mat \&img\+\_\+in, const cv\+::\+Mat \&img\+\_\+hsv, const double scale, std\+::vector$<$ Polygon $>$ \&obstacle\+\_\+list, bool DEBUG)
+\begin{DoxyCompactList}\small\item\em Finds the black borders of the arena and treats them as trapezoidal obstacles. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_a54be2d174756e688e7ab0a2a82919893}\label{namespacestudent_a54be2d174756e688e7ab0a2a82919893}} 
+bool \mbox{\hyperlink{namespacestudent_a54be2d174756e688e7ab0a2a82919893}{process\+Gate}} (const cv\+::\+Mat \&img\+\_\+hsv, cv\+::\+Mat \&green\+\_\+mask, const double scale, Polygon \&gate, std\+::vector$<$ Polygon $>$ \&off\+\_\+borders, bool DEBUG)
+\begin{DoxyCompactList}\small\item\em Finds the green gate. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_a581cf472361fdc3d816722f312f0c173}\label{namespacestudent_a581cf472361fdc3d816722f312f0c173}} 
+bool \mbox{\hyperlink{namespacestudent_a581cf472361fdc3d816722f312f0c173}{process\+Victims}} (const cv\+::\+Mat \&img\+\_\+in, const cv\+::\+Mat \&img\+\_\+hsv, cv\+::\+Mat \&green\+\_\+mask, const double scale, std\+::vector$<$ std\+::pair$<$ int, Polygon $>$$>$ \&victim\+\_\+list, bool DEBUG)
+\begin{DoxyCompactList}\small\item\em Processes the green circles that correspond to the victims, to collect their position and their id. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_a2608eef8e596c047d66f356948e8aeb3}\label{namespacestudent_a2608eef8e596c047d66f356948e8aeb3}} 
+float \mbox{\hyperlink{namespacestudent_a2608eef8e596c047d66f356948e8aeb3}{find\+Robot\+Radius}} (const cv\+::\+Mat \&img\+\_\+in, const cv\+::\+Mat \&img\+\_\+hsv, const double scale, bool DEBUG)
+\begin{DoxyCompactList}\small\item\em Processes the blue triangle of the robot to find the radius of the circle, in order to perform the offset. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_a12c34fd357e9aea63dd5181ab6badcdc}\label{namespacestudent_a12c34fd357e9aea63dd5181ab6badcdc}} 
+bool \mbox{\hyperlink{namespacestudent_a12c34fd357e9aea63dd5181ab6badcdc}{offset\+Obstacles}} (const float OFFSET, const cv\+::\+Mat \&img\+\_\+in, const double scale, const std\+::vector$<$ Polygon $>$ \&found\+\_\+obstacles, std\+::vector$<$ Polygon $>$ \&offsetted\+\_\+obstacles, const bool DEBUG)
+\begin{DoxyCompactList}\small\item\em Uses Clipper to offset the found\+\_\+obstacles all together, returing a list of processed\+\_\+obstacles where they are merged. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_a7cc638b6ddc6f6380953a2a4f0727883}\label{namespacestudent_a7cc638b6ddc6f6380953a2a4f0727883}} 
+bool \mbox{\hyperlink{namespacestudent_a7cc638b6ddc6f6380953a2a4f0727883}{offset\+Each\+Obstacle}} (const float OFFSET, const cv\+::\+Mat \&img\+\_\+in, const double scale, std\+::vector$<$ Polygon $>$ \&found\+\_\+obstacles, std\+::vector$<$ Polygon $>$ \&offsetted\+\_\+obstacles, const bool DEBUG)
+\begin{DoxyCompactList}\small\item\em Offsets each obstacle in found\+\_\+obstacles at a time by using the Clipper library. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_ad0197bd1e3fcf8ee1faadaef7e582c1b}\label{namespacestudent_ad0197bd1e3fcf8ee1faadaef7e582c1b}} 
+int \mbox{\hyperlink{namespacestudent_ad0197bd1e3fcf8ee1faadaef7e582c1b}{find\+Template\+Id}} (cv\+::\+Mat \&process\+ROI, std\+::vector$<$ cv\+::\+Mat $>$ \&templates, bool DEBUG)
+\begin{DoxyCompactList}\small\item\em Processes a region of an image against the number templates, and returns the id of the best match. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_ae9bdf2fadfcf7a12d2a22d4b0136a56d}\label{namespacestudent_ae9bdf2fadfcf7a12d2a22d4b0136a56d}} 
+cv\+::\+Mat \mbox{\hyperlink{namespacestudent_ae9bdf2fadfcf7a12d2a22d4b0136a56d}{rotate}} (cv\+::\+Mat src, double angle)
+\begin{DoxyCompactList}\small\item\em Function to rotate a part of an image by a certain angle, used when processing the victims and doing template matching. ~\newline
+ \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{namespacestudent_aa8dca798ff334b12e92b73870aca45dd}\label{namespacestudent_aa8dca798ff334b12e92b73870aca45dd}} 
+const bool {\bfseries DEBUG\+\_\+plan} = false
+\item 
+\mbox{\Hypertarget{namespacestudent_acde836d5f98f30b0460816d7e9cfaa4d}\label{namespacestudent_acde836d5f98f30b0460816d7e9cfaa4d}} 
+double {\bfseries SCALE}
+\item 
+int \mbox{\hyperlink{namespacestudent_a5ce878278dd83cdab3ddbb0fbfd0ba62}{dubins\+\_\+primitives\+\_\+ksigns}} \mbox{[}6\mbox{]}\mbox{[}3\mbox{]}
+\item 
+\mbox{\Hypertarget{namespacestudent_a4d3df385a86baf5326e211215e9e59b9}\label{namespacestudent_a4d3df385a86baf5326e211215e9e59b9}} 
+Polygon {\bfseries this\+\_\+borders}
+\item 
+\mbox{\Hypertarget{namespacestudent_a9ad29d01c42bbbe7cfcd5327f991f369}\label{namespacestudent_a9ad29d01c42bbbe7cfcd5327f991f369}} 
+polygon\+\_\+type {\bfseries arena}
+\item 
+\mbox{\Hypertarget{namespacestudent_a8831c2907627f4f2c91cf27c7c7c796b}\label{namespacestudent_a8831c2907627f4f2c91cf27c7c7c796b}} 
+polygon\+\_\+type {\bfseries valid\+\_\+gate}
+\item 
+\mbox{\Hypertarget{namespacestudent_a8f219a041f42d14b7e80c3fd23a050af}\label{namespacestudent_a8f219a041f42d14b7e80c3fd23a050af}} 
+std\+::vector$<$ polygon\+\_\+type $>$ {\bfseries boost\+\_\+obstacle\+\_\+list}
+\item 
+\mbox{\Hypertarget{namespacestudent_ac9f439833a89e0d71f45a53568b2f560}\label{namespacestudent_ac9f439833a89e0d71f45a53568b2f560}} 
+std\+::vector$<$ Polygon $>$ {\bfseries coll\+\_\+obstacles}
+\item 
+\mbox{\Hypertarget{namespacestudent_a7872d3ca1e38ee4c16fd3db5577960e2}\label{namespacestudent_a7872d3ca1e38ee4c16fd3db5577960e2}} 
+std\+::vector$<$ Point $>$ {\bfseries full\+\_\+tree}
+\item 
+\mbox{\Hypertarget{namespacestudent_ac128b14e30411c9bfeaf6989c94a14d9}\label{namespacestudent_ac128b14e30411c9bfeaf6989c94a14d9}} 
+double {\bfseries SOL\+\_\+\+TIME} = 1.\+0
+\item 
+\mbox{\Hypertarget{namespacestudent_a579efecb6f1e5efff940ec3b3e53a6fc}\label{namespacestudent_a579efecb6f1e5efff940ec3b3e53a6fc}} 
+cv\+::\+Mat {\bfseries graph\+\_\+image}
+\item 
+\mbox{\Hypertarget{namespacestudent_a8310e57d600189e3593de33fc1d29de3}\label{namespacestudent_a8310e57d600189e3593de33fc1d29de3}} 
+bool {\bfseries done} = false
+\item 
+\mbox{\Hypertarget{namespacestudent_aafb172f6c2c4c0c49c3eb166ef9e6950}\label{namespacestudent_aafb172f6c2c4c0c49c3eb166ef9e6950}} 
+double $\ast$$\ast$ {\bfseries free\+\_\+edges}
+\item 
+\mbox{\Hypertarget{namespacestudent_aa99b5c6c8d97f166a4ff1b9d65357518}\label{namespacestudent_aa99b5c6c8d97f166a4ff1b9d65357518}} 
+const bool \mbox{\hyperlink{namespacestudent_aa99b5c6c8d97f166a4ff1b9d65357518}{DEBUG\+\_\+\+Map}} = false
+\begin{DoxyCompactList}\small\item\em Debug variable for map processing. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_ab258fa8d1e2d06180f4917f9d400a696}\label{namespacestudent_ab258fa8d1e2d06180f4917f9d400a696}} 
+const bool \mbox{\hyperlink{namespacestudent_ab258fa8d1e2d06180f4917f9d400a696}{DEBUG\+\_\+\+Robot}} = false
+\begin{DoxyCompactList}\small\item\em Debug variable for robot location. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{namespacestudent_a3822619858f3467801ba8c1aa55fcdd5}\label{namespacestudent_a3822619858f3467801ba8c1aa55fcdd5}} 
+bool {\bfseries DEBUG\+\_\+\+VICT} = false
+\item 
+\mbox{\Hypertarget{namespacestudent_a20d01d14d5e3e21c24927742f9673da7}\label{namespacestudent_a20d01d14d5e3e21c24927742f9673da7}} 
+int {\bfseries additional\+\_\+off} = 7
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Main file with the functions required by the simulator. The actual functions called are organized in different files for a cleaner code. 
+
+\doxysubsection{Function Documentation}
+\mbox{\Hypertarget{namespacestudent_a2d7550d88430bcb695137e5976b94e3a}\label{namespacestudent_a2d7550d88430bcb695137e5976b94e3a}} 
+\index{student@{student}!coll\_LineCircle@{coll\_LineCircle}}
+\index{coll\_LineCircle@{coll\_LineCircle}!student@{student}}
+\doxysubsubsection{\texorpdfstring{coll\_LineCircle()}{coll\_LineCircle()}}
+{\footnotesize\ttfamily bool student\+::coll\+\_\+\+Line\+Circle (\begin{DoxyParamCaption}\item[{double}]{x1,  }\item[{double}]{y1,  }\item[{double}]{x2,  }\item[{double}]{y2,  }\item[{\mbox{\hyperlink{structstudent_1_1dubinsArc}{dubins\+Arc}}}]{arc }\end{DoxyParamCaption})}
+
+Detects collisions between a segment and an arc, identified as a circle 
+\begin{DoxyParams}{Parameters}
+{\em x1} & First x coordinate of the segment \\
+\hline
+{\em y1} & First y coordinate of the segment \\
+\hline
+{\em x2} & Second x coordinate of the segment \\
+\hline
+{\em y2} & Second y coordinate of the segment \\
+\hline
+{\em arc} & \mbox{\hyperlink{structstudent_1_1dubinsArc}{dubins\+Arc}} \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The result of the collision check 
+\end{DoxyReturn}
+Make positive if not
+
+To avoid being considered as collisions
+
+No intersection points found
+
+2 intersection points with circle
+
+1 collision point with circle, delta equal to zero
+
+Find if t1 and t2 are a collision of the actual segment or just of the rect containing it
+
+Real arc collision
+
+Exit, collision found ~\newline
+
+
+Right turn
+
+Real arc collision
+
+Exit, collision found
+
+Real arc collision
+
+Exit, collision found
+
+Make positive if not
+
+To avoid being considered as collisions
+
+No intersection points found
+
+2 intersection points with circle
+
+1 collision point with circle, delta equal to zero
+
+Find if t1 and t2 are a collision of the actual segment or just of the rect containing it
+
+Real arc collision
+
+Exit, collision found ~\newline
+
+
+Right turn
+
+Real arc collision
+
+Exit, collision found
+
+Real arc collision
+
+Exit, collision found\mbox{\Hypertarget{namespacestudent_a5b674b3695610f840b28b97b1bcd82de}\label{namespacestudent_a5b674b3695610f840b28b97b1bcd82de}} 
+\index{student@{student}!coll\_LineLine@{coll\_LineLine}}
+\index{coll\_LineLine@{coll\_LineLine}!student@{student}}
+\doxysubsubsection{\texorpdfstring{coll\_LineLine()}{coll\_LineLine()}}
+{\footnotesize\ttfamily bool student\+::coll\+\_\+\+Line\+Line (\begin{DoxyParamCaption}\item[{double}]{x1,  }\item[{double}]{y1,  }\item[{double}]{x2,  }\item[{double}]{y2,  }\item[{double}]{x3,  }\item[{double}]{y3,  }\item[{double}]{x4,  }\item[{double}]{y4 }\end{DoxyParamCaption})}
+
+COLLISION\+\_\+\+CORE
+
+Detects collisions between a couple of segments, and returns the boolean outcome. 
+\begin{DoxyParams}{Parameters}
+{\em x1} & First x coordinate of the first segment \\
+\hline
+{\em y1} & First y coordinate of the first segment \\
+\hline
+{\em x2} & Second x coordinate of the first segment \\
+\hline
+{\em y2} & Second y coordinate of the first segment \\
+\hline
+{\em x3} & First x coordinate of the second segment \\
+\hline
+{\em y3} & First y coordinate of the second segment \\
+\hline
+{\em x4} & Second x coordinate of the second segment \\
+\hline
+{\em y4} & Second y coordinate of the second segment \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The result of the collision check 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacestudent_a7e804115ed7fd271368146f5cf78fce6}\label{namespacestudent_a7e804115ed7fd271368146f5cf78fce6}} 
+\index{student@{student}!constructArc@{constructArc}}
+\index{constructArc@{constructArc}!student@{student}}
+\doxysubsubsection{\texorpdfstring{constructArc()}{constructArc()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structstudent_1_1dubinsArc}{dubins\+Arc}} student\+::construct\+Arc (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structstudent_1_1configuration}{configuration}}}]{curr\+Conf,  }\item[{double}]{k,  }\item[{double}]{L }\end{DoxyParamCaption})}
+
+Returns a \mbox{\hyperlink{structstudent_1_1dubinsArc}{dubins\+Arc}} datastructure, which uniquely identifies the arc given its initial and final configurations, its length and curvature. \mbox{\Hypertarget{namespacestudent_ac881c09e990c34189df7dee9cd43ed39}\label{namespacestudent_ac881c09e990c34189df7dee9cd43ed39}} 
+\index{student@{student}!constructDubinsCurve@{constructDubinsCurve}}
+\index{constructDubinsCurve@{constructDubinsCurve}!student@{student}}
+\doxysubsubsection{\texorpdfstring{constructDubinsCurve()}{constructDubinsCurve()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structstudent_1_1dubinsCurve}{dubins\+Curve}} student\+::construct\+Dubins\+Curve (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structstudent_1_1configuration}{configuration}}}]{initial\+Conf,  }\item[{double}]{s1,  }\item[{double}]{s2,  }\item[{double}]{s3,  }\item[{double}]{k0,  }\item[{double}]{k1,  }\item[{double}]{k2 }\end{DoxyParamCaption})}
+
+Constructs the whole Dubin\textquotesingle{}s curve given the initial configuration, and the precomputed parameters of the three arcs. These are the length of the arcs -\/ s1, s2, s3 -\/ and their curvature -\/ k0, k1, k2. \mbox{\Hypertarget{namespacestudent_a1683a6357c9495deae1b46f1f23d716e}\label{namespacestudent_a1683a6357c9495deae1b46f1f23d716e}} 
+\index{student@{student}!cross2D@{cross2D}}
+\index{cross2D@{cross2D}!student@{student}}
+\doxysubsubsection{\texorpdfstring{cross2D()}{cross2D()}}
+{\footnotesize\ttfamily double student\+::cross2D (\begin{DoxyParamCaption}\item[{double}]{M\+\_\+00,  }\item[{double}]{M\+\_\+01,  }\item[{double}]{M\+\_\+10,  }\item[{double}]{M\+\_\+11 }\end{DoxyParamCaption})}
+
+Computes the cross product of a 2-\/Dimensional matrix. Variables are named after their ficticious index in the matrix. \mbox{\Hypertarget{namespacestudent_a1ab33418a119017635f5f69558fd7c43}\label{namespacestudent_a1ab33418a119017635f5f69558fd7c43}} 
+\index{student@{student}!dot2D@{dot2D}}
+\index{dot2D@{dot2D}!student@{student}}
+\doxysubsubsection{\texorpdfstring{dot2D()}{dot2D()}}
+{\footnotesize\ttfamily double student\+::dot2D (\begin{DoxyParamCaption}\item[{double}]{M\+\_\+00,  }\item[{double}]{M\+\_\+01,  }\item[{double}]{M\+\_\+10,  }\item[{double}]{M\+\_\+11 }\end{DoxyParamCaption})}
+
+Computes the dot product of two arrays. Variables are named after their ficticious index in the matrix. \mbox{\Hypertarget{namespacestudent_aa356091fcb55ee1924e097c9c97129a1}\label{namespacestudent_aa356091fcb55ee1924e097c9c97129a1}} 
+\index{student@{student}!dubins\_LRL@{dubins\_LRL}}
+\index{dubins\_LRL@{dubins\_LRL}!student@{student}}
+\doxysubsubsection{\texorpdfstring{dubins\_LRL()}{dubins\_LRL()}}
+{\footnotesize\ttfamily bool student\+::dubins\+\_\+\+LRL (\begin{DoxyParamCaption}\item[{double}]{sc\+\_\+th0,  }\item[{double}]{sc\+\_\+thf,  }\item[{double}]{sc\+\_\+\+Kmax,  }\item[{double \&}]{sc\+\_\+s1,  }\item[{double \&}]{sc\+\_\+s2,  }\item[{double \&}]{sc\+\_\+s3 }\end{DoxyParamCaption})}
+
+Function to implement the finding of the path made of a Left curve, followed by a ~\newline
+ Right curve, followed by a Left curve. Takes as input the initial and final orientations, and the maximum curvature. It returns the length of the three segments. \mbox{\Hypertarget{namespacestudent_a80f21f358569ce086b2be919cd3c7607}\label{namespacestudent_a80f21f358569ce086b2be919cd3c7607}} 
+\index{student@{student}!dubins\_LSL@{dubins\_LSL}}
+\index{dubins\_LSL@{dubins\_LSL}!student@{student}}
+\doxysubsubsection{\texorpdfstring{dubins\_LSL()}{dubins\_LSL()}}
+{\footnotesize\ttfamily bool student\+::dubins\+\_\+\+LSL (\begin{DoxyParamCaption}\item[{double}]{sc\+\_\+th0,  }\item[{double}]{sc\+\_\+thf,  }\item[{double}]{sc\+\_\+\+Kmax,  }\item[{double \&}]{sc\+\_\+s1,  }\item[{double \&}]{sc\+\_\+s2,  }\item[{double \&}]{sc\+\_\+s3 }\end{DoxyParamCaption})}
+
+Performs the computation of the Dubin\textquotesingle{}s curve composed by an arc to the left, then a straight line, then an arc to the left. Takes as input the initial and final orientations, and the maximum curvature. It returns the length of the three segments. \mbox{\Hypertarget{namespacestudent_a255f1fd6ee3a8a404469459c51fd8e76}\label{namespacestudent_a255f1fd6ee3a8a404469459c51fd8e76}} 
+\index{student@{student}!dubins\_LSR@{dubins\_LSR}}
+\index{dubins\_LSR@{dubins\_LSR}!student@{student}}
+\doxysubsubsection{\texorpdfstring{dubins\_LSR()}{dubins\_LSR()}}
+{\footnotesize\ttfamily bool student\+::dubins\+\_\+\+LSR (\begin{DoxyParamCaption}\item[{double}]{sc\+\_\+th0,  }\item[{double}]{sc\+\_\+thf,  }\item[{double}]{sc\+\_\+\+Kmax,  }\item[{double \&}]{sc\+\_\+s1,  }\item[{double \&}]{sc\+\_\+s2,  }\item[{double \&}]{sc\+\_\+s3 }\end{DoxyParamCaption})}
+
+Performs the computation to check for the Dubin\textquotesingle{}s curve composed by an arc to the left, then a straight line, then an arc to the right. Takes as input the initial and final orientations, and the maximum curvature. It returns the length of the three segments. \mbox{\Hypertarget{namespacestudent_acc22c326309c1c531da2d15d271e009c}\label{namespacestudent_acc22c326309c1c531da2d15d271e009c}} 
+\index{student@{student}!dubins\_RLR@{dubins\_RLR}}
+\index{dubins\_RLR@{dubins\_RLR}!student@{student}}
+\doxysubsubsection{\texorpdfstring{dubins\_RLR()}{dubins\_RLR()}}
+{\footnotesize\ttfamily bool student\+::dubins\+\_\+\+RLR (\begin{DoxyParamCaption}\item[{double}]{sc\+\_\+th0,  }\item[{double}]{sc\+\_\+thf,  }\item[{double}]{sc\+\_\+\+Kmax,  }\item[{double \&}]{sc\+\_\+s1,  }\item[{double \&}]{sc\+\_\+s2,  }\item[{double \&}]{sc\+\_\+s3 }\end{DoxyParamCaption})}
+
+Function to implement the finding of the path made of a Right curve, followed by a Left curve, followed by a Right curve. Takes as input the initial and final orientations, and the maximum curvature. It returns the length of the three segments. \mbox{\Hypertarget{namespacestudent_ada1e4d5c3ea5d2032812cce24ac5a479}\label{namespacestudent_ada1e4d5c3ea5d2032812cce24ac5a479}} 
+\index{student@{student}!dubins\_RSL@{dubins\_RSL}}
+\index{dubins\_RSL@{dubins\_RSL}!student@{student}}
+\doxysubsubsection{\texorpdfstring{dubins\_RSL()}{dubins\_RSL()}}
+{\footnotesize\ttfamily bool student\+::dubins\+\_\+\+RSL (\begin{DoxyParamCaption}\item[{double}]{sc\+\_\+th0,  }\item[{double}]{sc\+\_\+thf,  }\item[{double}]{sc\+\_\+\+Kmax,  }\item[{double \&}]{sc\+\_\+s1,  }\item[{double \&}]{sc\+\_\+s2,  }\item[{double \&}]{sc\+\_\+s3 }\end{DoxyParamCaption})}
+
+Function to implement the finding of the path made of a Right curve, followed by a ~\newline
+ Straight line, followed by a Left curve. Takes as input the initial and final orientations, and the maximum curvature. It returns the length of the three segments. \mbox{\Hypertarget{namespacestudent_a79074a60055dba829304da1ba43cfdfb}\label{namespacestudent_a79074a60055dba829304da1ba43cfdfb}} 
+\index{student@{student}!dubins\_RSR@{dubins\_RSR}}
+\index{dubins\_RSR@{dubins\_RSR}!student@{student}}
+\doxysubsubsection{\texorpdfstring{dubins\_RSR()}{dubins\_RSR()}}
+{\footnotesize\ttfamily bool student\+::dubins\+\_\+\+RSR (\begin{DoxyParamCaption}\item[{double}]{sc\+\_\+th0,  }\item[{double}]{sc\+\_\+thf,  }\item[{double}]{sc\+\_\+\+Kmax,  }\item[{double \&}]{sc\+\_\+s1,  }\item[{double \&}]{sc\+\_\+s2,  }\item[{double \&}]{sc\+\_\+s3 }\end{DoxyParamCaption})}
+
+Performs the computation to check for the Dubin\textquotesingle{}s curve composed by an arc to the right, then a straight line, then an arc to the right. Takes as input the initial and final orientations, and the maximum curvature. It returns the length of the three segments. \mbox{\Hypertarget{namespacestudent_ad16c5106a18eaaea0d105ba30403eedd}\label{namespacestudent_ad16c5106a18eaaea0d105ba30403eedd}} 
+\index{student@{student}!dubins\_shortest\_path@{dubins\_shortest\_path}}
+\index{dubins\_shortest\_path@{dubins\_shortest\_path}!student@{student}}
+\doxysubsubsection{\texorpdfstring{dubins\_shortest\_path()}{dubins\_shortest\_path()}}
+{\footnotesize\ttfamily std\+::pair$<$ int, \mbox{\hyperlink{structstudent_1_1dubinsCurve}{dubins\+Curve}} $>$ student\+::dubins\+\_\+shortest\+\_\+path (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structstudent_1_1configuration}{configuration}}}]{initial,  }\item[{\mbox{\hyperlink{structstudent_1_1configuration}{configuration}}}]{final,  }\item[{double}]{Kmax }\end{DoxyParamCaption})}
+
+Solve the Dubins problem for the given input parameters. Return the type and the parameters of the optimal curve. \mbox{\Hypertarget{namespacestudent_ae40970d4d45d273f2571d70f5e75a054}\label{namespacestudent_ae40970d4d45d273f2571d70f5e75a054}} 
+\index{student@{student}!getCenter@{getCenter}}
+\index{getCenter@{getCenter}!student@{student}}
+\doxysubsubsection{\texorpdfstring{getCenter()}{getCenter()}}
+{\footnotesize\ttfamily Point student\+::get\+Center (\begin{DoxyParamCaption}\item[{const Polygon \&}]{poly }\end{DoxyParamCaption})}
+
+Returns the Point struct with the coordinates of the passed Polygon\textquotesingle{}s center \mbox{\Hypertarget{namespacestudent_a343d9cd6d6fd1747e42374104cee6cba}\label{namespacestudent_a343d9cd6d6fd1747e42374104cee6cba}} 
+\index{student@{student}!getNextConfig@{getNextConfig}}
+\index{getNextConfig@{getNextConfig}!student@{student}}
+\doxysubsubsection{\texorpdfstring{getNextConfig()}{getNextConfig()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structstudent_1_1configuration}{configuration}} student\+::get\+Next\+Config (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structstudent_1_1configuration}{configuration}}}]{curr,  }\item[{double}]{k,  }\item[{double}]{s }\end{DoxyParamCaption})}
+
+Computes next configuration given the current one, the length of the arc and the curvature. Applied to get the next\+Conf in \mbox{\hyperlink{structstudent_1_1dubinsArc}{dubins\+Arc}}. \mbox{\Hypertarget{namespacestudent_a13283ab20308fde8c6f0175f6c2ddf44}\label{namespacestudent_a13283ab20308fde8c6f0175f6c2ddf44}} 
+\index{student@{student}!max@{max}}
+\index{max@{max}!student@{student}}
+\doxysubsubsection{\texorpdfstring{max()}{max()}}
+{\footnotesize\ttfamily double student\+::max (\begin{DoxyParamCaption}\item[{double}]{a,  }\item[{double}]{b }\end{DoxyParamCaption})}
+
+COLLISION\+\_\+\+UTILITY \mbox{\Hypertarget{namespacestudent_aabfea618c10c13f73ac9e6ddca052db2}\label{namespacestudent_aabfea618c10c13f73ac9e6ddca052db2}} 
+\index{student@{student}!missionOne@{missionOne}}
+\index{missionOne@{missionOne}!student@{student}}
+\doxysubsubsection{\texorpdfstring{missionOne()}{missionOne()}}
+{\footnotesize\ttfamily void student\+::mission\+One (\begin{DoxyParamCaption}\item[{std\+::vector$<$ Point $>$ \&}]{point\+\_\+list,  }\item[{std\+::vector$<$ Point $>$ \&}]{RRT\+\_\+list,  }\item[{std\+::shared\+\_\+ptr$<$ ompl\+::base\+::\+Space\+Information $>$}]{si,  }\item[{std\+::shared\+\_\+ptr$<$ ob\+::\+SE2\+State\+Space $>$}]{space,  }\item[{cv\+::\+Mat \&}]{image }\end{DoxyParamCaption})}
+
+Implementation of the mission one\+: collect all the victims in order and go to the gate, by avoiding the obstacles. Takes as input\+: 
+\begin{DoxyParams}{Parameters}
+{\em point\+\_\+list} & The victims, in order, and the gate \\
+\hline
+{\em RRT\+\_\+list} & the output list containing a series of states along the path \\
+\hline
+{\em si} & A variable of OMPL needed by the planner \\
+\hline
+{\em space} & Another variable of OMPL \\
+\hline
+{\em image} & An image for debugging purposes. \\
+\hline
+\end{DoxyParams}
+Close with the last segment
+
+Free the memory from the previous goal TODO remove
+
+Close with the last segment
+
+Free the memory from the previous goal TODO remove\mbox{\Hypertarget{namespacestudent_af0e78c9c1bb3fcd9536f328335d64def}\label{namespacestudent_af0e78c9c1bb3fcd9536f328335d64def}} 
+\index{student@{student}!missionTwo@{missionTwo}}
+\index{missionTwo@{missionTwo}!student@{student}}
+\doxysubsubsection{\texorpdfstring{missionTwo()}{missionTwo()}}
+{\footnotesize\ttfamily void student\+::mission\+Two (\begin{DoxyParamCaption}\item[{std\+::shared\+\_\+ptr$<$ ompl\+::base\+::\+Space\+Information $>$}]{si,  }\item[{std\+::vector$<$ Point $>$ \&}]{point\+\_\+list }\end{DoxyParamCaption})}
+
+Trial of implementing mission two, by connecting all the points found in one iteration of the RRTstar between each other (a sort of PRM). \mbox{\Hypertarget{namespacestudent_ab3f1d6c8dd4caa817efc0cd3c46eb2e0}\label{namespacestudent_ab3f1d6c8dd4caa817efc0cd3c46eb2e0}} 
+\index{student@{student}!mouseCallback@{mouseCallback}}
+\index{mouseCallback@{mouseCallback}!student@{student}}
+\doxysubsubsection{\texorpdfstring{mouseCallback()}{mouseCallback()}}
+{\footnotesize\ttfamily void student\+::mouse\+Callback (\begin{DoxyParamCaption}\item[{int}]{event,  }\item[{int}]{x,  }\item[{int}]{y,  }\item[{int}]{,  }\item[{void $\ast$}]{p }\end{DoxyParamCaption})}
+
+Saves the selected points into the result variable, for usage by the calibration function. (taken from professor\+\_\+interface.\+cpp) \mbox{\Hypertarget{namespacestudent_a37eabf8488e510a598c21787bb66cfea}\label{namespacestudent_a37eabf8488e510a598c21787bb66cfea}} 
+\index{student@{student}!multipoint@{multipoint}}
+\index{multipoint@{multipoint}!student@{student}}
+\doxysubsubsection{\texorpdfstring{multipoint()}{multipoint()}}
+{\footnotesize\ttfamily std\+::vector$<$ \mbox{\hyperlink{structstudent_1_1dubinsCurve}{dubins\+Curve}} $>$ student\+::multipoint (\begin{DoxyParamCaption}\item[{const \mbox{\hyperlink{structstudent_1_1configuration}{configuration}} \&}]{robot,  }\item[{std\+::vector$<$ Point $>$ \&}]{points,  }\item[{double}]{gate\+\_\+th }\end{DoxyParamCaption})}
+
+Computes the Dubin\textquotesingle{}s shortest path between a list of points, the first of which is the robot and the last of which is the gate. Both brute-\/froce approach and the optimized/iterative one are implemented. \mbox{\Hypertarget{namespacestudent_a6c480ab8ffeff46887387b8b54c4dcb9}\label{namespacestudent_a6c480ab8ffeff46887387b8b54c4dcb9}} 
+\index{student@{student}!myStateValidityCheckerFunction@{myStateValidityCheckerFunction}}
+\index{myStateValidityCheckerFunction@{myStateValidityCheckerFunction}!student@{student}}
+\doxysubsubsection{\texorpdfstring{myStateValidityCheckerFunction()}{myStateValidityCheckerFunction()}}
+{\footnotesize\ttfamily bool student\+::my\+State\+Validity\+Checker\+Function (\begin{DoxyParamCaption}\item[{const ob\+::\+State $\ast$}]{state }\end{DoxyParamCaption})}
+
+State validity checker, used by the sampler in order to see if a point is valid. \begin{DoxyReturn}{Returns}
+true if the point is inside the arena and in a free area, or on the gate. False if it is outside the arena or on an obstacle. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{namespacestudent_a01244e0e0a28d974de100ffcad7a2583}\label{namespacestudent_a01244e0e0a28d974de100ffcad7a2583}} 
+\index{student@{student}!pickNPoints@{pickNPoints}}
+\index{pickNPoints@{pickNPoints}!student@{student}}
+\doxysubsubsection{\texorpdfstring{pickNPoints()}{pickNPoints()}}
+{\footnotesize\ttfamily std\+::vector$<$cv\+::\+Point2f$>$ student\+::pick\+NPoints (\begin{DoxyParamCaption}\item[{int}]{n0,  }\item[{const cv\+::\+Mat \&}]{img }\end{DoxyParamCaption})}
+
+Function which asks the user to select the 4 points to be used for the calibration of the camera (the arena corners). (taken from professor\+\_\+interface.\+cpp) \mbox{\Hypertarget{namespacestudent_a218f733020135d62f2caa53a28210869}\label{namespacestudent_a218f733020135d62f2caa53a28210869}} 
+\index{student@{student}!plotXCircle@{plotXCircle}}
+\index{plotXCircle@{plotXCircle}!student@{student}}
+\doxysubsubsection{\texorpdfstring{plotXCircle()}{plotXCircle()}}
+{\footnotesize\ttfamily void student\+::plot\+XCircle (\begin{DoxyParamCaption}\item[{bool}]{res,  }\item[{double}]{x1,  }\item[{double}]{y1,  }\item[{double}]{x2,  }\item[{double}]{y2,  }\item[{double}]{xC,  }\item[{double}]{yC,  }\item[{double}]{radius,  }\item[{cv\+::\+Point}]{a1,  }\item[{cv\+::\+Point}]{a2,  }\item[{double}]{verse }\end{DoxyParamCaption})}
+
+Function to plot a possible collision between two lines If the image is scaled incorrectly, change the fact variable. Plot line, circle and the two arc points as circles, the smallest as the starting one.
+
+Left turn
+
+Left turn
+
+Plot line, circle and the two arc points as circles, the smallest as the starting one.
+
+Left turn
+
+Left turn\mbox{\Hypertarget{namespacestudent_a7c29d7d15cf5e0736336cb908aaf0c71}\label{namespacestudent_a7c29d7d15cf5e0736336cb908aaf0c71}} 
+\index{student@{student}!plotXLine@{plotXLine}}
+\index{plotXLine@{plotXLine}!student@{student}}
+\doxysubsubsection{\texorpdfstring{plotXLine()}{plotXLine()}}
+{\footnotesize\ttfamily void student\+::plot\+XLine (\begin{DoxyParamCaption}\item[{bool}]{res,  }\item[{double}]{x1,  }\item[{double}]{y1,  }\item[{double}]{x2,  }\item[{double}]{y2,  }\item[{double}]{x3,  }\item[{double}]{y3,  }\item[{double}]{x4,  }\item[{double}]{y4 }\end{DoxyParamCaption})}
+
+COLLISION\+\_\+\+PLOT
+
+Function to plot a possible collision between two lines If the image is scaled incorrectly, change the fact variable. \mbox{\Hypertarget{namespacestudent_a4d70460143a4151dd1ef09ee21bbe767}\label{namespacestudent_a4d70460143a4151dd1ef09ee21bbe767}} 
+\index{student@{student}!student\_extrinsicCalib@{student\_extrinsicCalib}}
+\index{student\_extrinsicCalib@{student\_extrinsicCalib}!student@{student}}
+\doxysubsubsection{\texorpdfstring{student\_extrinsicCalib()}{student\_extrinsicCalib()}}
+{\footnotesize\ttfamily bool student\+::student\+\_\+extrinsic\+Calib (\begin{DoxyParamCaption}\item[{const cv\+::\+Mat \&}]{img\+\_\+in,  }\item[{std\+::vector$<$ cv\+::\+Point3f $>$}]{object\+\_\+points,  }\item[{const cv\+::\+Mat \&}]{camera\+\_\+matrix,  }\item[{cv\+::\+Mat \&}]{rvec,  }\item[{cv\+::\+Mat \&}]{tvec,  }\item[{const std\+::string \&}]{config\+\_\+folder }\end{DoxyParamCaption})}
+
+Implementation of extrinsic\+Calib() functions. From 4 user-\/inserted points, it gets an estimate of the arena corners in 3D and computes the rotation and translation vectors to map them into 2D. These will be used to unwarm the image, transforming i t from 3d to 2d in a correct way. (Finds arena pose from 3D(object\+\_\+points)-\/2D(image\+\_\+in) point correspondences.) Returns true if the operation was successful. \mbox{\Hypertarget{namespacestudent_a41af80cd00041a3f7159a5d3f4fb6116}\label{namespacestudent_a41af80cd00041a3f7159a5d3f4fb6116}} 
+\index{student@{student}!student\_findPlaneTransform@{student\_findPlaneTransform}}
+\index{student\_findPlaneTransform@{student\_findPlaneTransform}!student@{student}}
+\doxysubsubsection{\texorpdfstring{student\_findPlaneTransform()}{student\_findPlaneTransform()}}
+{\footnotesize\ttfamily void student\+::student\+\_\+find\+Plane\+Transform (\begin{DoxyParamCaption}\item[{const cv\+::\+Mat \&}]{cam\+\_\+matrix,  }\item[{const cv\+::\+Mat \&}]{rvec,  }\item[{const cv\+::\+Mat \&}]{tvec,  }\item[{const std\+::vector$<$ cv\+::\+Point3f $>$ \&}]{object\+\_\+points\+\_\+plane,  }\item[{const std\+::vector$<$ cv\+::\+Point2f $>$ \&}]{dest\+\_\+image\+\_\+points\+\_\+plane,  }\item[{cv\+::\+Mat \&}]{plane\+\_\+transf,  }\item[{const std\+::string \&}]{config\+\_\+folder }\end{DoxyParamCaption})}
+
+Implementation of the find\+Plan\+Transform() function of the student\+\_\+interface. Performs the 3D to 2D transformation of the arena. \mbox{\Hypertarget{namespacestudent_a04e9d0633e36ea78c4bb946f593c8f8e}\label{namespacestudent_a04e9d0633e36ea78c4bb946f593c8f8e}} 
+\index{student@{student}!student\_findRobot@{student\_findRobot}}
+\index{student\_findRobot@{student\_findRobot}!student@{student}}
+\doxysubsubsection{\texorpdfstring{student\_findRobot()}{student\_findRobot()}}
+{\footnotesize\ttfamily bool student\+::student\+\_\+find\+Robot (\begin{DoxyParamCaption}\item[{const cv\+::\+Mat \&}]{img\+\_\+in,  }\item[{const double}]{scale,  }\item[{Polygon \&}]{triangle,  }\item[{double \&}]{x,  }\item[{double \&}]{y,  }\item[{double \&}]{theta,  }\item[{const std\+::string \&}]{config\+\_\+folder,  }\item[{const bool}]{DEBUG }\end{DoxyParamCaption})}
+
+Student implementation of the find\+Robot() function. It processes the blue area of the arena, identifies the triangle which represents the robot, processes it to find its center (x,y) and orientation (theta). If DEBUG is true, more information about the process is printed and images are shown. \mbox{\Hypertarget{namespacestudent_a9056dc07d30ae7657be42b03dfe3a2a0}\label{namespacestudent_a9056dc07d30ae7657be42b03dfe3a2a0}} 
+\index{student@{student}!student\_genericImageListener@{student\_genericImageListener}}
+\index{student\_genericImageListener@{student\_genericImageListener}!student@{student}}
+\doxysubsubsection{\texorpdfstring{student\_genericImageListener()}{student\_genericImageListener()}}
+{\footnotesize\ttfamily void student\+::student\+\_\+generic\+Image\+Listener (\begin{DoxyParamCaption}\item[{const cv\+::\+Mat \&}]{img\+\_\+in,  }\item[{std\+::string}]{topic,  }\item[{const std\+::string \&}]{config\+\_\+folder }\end{DoxyParamCaption})}
+
+Implementation of the generic\+Image\+Listener function from the student\+\_\+interface. It saves the img\+\_\+in into the config\+\_\+folder/camera\+\_\+image directory, upon request of the user. Press \textquotesingle{}s\textquotesingle{} when the image is shown in order to save it. \mbox{\Hypertarget{namespacestudent_a187cfd6d82aaffa5c634c4ef24271f7d}\label{namespacestudent_a187cfd6d82aaffa5c634c4ef24271f7d}} 
+\index{student@{student}!student\_imageUndistort@{student\_imageUndistort}}
+\index{student\_imageUndistort@{student\_imageUndistort}!student@{student}}
+\doxysubsubsection{\texorpdfstring{student\_imageUndistort()}{student\_imageUndistort()}}
+{\footnotesize\ttfamily void student\+::student\+\_\+image\+Undistort (\begin{DoxyParamCaption}\item[{const cv\+::\+Mat \&}]{img\+\_\+in,  }\item[{cv\+::\+Mat \&}]{img\+\_\+out,  }\item[{const cv\+::\+Mat \&}]{cam\+\_\+matrix,  }\item[{const cv\+::\+Mat \&}]{dist\+\_\+coeffs,  }\item[{const std\+::string \&}]{config\+\_\+folder }\end{DoxyParamCaption})}
+
+Implementation of the image\+Undistort() function of student\+\_\+interface. It takes the img\+\_\+in and performs the undistortion based on the camera parameters. \mbox{\Hypertarget{namespacestudent_a3c8c9cb0a117359291d6800b0dd9461f}\label{namespacestudent_a3c8c9cb0a117359291d6800b0dd9461f}} 
+\index{student@{student}!student\_loadImage@{student\_loadImage}}
+\index{student\_loadImage@{student\_loadImage}!student@{student}}
+\doxysubsubsection{\texorpdfstring{student\_loadImage()}{student\_loadImage()}}
+{\footnotesize\ttfamily void student\+::student\+\_\+load\+Image (\begin{DoxyParamCaption}\item[{cv\+::\+Mat \&}]{img\+\_\+out,  }\item[{const std\+::string \&}]{config\+\_\+folder }\end{DoxyParamCaption})}
+
+Implementation of the load\+Image() function of the student\+\_\+interface. It takes the imges from the config\+\_\+folder/camera\+\_\+image folder and loads them into the simulator. \mbox{\Hypertarget{namespacestudent_aa3e0aecde54620c30d46a5dcc6c9fb7a}\label{namespacestudent_aa3e0aecde54620c30d46a5dcc6c9fb7a}} 
+\index{student@{student}!student\_planPath@{student\_planPath}}
+\index{student\_planPath@{student\_planPath}!student@{student}}
+\doxysubsubsection{\texorpdfstring{student\_planPath()}{student\_planPath()}}
+{\footnotesize\ttfamily bool student\+::student\+\_\+plan\+Path (\begin{DoxyParamCaption}\item[{const Polygon \&}]{borders,  }\item[{const std\+::vector$<$ Polygon $>$ \&}]{obstacle\+\_\+list,  }\item[{const std\+::vector$<$ std\+::pair$<$ int, Polygon $>$$>$ \&}]{victim\+\_\+list,  }\item[{const Polygon \&}]{gate,  }\item[{const float}]{x,  }\item[{const float}]{y,  }\item[{const float}]{theta,  }\item[{Path \&}]{path,  }\item[{const std\+::string \&}]{config\+\_\+folder }\end{DoxyParamCaption})}
+
+Performs the computation of a collision free path, that goes through all the victims\textquotesingle{}s in order (mission 1) by using Dubin\textquotesingle{}s manoeuvres. It uses the RRTstar library of OMPL. Close the arena polygon
+
+Close the obstacle polygon
+
+Close the arena polygon
+
+Close the obstacle polygon\mbox{\Hypertarget{namespacestudent_a261bfa62778cb6adf492f7d50827da78}\label{namespacestudent_a261bfa62778cb6adf492f7d50827da78}} 
+\index{student@{student}!student\_processMap@{student\_processMap}}
+\index{student\_processMap@{student\_processMap}!student@{student}}
+\doxysubsubsection{\texorpdfstring{student\_processMap()}{student\_processMap()}}
+{\footnotesize\ttfamily bool student\+::student\+\_\+process\+Map (\begin{DoxyParamCaption}\item[{const cv\+::\+Mat \&}]{img\+\_\+in,  }\item[{const double}]{scale,  }\item[{std\+::vector$<$ Polygon $>$ \&}]{obstacle\+\_\+list,  }\item[{std\+::vector$<$ std\+::pair$<$ int, Polygon $>$$>$ \&}]{victim\+\_\+list,  }\item[{Polygon \&}]{gate,  }\item[{const std\+::string \&}]{config\+\_\+folder,  }\item[{const bool}]{DEBUG }\end{DoxyParamCaption})}
+
+Implementation of the process\+Map() function of the student\+\_\+interface. It takes the img\+\_\+in coming from the simulator or the camera, processes it to find the obstacles that the robot has to avoid and the victims that it needs to save. It uses some helper functions that divide the processing in a more structured way. \mbox{\Hypertarget{namespacestudent_a7b33d29b9e4396350ed75aac2ef2d3ce}\label{namespacestudent_a7b33d29b9e4396350ed75aac2ef2d3ce}} 
+\index{student@{student}!student\_unwarp@{student\_unwarp}}
+\index{student\_unwarp@{student\_unwarp}!student@{student}}
+\doxysubsubsection{\texorpdfstring{student\_unwarp()}{student\_unwarp()}}
+{\footnotesize\ttfamily void student\+::student\+\_\+unwarp (\begin{DoxyParamCaption}\item[{const cv\+::\+Mat \&}]{img\+\_\+in,  }\item[{cv\+::\+Mat \&}]{img\+\_\+out,  }\item[{const cv\+::\+Mat \&}]{transf,  }\item[{const std\+::string \&}]{config\+\_\+folder }\end{DoxyParamCaption})}
+
+Implementation of the unwarp() function of the student\+\_\+interface. It performs the last step in image processing which unwarps the image according to the transformation matrix previously computed. 
+
+\doxysubsection{Variable Documentation}
+\mbox{\Hypertarget{namespacestudent_a5ce878278dd83cdab3ddbb0fbfd0ba62}\label{namespacestudent_a5ce878278dd83cdab3ddbb0fbfd0ba62}} 
+\index{student@{student}!dubins\_primitives\_ksigns@{dubins\_primitives\_ksigns}}
+\index{dubins\_primitives\_ksigns@{dubins\_primitives\_ksigns}!student@{student}}
+\doxysubsubsection{\texorpdfstring{dubins\_primitives\_ksigns}{dubins\_primitives\_ksigns}}
+{\footnotesize\ttfamily int student\+::dubins\+\_\+primitives\+\_\+ksigns\mbox{[}6\mbox{]}\mbox{[}3\mbox{]}}
+
+{\bfseries Initial value\+:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{= \{}
+\DoxyCodeLine{        \{  1,  0,  1 \},     }
+\DoxyCodeLine{        \{ -\/1,  0, -\/1 \},     }
+\DoxyCodeLine{        \{  1,  0, -\/1 \},     }
+\DoxyCodeLine{        \{ -\/1,  0,  1 \},     }
+\DoxyCodeLine{        \{ -\/1,  1, -\/1 \},     }
+\DoxyCodeLine{        \{  1, -\/1,  1 \}      }
+\DoxyCodeLine{    \}}
+
+\end{DoxyCode}
+Definition of the curvatue signs corresponding to the different dubins primitives functions. 
