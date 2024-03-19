@@ -5,11 +5,11 @@ The first part involved the processing of the raw image coming from a camera sit
 ### A side view of the arena in the 3D environment of development
 
 <p align="left">
-  <img width="800" src=https://github.com/massimilianofronza/AppliedRoboticsStudentInterface/assets/38779834/e4eb45e9-8dfc-427c-b78a-6db667ddda73>
+  <img width="600" src=https://github.com/massimilianofronza/AppliedRoboticsStudentInterface/assets/38779834/e4eb45e9-8dfc-427c-b78a-6db667ddda73>
 </p>
 
 ### The virtual representation of the maze, with the path defined and ready to be passed to the controller
 
 <p align="left">
-  <img width="800" src=https://github.com/massimilianofronza/AppliedRoboticsStudentInterface/assets/38779834/2cf4e6c7-0a0e-4703-be58-f92a368352a0>
+  <img width="600" src=https://github.com/massimilianofronza/AppliedRoboticsStudentInterface/assets/38779834/2cf4e6c7-0a0e-4703-be58-f92a368352a0>
 </p>
